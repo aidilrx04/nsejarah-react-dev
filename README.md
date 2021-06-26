@@ -1,3 +1,7 @@
+# FRIENDLY REMINDER
+
+## THIS PROJECT IS NOT OPTIMISED :(
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
