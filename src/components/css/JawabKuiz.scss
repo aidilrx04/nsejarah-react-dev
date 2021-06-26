@@ -1,0 +1,124 @@
+@import 'colors';
+@import 'mixins';
+
+#JawabKuiz
+{
+    .kuiz-content
+    {
+        // min-height: 400px;
+        padding: 20px 40px;
+        background: rgba( $color2, .8 );
+        position: relative;
+
+        .soalan
+        {
+            &-teks
+            {
+                font-size: 20px;
+                min-height: 250px;
+                color: #fff;
+                text-align: center;
+            }
+
+            &-gambar
+            {
+                width: 50%;
+                display: block;
+                margin: 10px auto;
+            }
+
+            &-jawapan-container
+            {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            &-jawapan
+            {
+                width: 100%;
+                min-width: 40%;
+                flex: 6;
+                margin: 5px 10px;
+                padding: 10px;
+                font-size: 21px;
+                // border: 2px solid $color1;
+                border: 1px solid $color1;
+                border-radius: 5px;
+                cursor: pointer;
+                // @include glinear(
+
+                // );
+                @include background-colors(
+                    linear-gradient( to top, darken( $color2, 10), lighten( $color2, 5)),
+                    $color2,
+                    darken( $color2, 20 ),
+                    darken( $color2, 20 )
+                );
+                color: #fefefe;
+
+                &:disabled
+                {
+                    background: darken( $color2, 2 );
+                    cursor: default;
+                }
+                
+            }
+
+            &-status
+            {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #00000044;
+                @include flex(flex, center, center);
+
+
+                &-betul, &-salah
+                {
+                    font-size: 50px;
+                }
+
+                &-betul
+                {
+                    color: $color4;
+                }
+                &-salah
+                {
+                    // color: darken( $color3, 10);
+                    color: #ff0000;
+                }
+            }
+        }
+
+        .jawapan
+        {
+            &-x
+            {
+                visibility: hidden;
+            }
+            &-salah
+            {
+                background-color: rgba( $color3, .8 ) !important;
+            }
+            &-betul
+            {
+                background-color: rgba( $color4, .8 ) !important;
+            }
+        }
+    }
+}
+
+.shake
+{
+    animation: shake .4s;
+}
+
+@keyframes shake
+{
+    0% { transform: translateY(-5px); }
+    25% { transform: translateY(5px); }
+    75% { transform: translateY(-2px); }
+    100% { transform: translateY(0)}
+}

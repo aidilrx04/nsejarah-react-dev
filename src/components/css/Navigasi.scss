@@ -1,0 +1,34 @@
+@import 'mixins';
+@import 'colors';
+
+.navigasi
+{
+    a
+    {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        @include background-colors(
+            #00000009 !important,
+            $color2 !important,
+            darken( $color2, 10 ) !important,
+            // #00000009
+        );
+
+        @include colors(
+            $color2,
+            #fefefe,
+            #fefefe
+            // $color2
+        );
+
+        @include transition( (background, color), 400ms, $state: 0);
+
+        i
+        {
+            width: 25px;
+            text-align: center;
+        }
+    }
+}

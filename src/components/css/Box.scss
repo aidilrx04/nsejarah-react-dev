@@ -1,0 +1,46 @@
+@import './colors';
+
+body
+{
+    background: linear-gradient( to left, rgba( $color1, .4 ), rgba( $color2, .4));
+}
+
+.box
+{
+    overflow: hidden;
+}
+
+.box-header
+{
+    & .header-btn
+    {
+        background: transparent;
+        color: #fefefe;
+        // border-width: 2px;
+        border: none;
+        border-radius: 50%;
+        padding: 0;
+        transition: box-shadow .2s, background .2s;
+
+        &:hover
+        {
+            box-shadow: 0 0 0 -3px $color1, 0 0 0 10px $color1;
+            background: $color1;
+        }
+        &:focus
+        {
+            box-shadow: 0 0 0 -3px $color1, 0 0 0 10px $color1;
+            background: $color1;
+        }
+    }
+
+    .header-right
+    {
+        font-size: 1.17em;
+    }
+}
+
+.box-body
+{
+    overflow: auto;
+}

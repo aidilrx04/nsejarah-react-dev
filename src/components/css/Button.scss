@@ -1,0 +1,16 @@
+@import 'colors';
+@import 'mixins';
+
+button
+{
+    padding: 5px 10px;
+    border: 1px solid grey;
+    border-radius: 3px;
+    cursor: pointer;
+
+    @include background-colors(
+        lightgrey,
+        darkgrey,
+        grey
+    )
+}

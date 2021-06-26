@@ -1,23 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter as Router
+} from 'react-router-dom';
+import Navbar from './components/js/Navbar';
+import Content from './components/js/Content';
+import './components/css/Footer.css';
+import { UserContextProvider } from './components/js/contexts/UserContext';
 
-function App() {
+
+
+
+/* function rand()
+{
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let r = '';
+  for( let i = 0; i < 10; i++ )
+  {
+    let n = Math.floor(Math.random() * chars.length);
+    let c = chars[n];
+    r += c;
+  }
+  return r;
+} */
+
+
+
+function App()
+{
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <>
+    <Router>
+      <UserContextProvider>
+        <Navbar/>
+        <Content/>
+      </UserContextProvider>
+      <Footer/>
+    </Router>
+    </>
+  );
+}
+
+function Footer()
+{
+  return (
+    <div id="footer">
+      <h4>&copy; 2021, Aidil BlubBlub.</h4>
+      <p>Sebarang kerosakan yang terjadi bukan masalah saya</p>
     </div>
   );
 }

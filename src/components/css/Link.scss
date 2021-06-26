@@ -1,0 +1,18 @@
+@import 'colors';
+
+.link
+{
+    padding: 5px 10px;
+    display: inline-block;
+    margin: 1px 5px;
+    border-radius: 5px;
+
+    color: #fefefe;
+    background-color: $color2;
+    text-decoration: none;
+
+    &:hover
+    {
+        filter: brightness(80%);
+    }
+}

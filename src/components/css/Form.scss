@@ -1,0 +1,119 @@
+@import './colors';
+@import './mixins';
+
+form
+{
+    input
+    {
+        &:not([type="radio"]):not([type="checkbox"])
+        {
+            $padding: 10px;
+            $border-width: 1px;
+            display: block;
+            width: calc( 100% - (#{$padding} * 2) - (#{$border-width * 3}));
+            padding: 10px $padding;
+            margin: 0 auto;
+            border: $border-width solid $color1;
+            border-radius: 5px;            
+
+            &:not(:disabled)
+            {
+                &:focus, &:active
+                {
+                    // outline: 3px solid rgba( $color1, .1 );
+                    outline: none;
+                    box-shadow: 0 0 0 1px rgba( $color1, .8 );
+                }
+            }
+
+        }
+        &:disabled
+        {
+            background: lightgrey;
+        }
+    }
+
+    textarea
+    {
+        @extend input;
+    }
+    select
+    {
+        @extend input;
+        width: 100% !important;
+    }
+
+    .input-container
+    {
+        margin: 7px 0;
+    }
+    .error
+    {
+        // @include glinear(to top, red, white);
+        padding: 5px 10px;
+        background: #ff0000bb;
+        color: #fefefe;
+    }
+    
+    & button
+    {
+        color: #fefefe;
+        @include background-colors(
+            $color2,
+            darken( $color2, 10 ),
+            darken( $color2, 20 )
+        );
+        // border: 2px solid darken( $color2, 10 );
+        border: 0;
+        margin: 0 2px;
+
+        &:hover
+        {
+            filter: brightness(80%);
+        }
+    }
+}
+
+
+.submit-btn
+{
+    padding: 5px 15px;
+    margin: 2px auto;
+    display: block;
+    font-size: 16px;
+    background: linear-gradient(to top, $color1, lighten($color1, 25));
+    color: #fefefe;
+    border: 1px solid $color1;
+    border-radius: 3px;
+
+    @include background-colors( 
+        linear-gradient(to top, $color1, lighten( $color1, 25 ) ),
+        linear-gradient( to top, $color1, lighten( $color1, 35 ) ),
+        $color1
+        );
+
+    // &:hover
+    // {
+    //     background: linear-gradient(to top, $color1, lighten( $color1, 35));
+    // }
+    // &:active, &:focus
+    // {
+    //     background: $color1;
+    // }
+
+    &:not(:disabled)
+    {
+        cursor: pointer;
+    }
+}
+
+.logout-btn
+{
+    @extend .submit-btn;
+    @include background-colors(
+        linear-gradient( to top, $color3, lighten( $color3, 20 ) ),
+        linear-gradient( to top, $color3, lighten( $color3, 25 ) ) !important,
+        $color3
+    );
+    border: 1px solid $color3;
+}

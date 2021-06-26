@@ -1,0 +1,80 @@
+@import 'colors';
+@import 'mixins';
+
+#ulangkaji
+{
+    .soalan
+    {
+        // width: 100%;
+        margin: 10px 0;
+        padding: 20px 40px;
+        font-size: 20px;
+        color: #fefefe;
+        background: rgba( $color2, .8 );
+        border-radius: 5px;        
+        
+        &-teks
+        {
+            @include flex( flex, center, center );
+            flex-wrap: wrap;
+            min-height: 100px;
+            text-align: center;
+            background: rgba( $color2, 1 );
+            border-radius: 5px;
+            margin: 10px 10px;
+            padding: 10px 0;
+
+            & span
+            {
+                display: block;
+                width: 100%;
+            }
+            &-gambar
+            {
+                width: 40%;
+                max-width: 100%;
+                margin-top: 10px;
+            }
+        }
+
+        &-jawapan-container
+        {
+            // @include flex( flex, space-between, center);
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        &-jawapan
+        {
+            flex: 6;
+            width: 100%;
+            min-width: 40%;
+            margin: 5px 10px;
+            padding: 10px;
+            border: 1px solid $color1;
+            border-radius: 5px;
+            text-align: center;
+            background-color: darken( $color2, 20 );
+            @include flex( flex, center, center );
+
+            // &:nth-child(even)
+            // {
+            //     margin-left: 10px;
+            // }
+            // &:nth-child(odd)
+            // {
+            //     margin-right: 10px;
+            // }
+
+            &-salah
+            {
+                background-color: rgba( $color3, .8 ) !important;
+            }
+            &-betul
+            {
+                background-color: rgba( $color4, .8 ) !important;
+            }
+        }
+
+    }
+}

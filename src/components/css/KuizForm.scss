@@ -1,0 +1,33 @@
+@import 'colors';
+
+.soalan
+{
+    margin-bottom: 10px;
+    .jawapan
+    {
+        cursor: pointer;
+        border: 2px solid $color2 !important;
+        position: relative;
+        user-select: none;
+
+        &-input
+        {
+            cursor: inherit;
+            margin: 10px 15px;
+            width: 15px;
+            height: 15px;
+        }
+
+        &-selected
+        {
+            border: 2px solid darken( $color4, 15 ) !important;
+            background-color: $color4;
+            color: darken( $color4, 20 );
+
+            & .jawapan-input
+            {
+                display: none;
+            }
+        }
+    }
+}

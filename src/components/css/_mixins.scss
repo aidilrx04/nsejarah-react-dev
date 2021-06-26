@@ -1,0 +1,75 @@
+@mixin glinear($direction, $color1, $color2)
+{
+    background: linear-gradient( $direction, $color1, $color2);
+}
+
+@mixin colors( $normal, $hover, $active, $focus: 0 )
+{
+    color: $normal;
+    
+    &:hover
+    {
+        color: $hover;
+    }
+
+    &:active
+    {
+        color: $active;
+    }
+
+    @if $focus != 0
+    {
+        &:focus
+        {
+            color: $focus;
+        }
+    }
+}
+
+@mixin background-colors($normal, $hover, $active, $focus: 0)
+{
+    background: $normal;
+    &:hover
+    {
+        background: $hover;
+    }
+
+    &:active
+    {
+        background: $active;
+    }
+    
+    @if $focus != 0
+    {
+        &:focus
+        {
+            background: $focus;
+        }
+    }
+}
+
+@mixin flex( $style: flex, $justify: center, $align: center)
+{
+    display: $style;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin transition($prop, $duration, $timing: ease, $state: 0 )
+{
+    @if $state == 0
+    {
+        transition-property:  $prop;
+        transition-duration:  $duration;
+        transition-timing-function:  $timing;
+    }
+    @if $state != 0
+    {
+        &:#{$state}
+        {
+            transition-property:  $prop;
+            transition-duration:  $duration;
+            transition-timing-function:  $timing;
+        }
+    }
+}
