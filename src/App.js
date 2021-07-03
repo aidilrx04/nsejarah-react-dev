@@ -4,8 +4,7 @@ import
 } from 'react-router-dom';
 import Navbar from './components/js/Navbar';
 import Content from './components/js/Content';
-import { UserContext, UserContextProvider } from './components/js/contexts/UserContext';
-import { useContext } from 'react';
+import { UserContextProvider } from './components/js/contexts/UserContext';
 import { API } from './components/js/utils';
 import './components/js/css-import';
 
