@@ -1,40 +1,27 @@
-import {
+import
+{
   BrowserRouter as Router
 } from 'react-router-dom';
 import Navbar from './components/js/Navbar';
 import Content from './components/js/Content';
-import './components/css/Footer.css';
-import { UserContextProvider } from './components/js/contexts/UserContext';
+import { UserContext, UserContextProvider } from './components/js/contexts/UserContext';
+import { useContext } from 'react';
+import { API } from './components/js/utils';
+import './components/js/css-import';
 
-
-
-
-/* function rand()
-{
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let r = '';
-  for( let i = 0; i < 10; i++ )
-  {
-    let n = Math.floor(Math.random() * chars.length);
-    let c = chars[n];
-    r += c;
-  }
-  return r;
-} */
-
-
+API.setApiUrL( '//localhost/nsejarah-react' );
 
 function App()
 {
   return (
     <>
-    <Router>
-      <UserContextProvider>
-        <Navbar/>
-        <Content/>
-      </UserContextProvider>
-      <Footer/>
-    </Router>
+      <Router>
+        <UserContextProvider>
+          <Navbar />
+          <Content />
+        </UserContextProvider>
+        <Footer />
+      </Router>
     </>
   );
 }

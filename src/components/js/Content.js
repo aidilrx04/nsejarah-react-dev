@@ -1,34 +1,33 @@
-import {
+import
+{
     Route,
     Switch,
 } from 'react-router-dom';
 import Main from './Main';
-import Kuiz from './kuiz/Kuiz';
-import Guru from './guru/Guru';
+import KuizRouteController from './kuiz/Kuiz';
+import GuruPageRouteController from './guru/Guru';
 import PrivateRoute from './PrivateRoute';
 import ErrorBox from './boxes/ErrorBox';
 import { Url } from './utils';
 
-function Content({...rest})
+function Content()
 {
-    // let {id} = useParams();
-    // let {path, url} = useRouteMatch();
     return (
         <Switch>
             <Route exact path={Url( "/" )} >
-                <Main/>
+                <Main />
             </Route>
             <Route path={Url( "/kuiz/:idKuiz" )}>
-                <Kuiz/>
+                <KuizRouteController />
             </Route>
             <PrivateRoute path={Url( "/guru" )} only="guru">
-                <Guru/>
+                <GuruPageRouteController />
             </PrivateRoute>
             <Route path="*">
                 <div id="mainContainer">
                     <ErrorBox>
                         404. Page Not Found!
-                        <br/>
+                        <br />
                         <small>The page you requested is not found.</small>
                     </ErrorBox>
                 </div>

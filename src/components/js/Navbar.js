@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
-import {
+import
+{
     Link
 } from 'react-router-dom';
-import '../css/Navbar.css';
 import { UserContext } from './contexts/UserContext';
 import { Url } from './utils';
 
-function Navbar(){
-    const {user, userLogout} = useContext( UserContext );
+function Navbar()
+{
+    const user = useContext( UserContext );
     return (
         <nav>
             {/* Main Title */}
@@ -18,25 +19,25 @@ function Navbar(){
             {/* Navs */}
             <ul>
                 {
-                    !user.loggedin && 
+                    !user.loggedin &&
                     <>
-                    <li>
-                        <Link to={Url( "/register" )}>Register</Link>
-                    </li>
-                    <li>
-                        <Link to={Url( "/" )}>Login</Link>
-                    </li>
+                        <li>
+                            <Link to={Url( "/register" )}>Register</Link>
+                        </li>
+                        <li>
+                            <Link to={Url( "/" )}>Login</Link>
+                        </li>
                     </>
                 }
                 {
-                    user.loggedin && 
+                    user.loggedin &&
                     <li>
                         {/* eslint-disable-next-line */}
-                        <a onClick={userLogout}>Logout</a>
+                        <a href="#asd" onClick={user.logout}>Logout</a>
                     </li>
                 }
             </ul>
-        </nav>
+        </nav >
     );
 }
 

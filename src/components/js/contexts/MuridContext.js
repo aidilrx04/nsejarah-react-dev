@@ -1,30 +1,33 @@
 import { createContext, useEffect, useState } from "react";
-import { getMurid } from "../guru/GuruMurid";
+import { API } from "../utils";
 
-export const MuridContext = createContext({});
+export const MuridContext = createContext( {} );
 
 export function MuridContextProvider( { idMurid = null, ...rest } )
 {
-    let [murid, setMurid] = useState({});
+  let [murid, setMurid] = useState( {} );
 
-    useEffect( () => {
-        if( idMurid !== null )
+  useEffect( () =>
+  {
+    if ( idMurid !== null )
+    {
+      API.getMurid( idMurid ).then( data =>
+      {
+        if ( data.success )
         {
-            getMurid( idMurid ).then( data => {
-                if( data.success )
-                {
-                    setMurid( data.data );
-                }
-            })
+          setMurid( data.data );
         }
+      } );
+    }
 
-        return () => {
-            setMurid( {} );
-        }
-    }, [idMurid]);
+    return () =>
+    {
+      setMurid( {} );
+    };
+  }, [idMurid] );
 
 
-    return (
-        <MuridContext.Provider value={{murid, setMurid}} {...rest}></MuridContext.Provider>
-    )
+  return (
+    <MuridContext.Provider value={{ murid, setMurid }} {...rest}></MuridContext.Provider>
+  );
 }

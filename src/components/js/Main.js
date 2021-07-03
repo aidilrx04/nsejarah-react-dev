@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
-import {Box, BoxHeader, BoxBody} from './boxes/Box';
-import KuizBox from './kuiz/KuizBox';
+import { Box, BoxHeader, BoxBody } from './boxes/Box';
+import KuizBox, { KuizBoxSkeleton } from './kuiz/KuizBox';
 import UserBox from './boxes/UserBox';
-import Spinner from './Spinner';
 // import {Link, useRouteMatch, useHistory} from 'react-router-dom';
-import { searchKuiz, useTitle } from './utils';
+import { API, useTitle } from './utils';
 // import RandomImageBox from './boxes/RandomImageBox';
 import NavigasiBox from './boxes/NavigasiBox';
-
-//css
-import '../css/Main.scss';
-import '../css/Button.scss';
 
 function Main()
 {
@@ -20,189 +15,248 @@ function Main()
         <>
             <div id="mainContainer">
                 <div id="main">
-                    <RandomKuizBox/>
-                    <ListKuizBox/>
+                    <RandomKuizBox />
+                    <ListKuizBox />
                 </div>
                 <div id="side">
-                    <NavigasiBox/>
-                    <UserBox redir={true}/>
-                    {/* <RandomImageBox/> */}
+                    <NavigasiBox />
+                    <UserBox redir={true} />
                 </div>
             </div>
         </>
     );
 }
-function ListKuizBox()
-{
-    let [init, setInit] = useState( true );
-    let [loaded, setLoaded] = useState( false );
-    let [loading, setLoading] = useState( false );
-    let [next, setNext] = useState( true );
-    let [kuiz, setKuiz] = useState( async () => await load() );
-    let [order, setOrder] = useState(0);
-    let [sorted, setSorted] = useState( false );
-    // let {path, url} = useRouteMatch();
-    // let history = useHistory();
-
-    async function load()
-    {
-        setLoading( true );
-
-        let kuizData = await searchKuiz( null, { limit: 6, offset: init ? 0 : kuiz.length } );
-        let data = init ? kuizData.data : kuiz.concat(kuizData.data);
-        setKuiz( data );
-        setNext( kuizData.hasNext );
-        setLoaded( true );
-        setLoading( false );
-        setInit( false );
-        setSorted( false );
-    };
-
-    let spinner = <Spinner/>
-
-    useEffect( () => {
-        if(kuiz.length > 0 && sorted === false)
-        {
-            let newKuiz = kuiz.sort( ( kuizA, kuizB ) => {
-                const timeA = Date.parse( kuizA.kz_tarikh ),
-                      timeB = Date.parse( kuizB.kz_tarikh );
-                    
-                let status = -1;
-                switch( order )
-                {
-                    case 0:
-                        if( timeA < timeB ) status = 1;
-                        break;
-                    case 1:
-                        if( timeA > timeB ) status = 1;
-                        break;
-                    default:
-                        status = -1;
-                        break;  
-                }
-
-                return status;
-            });
-
-            setKuiz( [ ...newKuiz ] );
-
-            setSorted( true );
-        }
-    }, [order, kuiz, init, sorted]);
-
-    function changeOrder(newOrder)
-    {
-        setSorted( false);
-        setOrder( newOrder );
-    }
-
-    // ? TO-dO: FIX REDIRECTING USER TO KUIZ PAGE - [/]
-    return (
-    <>
-        <Box id="senarai-kuiz" /* style={{position: 'relative'}} */>
-            <BoxHeader
-                right={
-                    <select 
-                        onChange={e => changeOrder( parseInt( e.target.value ) )} 
-                        value={order}
-                        style={{
-                            padding: 0,
-                            fontSize: '1em',
-                            backgroundColor: 'transparent',
-                            border: 'none',
-                            outline: 'none',
-                            color: 'white'
-                        }}
-                    >
-                        <option style={{color: 'grey'}} disabled>Susun</option>
-                        <option style={{color: 'black'}} value={0}>Terbaru</option>
-                        <option style={{color: 'black'}} value={1}>Lama</option>
-                    </select>
-                }
-            >
-                <i className="fas fa-book"/> Senarai Kuiz
-            </BoxHeader>
-            <BoxBody>
-                <div className='kuizbox-container'>
-                    { kuiz.length > 0 && kuiz.map( k => 
-                        <KuizBox 
-                            key={k.kz_id} 
-                            kuiz={k}
-                        /> ) }
-                
-                </div>
-                { !loaded && spinner }
-                { loaded && next && 
-                <button 
-                    onClick={load} 
-                    disabled={loading}
-                > 
-                    <Spinner text='Muat lagi...' spin={loading}/> 
-                </button> }
-            </BoxBody>
-        </Box>
-    </>
-    );
-}
 
 function RandomKuizBox()
 {
-    let [loaded, setLoaded] = useState( false );
-    let [loading, setLoading] = useState( false );
-    let [kuiz, setKuiz] = useState( async () => await loadRandom() );
 
-    async function loadRandom()
+    let [senaraiKuiz, setSenaraiKuiz] = useState( [] );
+    let [loaded, setLoaded] = useState( false );
+
+    useEffect( () =>
     {
-        setLoading( true );
-        let data = await searchKuiz(null, {limit: 2, order: 'random'});
-        if( data.success )
+        load().then( () =>
         {
-            setKuiz( data.data );
+            setLoaded( true );
+        } );
+
+        return () =>
+        {
+            setSenaraiKuiz( [] );
+            setLoaded( false );
+        };
+
+    }, [] );
+
+    async function load()
+    {
+        const result = await API.searchKuiz( null, { limit: 2, order: 'random' } );
+
+        if ( result.success )
+        {
+            setSenaraiKuiz( result.data.data );
         }
-        setLoading( false );
-        setLoaded( true );
+
     }
 
-    let spinner = <Spinner/>;
-
     return (
-        <>
-            <Box id="random">
-                <BoxHeader 
-                    right={
-                        <button 
-                            className="header-btn" 
-                            style={{display: 'inline-block', marginLeft: 'auto', fontSize: '1em'}}
-                            onClick={loadRandom}
-                            disabled={loading}
-                        >
-                            <i className={`fas fa-redo ${loading ? 'fa-spin' : ''}`}/>
-                        </button>
-                    }> 
-                    <i className="fas fa-random"/> Random
-                </BoxHeader>
-                <BoxBody>
-                    <div className="kuizbox-container">
-                        {kuiz.length > 0 && kuiz.map( k => 
-                            <KuizBox 
-                                path={k.kz_id} 
-                                key={k.kz_id} 
-                                kuiz={k}
-                            >
-                            </KuizBox> )}
-                    </div>
-                    { !loaded && spinner }
-                    {/* { loaded && 
-                        <button 
-                            disabled={loading} 
-                            onClick={ loadRandom }
-                        > 
-                            <Spinner text='Memuat' spin={loading}/> 
-                        </button> } */}
-                </BoxBody>
-            </Box>
-        </>
+        <Box>
+            <BoxHeader right={
+                <button
+                    className="header-btn"
+                    style={{ display: 'inline-block', marginLeft: 'auto', fontSize: '1em' }}
+                    onClick={() =>
+                    {
+                        setLoaded( false );
+                        load().then( () => setLoaded( true ) );
+                    }}
+                    disabled={!loaded}
+                >
+                    <i className={`fas fa-redo`} />
+                </button>
+            }>
+                <i className="fas fa-random" /> Rawak
+            </BoxHeader>
+            <BoxBody>
+                <div className="kuizbox-container">
+                    {
+                        loaded &&
+                        <>
+                            {senaraiKuiz.length > 0
+                                ? senaraiKuiz.map( kuiz => (
+                                    <KuizBox key={kuiz.kz_id} path={kuiz.kz_id} kuiz={kuiz} />
+                                ) )
+                                : ''}
+                        </>
+                    }
+                    {
+                        loaded === false &&
+                        <>
+                            <KuizBoxSkeleton />
+                            <KuizBoxSkeleton />
+                        </>
+                    }
+                </div>
+            </BoxBody>
+        </Box>
     );
+}
+
+function ListKuizBox()
+{
+    let [loaded, setLoaded] = useState( false );
+    let [senaraiKuiz, setSenaraiKuiz] = useState( {} );
+    let [paging, setPaging] = useState( {} );
+    let [order, setOrder] = useState( 0 );
+    let [sorted, setSorted] = useState( false );
+    let [limit] = useState( 6 );
+
+    useEffect( () =>
+    {
+        return () =>
+        {
+            setSenaraiKuiz( [] );
+            setPaging( {} );
+        };
+    }, [] );
+
+
+    async function load( limit = 10, page = 1 )
+    {
+        const data = await API.searchKuiz( null, { limit: limit, page: page } );
+
+        if ( data.success )
+        {
+            senaraiKuiz = senaraiKuiz.length > 0 ? senaraiKuiz.concat( data.data.data ) : data.data.data;
+            setSenaraiKuiz( [...senaraiKuiz] );
+            setPaging( data.data.paging );
+        }
+    }
+    useEffect( () =>
+    {
+        load( limit, 1 ).then( () =>
+        {
+            setLoaded( true );
+        } );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [limit] );
+
+    useEffect( () =>
+    {
+        if ( !sorted && senaraiKuiz.length > 0 )
+        {
+            const newKuiz = senaraiKuiz.sort( ( a, b ) =>
+            {
+                const timeA = Date.parse( a.kz_tarikh );
+                const timeB = Date.parse( b.kz_tarikh );
+
+                let status = -1;
+                switch ( order )
+                {
+                    case 0:
+                        if ( timeA < timeB ) status = 1;
+                        break;
+                    case 1:
+                        if ( timeA > timeB ) status = 1;
+                        break;
+                    default:
+                        status = -1;
+                        break;
+                }
+
+                return status;
+            } );
+
+            setSenaraiKuiz( [...newKuiz] );
+            setSorted( true );
+        }
+    }, [order, sorted, senaraiKuiz] );
+    return (
+        <Box>
+            <BoxHeader right={
+                <select
+                    onChange={e => 
+                    {
+                        setOrder( parseInt( e.target.value ) );
+                        setSorted( false );
+                    }}
+                    value={order}
+                    style={{
+                        padding: 0,
+                        fontSize: '1em',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        outline: 'none',
+                        color: 'white'
+                    }}
+                >
+                    <option style={{ color: 'grey' }} disabled>Susun</option>
+                    <option style={{ color: 'black' }} value={0}>Terbaru</option>
+                    <option style={{ color: 'black' }} value={1}>Lama</option>
+                </select>
+            }>
+                <i className="fas fa-book" /> Senarai Kuiz
+            </BoxHeader>
+            <BoxBody>
+                <div className="kuizbox-container">
+                    {console.log( senaraiKuiz )}
+                    {
+                        senaraiKuiz.length > 0
+                            ? senaraiKuiz.map( kuiz => (
+                                <KuizBox key={kuiz.kz_id} path={kuiz.kz_id} kuiz={kuiz} />
+                            ) )
+                            : loaded ? 'Tiada kuiz dijumpai' : ''
+                    }
+                    {
+                        !loaded &&
+                        <>
+                            {
+                                range( limit ).map( id =>
+                                {
+                                    return (
+                                        <KuizBoxSkeleton key={id} />
+                                    );
+                                } )
+                            }
+                        </>
+                    }
+                </div>
+                {
+                    paging.hasOwnProperty( 'has_next' )
+                        ? paging.has_next
+                            ? <button style={{
+                                display: 'block',
+                                width: '100%',
+                                padding: '10px'
+                            }}
+                                onClick={( e ) =>
+                                {
+                                    setLoaded( false );
+                                    e.target.disabled = true;
+                                    load( limit, paging.page + 1 ).then( () =>
+                                    {
+                                        setLoaded( true );
+                                        e.target.disabled = false;
+                                    } );
+                                }}
+                            >Muat lagi</button>
+                            : null
+                        : null
+                }
+            </BoxBody>
+        </Box>
+    );
+}
+
+function range( n )
+{
+    const arr = [];
+    for ( let i = 0; i < n; i++ )
+    {
+        arr.push( i );
+    }
+
+    return arr;
 }
 
 export default Main;

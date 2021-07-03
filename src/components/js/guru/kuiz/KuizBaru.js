@@ -1,7 +1,6 @@
 import { useState, createContext, useContext, useEffect } from 'react';
 import { Box, BoxHeader, BoxBody } from '../../boxes/Box';
-import { baru, rand, useTitle } from '../../utils';
-import { getTingkatanByGuru } from '../GuruTingkatan';
+import { API, rand, useTitle } from '../../utils';
 import { UserContext } from '../../contexts/UserContext';
 
 
@@ -71,8 +70,8 @@ const template = {
 
 
 
-const KuizBaruContext = createContext(template);
-export function KuizBaru( {children = {}, ...rest})
+const KuizBaruContext = createContext( template );
+export function KuizBaru( { children = {}, ...rest } )
 {
     useTitle( 'Tambah Kuiz' );
 
@@ -80,14 +79,15 @@ export function KuizBaru( {children = {}, ...rest})
     let [disabled, setDisabled] = useState( false );
     const { user } = useContext( UserContext );
 
-    useEffect( () => {
+    useEffect( () =>
+    {
         console.log( kuiz );
 
-        if( !kuiz.kz_guru )
+        if ( !kuiz.kz_guru )
         {
             kuiz.kz_guru = user.data.g_id;
         }
-    }, [kuiz, user]);
+    }, [kuiz, user] );
 
     function handleSubmit( e )
     {
@@ -95,86 +95,89 @@ export function KuizBaru( {children = {}, ...rest})
         setDisabled( true );
 
         // ! tmp only
-        baru( kuiz, user.token, 'kuiz').then( data => {
+        API.baru( kuiz, user.token, 'kuiz' ).then( data =>
+        {
             console.log( data );
-            if( data.success )
-            {                
+            if ( data.success )
+            {
                 window.location.href = `http://localhost:3000/guru/kuiz/${data.data.kz_id}`;
             }
-        })
+        } );
     }
     return (
-        <KuizBaruContext.Provider value={ { kuiz, setKuiz, disabled } }>
-            <form style={{padding: 0}} onSubmit={e => handleSubmit(e)}>
+        <KuizBaruContext.Provider value={{ kuiz, setKuiz, disabled }}>
+            <form style={{ padding: 0 }} onSubmit={e => handleSubmit( e )}>
                 <KuizFormBox></KuizFormBox>
                 <KuizSoalanFormBox></KuizSoalanFormBox>
             </form>
         </KuizBaruContext.Provider>
-    
-    )
-    
+
+    );
+
 }
 
 function KuizFormBox()
 {
-    const { kuiz, setKuiz } = useContext(KuizBaruContext);
-    let [senaraiTing, setSenaraiTing] = useState([]);
+    const { kuiz, setKuiz } = useContext( KuizBaruContext );
+    let [senaraiTing, setSenaraiTing] = useState( [] );
 
-    useEffect( () => {
+    useEffect( () =>
+    {
         // ! tmp only
-        getTingkatanByGuru( 2 ).then( data => {
-            if( data.success )
+        API.getListTingkatanGuru( 2 ).then( data =>
+        {
+            if ( data.success )
             {
                 setSenaraiTing( data.data );
             }
-        })
+        } );
     } );
     return (
         <Box>
             <BoxHeader>
-                <i className="fas fa-plus"/> Cipta Kuiz Baharu
+                <i className="fas fa-plus" /> Cipta Kuiz Baharu
             </BoxHeader>
             <BoxBody>
                 <div className="input-container">
                     <label htmlFor="nama">Nama Kuiz</label>
-                    <input 
-                        type="text" 
-                        id="nama" 
-                        onChange={e => setKuiz( {...kuiz, kz_nama: e.target.value } ) } 
-                        value={kuiz.kz_nama} 
+                    <input
+                        type="text"
+                        id="nama"
+                        onChange={e => setKuiz( { ...kuiz, kz_nama: e.target.value } )}
+                        value={kuiz.kz_nama}
                         maxLength="255"
                     />
                 </div>
 
                 <div className="input-container">
                     <label htmlFor="ting">Tingkatan</label>
-                    <select 
-                        id="ting" 
-                        value={kuiz.kz_ting} 
-                        onChange={e => setKuiz( { ...kuiz, kz_ting: e.target.value } ) }>
+                    <select
+                        id="ting"
+                        value={kuiz.kz_ting}
+                        onChange={e => setKuiz( { ...kuiz, kz_ting: e.target.value } )}>
                         {
                             senaraiTing.map( ting => (
-                                <option 
-                                    key={ting.kt_id} 
+                                <option
+                                    key={ting.kt_id}
                                     value={ting.kt_id}
-                                    > {ting.kt_ting} {ting.kelas.k_nama} </option>
-                            ))
+                                > {ting.kt_ting} {ting.kelas.k_nama} </option>
+                            ) )
                         }
                     </select>
                 </div>
 
                 <div className="input-container">
                     <label htmlFor="tarikh">Tarikh</label>
-                    <input 
-                        type="date" 
-                        value={kuiz.kz_tarikh} 
-                        onChange={e => setKuiz( {...kuiz, kz_tarikh: e.target.value } ) } />
+                    <input
+                        type="date"
+                        value={kuiz.kz_tarikh}
+                        onChange={e => setKuiz( { ...kuiz, kz_tarikh: e.target.value } )} />
 
                     <label htmlFor="jenis">Jenis</label>
-                    <select 
-                        id="jenis" 
-                        value={kuiz.kz_jenis} 
-                        onChange={e => setKuiz( { ...kuiz, kz_jenis: e.target.value } ) } >
+                    <select
+                        id="jenis"
+                        value={kuiz.kz_jenis}
+                        onChange={e => setKuiz( { ...kuiz, kz_jenis: e.target.value } )} >
                         <option value="kuiz"> Kuiz </option>
                         <option value="latihan"> Latihan </option>
                     </select>
@@ -182,15 +185,15 @@ function KuizFormBox()
 
                 <div className="input-container">
                     <label htmlFor="masa"> Masa </label>
-                    <input 
-                        type="number" 
-                        disabled={kuiz.kz_jenis === 'latihan'} 
-                        value={kuiz.kz_masa === null ? 0 : kuiz.kz_masa} 
-                        onChange={e => setKuiz( { ...kuiz, kz_masa: e.target.value } ) } 
+                    <input
+                        type="number"
+                        disabled={kuiz.kz_jenis === 'latihan'}
+                        value={kuiz.kz_masa === null ? 0 : kuiz.kz_masa}
+                        onChange={e => setKuiz( { ...kuiz, kz_masa: e.target.value } )}
                     />
                 </div>
 
-                <button> <i className="fas fa-arrow-right"/> Cipta Kuiz</button>
+                <button> <i className="fas fa-arrow-right" /> Cipta Kuiz</button>
             </BoxBody>
         </Box>
     );
@@ -198,11 +201,11 @@ function KuizFormBox()
 
 function KuizSoalanFormBox()
 {
-    const {kuiz, setKuiz} = useContext(KuizBaruContext);
+    const { kuiz, setKuiz } = useContext( KuizBaruContext );
     const templateSoalan = {
         's_id': rand(),
         's_teks': '',
-        jawapan:[
+        jawapan: [
             {
                 j_id: rand(),
                 j_teks: ''
@@ -221,35 +224,35 @@ function KuizSoalanFormBox()
             }
         ],
         jawapan_betul: {}
-    }
+    };
 
-    function addSoalan( )
+    function addSoalan()
     {
         kuiz.soalan.push( templateSoalan );
-        setKuiz( {...kuiz} );
+        setKuiz( { ...kuiz } );
     }
     return (
         <Box>
             <BoxHeader>
-                <i className="fas fa-plus"/> Soalan
+                <i className="fas fa-plus" /> Soalan
             </BoxHeader>
             <BoxBody>
                 {
                     kuiz.soalan.map( soalan => (
-                        <Soalan soalan={soalan} key={soalan.s_id}/>
-                    ))
+                        <Soalan soalan={soalan} key={soalan.s_id} />
+                    ) )
                 }
-                <button type="button" className="bg5" onClick={ addSoalan }> <i className="fas fa-plus"/> Tambah Soalan </button>
+                <button type="button" className="bg5" onClick={addSoalan}> <i className="fas fa-plus" /> Tambah Soalan </button>
             </BoxBody>
         </Box>
-    )
+    );
 }
 
 function Soalan( { soalan, ...rest } )
 {
-    const {kuiz, setKuiz} = useContext(KuizBaruContext);
+    const { kuiz, setKuiz } = useContext( KuizBaruContext );
     const index = kuiz.soalan.indexOf( soalan );
-    function handleChangeTeks(e)
+    function handleChangeTeks( e )
     {
         soalan['s_teks'] = e.target.value;
         updateSoalan();
@@ -261,9 +264,9 @@ function Soalan( { soalan, ...rest } )
         setKuiz( { ...kuiz } );
     }
 
-    function deleteSoalan( )
+    function deleteSoalan()
     {
-        kuiz.soalan.splice( kuiz.soalan.indexOf( soalan ), 1);
+        kuiz.soalan.splice( kuiz.soalan.indexOf( soalan ), 1 );
 
         setKuiz( { ...kuiz } );
     }
@@ -271,9 +274,9 @@ function Soalan( { soalan, ...rest } )
         <div className="soalan">
             <div className="input-container">
                 <label htmlFor={`s-teks-${soalan.s_id}`}>Teks Soalan</label>
-                <textarea 
-                    rows="2" 
-                    value={soalan.s_teks} 
+                <textarea
+                    rows="2"
+                    value={soalan.s_teks}
                     onChange={handleChangeTeks}
                     required
                     placeholder="Sila masukkan teks soalan."
@@ -285,22 +288,22 @@ function Soalan( { soalan, ...rest } )
                 <h4>Jawapan</h4>
                 {
                     soalan.jawapan.map( jawapan => (
-                        <Jawapan jawapan={jawapan} soalan={soalan} key={jawapan.j_id}/>
+                        <Jawapan jawapan={jawapan} soalan={soalan} key={jawapan.j_id} />
                     ) )
                 }
             </div>
-            <button type="button" className="bg3" onClick={ deleteSoalan }> <i className="fas fa-trash-alt"/> Padam Soalan</button>
-            <hr style={{margin: '5px 0'}}/>
+            <button type="button" className="bg3" onClick={deleteSoalan}> <i className="fas fa-trash-alt" /> Padam Soalan</button>
+            <hr style={{ margin: '5px 0' }} />
         </div>
     );
 }
 
 function Jawapan( { jawapan, soalan, ...rest } )
 {
-    const {kuiz, disabled, setKuiz} = useContext(KuizBaruContext);
+    const { kuiz, disabled, setKuiz } = useContext( KuizBaruContext );
     const index = kuiz.soalan[kuiz.soalan.indexOf( soalan )].jawapan.indexOf( jawapan );
 
-    function handleChangeTeks(e)
+    function handleChangeTeks( e )
     {
         jawapan['j_teks'] = e.target.value;
         updateJawapan();
@@ -310,14 +313,14 @@ function Jawapan( { jawapan, soalan, ...rest } )
     {
         kuiz.soalan[kuiz.soalan.indexOf( soalan )].jawapan[index] = jawapan;
 
-        setKuiz( {...kuiz} )
+        setKuiz( { ...kuiz } );
     }
 
     function updateJawapanBetul()
     {
         kuiz.soalan[kuiz.soalan.indexOf( soalan )].jawapan_betul = jawapan;
 
-        setKuiz( {...kuiz} );
+        setKuiz( { ...kuiz } );
     }
 
     return (
@@ -325,36 +328,36 @@ function Jawapan( { jawapan, soalan, ...rest } )
             display: 'flex',
             marginBottom: '5px'
         }} className="input-container">
-            <input 
-                defaultValue={jawapan.j_teks} 
-                onChange={handleChangeTeks} 
-                style={{marginBottom: '0', marginRight: '5px'}} 
-                required 
-                placeholder="Sila masukkan teks jawapan" 
+            <input
+                defaultValue={jawapan.j_teks}
+                onChange={handleChangeTeks}
+                style={{ marginBottom: '0', marginRight: '5px' }}
+                required
+                placeholder="Sila masukkan teks jawapan"
                 disabled={disabled}
             />
             {/* <button onClick={handleClick} disabled={jawapan.j_id === soalan.jawapan_betul.j_id} style={{background: jawapan.j_id === soalan.jawapan_betul.j_id ? '#00ff00dd' : 'initial', color: jawapan.j_id === soalan.jawapan_betul.j_id ? 'darkgreen' : 'initial', border: `2px solid ${jawapan.j_id === soalan.jawapan_betul.j_id ? 'darkgreen' : 'grey'}`, borderRadius: '5px', cursor: jawapan.j_id !== soalan.jawapan_betul.j_id ? 'pointer' : 'not-allowed'}}>
                 { jawapan.j_id === soalan.jawapan_betul.j_id ? <i className="fas fa-check"/> : <i className="fas fa-minus"/> }
             </button> */}
-            <div 
-                style={{border: "2px solid grey", borderRadius: '5px'}} 
-                disabled={jawapan.j_id === soalan.jawapan_betul.j_id || disabled} 
+            <div
+                style={{ border: "2px solid grey", borderRadius: '5px' }}
+                disabled={jawapan.j_id === soalan.jawapan_betul.j_id || disabled}
                 onClick={updateJawapanBetul}
                 className={`${jawapan.j_id === soalan.jawapan_betul.j_id ? 'jawapan-selected' : 'jawapan'}`}
             >
-                <input 
-                    type="radio" 
-                    name={`jawapan-soalan-${soalan.s_id}`} 
-                    onClick={updateJawapanBetul} 
-                    onChange={() => {}} 
-                    checked={jawapan.j_id === soalan.jawapan_betul.j_id} 
+                <input
+                    type="radio"
+                    name={`jawapan-soalan-${soalan.s_id}`}
+                    onClick={updateJawapanBetul}
+                    onChange={() => { }}
+                    checked={jawapan.j_id === soalan.jawapan_betul.j_id}
                     required
                     disabled={disabled}
                     className={`jawapan-input`}
                 />
-                <i 
-                    className={`fas fa-check ${jawapan.j_id === soalan.jawapan_betul.j_id ? 'jawapan-selected-text' : ''}`} 
-                    style={{display: jawapan.j_id === soalan.jawapan_betul.j_id ? 'block' : 'none', margin: '10px 15px', width: '15px', height: '15px'}} 
+                <i
+                    className={`fas fa-check ${jawapan.j_id === soalan.jawapan_betul.j_id ? 'jawapan-selected-text' : ''}`}
+                    style={{ display: jawapan.j_id === soalan.jawapan_betul.j_id ? 'block' : 'none', margin: '10px 15px', width: '15px', height: '15px' }}
                     disabled={disabled || jawapan.j_id === soalan.jawapan_betul.j_id}
                 />
             </div>

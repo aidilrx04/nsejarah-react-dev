@@ -3,8 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import { UserContext } from "../../contexts/UserContext";
-import { baru, useTitle } from "../../utils";
-import { getTingkatan } from "../GuruTingkatan";
+import { API, useTitle } from "../../utils";
 
 const template = {
     m_id: '0',
@@ -22,45 +21,49 @@ export function MuridBaru()
     let [senaraiTing, setSenaraiTing] = useState( [] );
     const { user } = useContext( UserContext );
 
-    useEffect( () => {
-        if( murid.m_kelas !== '' )
+    useEffect( () =>
+    {
+        if ( murid.m_kelas !== '' )
         {
-            getTingkatan().then( data => {
-                if( data.success )
+            API.getTingkatan().then( data =>
+            {
+                if ( data.success )
                 {
-                    setMurid( { ...murid, m_kelas: data.data[0].kt_id } )
+                    setMurid( { ...murid, m_kelas: data.data[0].kt_id } );
                     setSenaraiTing( data.data );
                 }
-            });
+            } );
         }
-    }, [murid]);
+    }, [murid] );
 
-    useEffect( () => {
+    useEffect( () =>
+    {
         console.log( murid );
-    }, [murid]);
+    }, [murid] );
 
-    function handleSubmit(e)
+    function handleSubmit( e )
     {
         e.preventDefault();
 
-        baru( murid, user.token, 'murid' ).then( data => {
+        API.baru( murid, user.token, 'murid' ).then( data =>
+        {
             console.log( data );
-        })
+        } );
     }
     return (
         <Box id="murid-baru">
             <BoxHeader>
-                <i className="fas fa-user-plus"/> Tambah Murid Baru
+                <i className="fas fa-user-plus" /> Tambah Murid Baru
             </BoxHeader>
             <BoxBody>
-                <form onSubmit={e => handleSubmit(e)}>
+                <form onSubmit={e => handleSubmit( e )}>
                     <div className="input-container">
                         <label htmlFor="nama">Nama Murid</label>
-                        <input 
+                        <input
                             value={murid.m_nama}
                             onChange={e => setMurid( { ...murid, m_nama: e.target.value } )}
                             id="nokp"
-                            type="text" 
+                            type="text"
                             maxLength="255"
                             required
                         />
@@ -81,26 +84,26 @@ export function MuridBaru()
 
                     <div className="input-container">
                         <label htmlFor="katalaluan">Katalaluan</label>
-                        <input 
+                        <input
                             value={murid.m_katalaluan}
                             onChange={e => setMurid( { ...murid, m_katalaluan: e.target.value } )}
-                            type="text" 
-                            id="katalaluan" 
+                            type="text"
+                            id="katalaluan"
                             required
                         />
                     </div>
 
                     <div className="input-container">
                         <label htmlFor="ting">Tingkatan</label>
-                        <select 
+                        <select
                             id="ting"
                             value={murid.m_kelas}
-                            onChange={e => setMurid( {...murid, m_kelas: e.target.value })}
+                            onChange={e => setMurid( { ...murid, m_kelas: e.target.value } )}
                         >
                             {
                                 senaraiTing.map( ting => (
                                     <option key={ting.kt_id} value={ting.kt_id}> {ting.kt_ting} {ting.kelas.k_nama} </option>
-                                ))
+                                ) )
                             }
                         </select>
                     </div>

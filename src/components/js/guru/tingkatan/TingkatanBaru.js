@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Box, BoxHeader, BoxBody } from '../../boxes/Box';
-import { baru, getKelas, useTitle } from '../../utils';
-import { getGuru } from '../GuruGuru';
+import { API, useTitle } from '../../utils';
 
 export function TingkatanBaru()
 {
@@ -14,67 +13,72 @@ export function TingkatanBaru()
         "kt_guru": ""
     }
     );
-    let [senaraiKelas, setSenaraiKelas ] = useState([]);
-    let [senaraiGuru, setSenaraiGuru] = useState([]);
+    let [senaraiKelas, setSenaraiKelas] = useState( [] );
+    let [senaraiGuru, setSenaraiGuru] = useState( [] );
 
-    useEffect( () => {
-        getKelas().then( data => {
-            if( data.success )
+    useEffect( () =>
+    {
+        API.getKelas().then( data =>
+        {
+            if ( data.success )
             {
                 setSenaraiKelas( data.data );
             }
-        });
+        } );
 
-        getGuru().then( data => {
-            if( data.success ) 
+        API.getGuru().then( data =>
+        {
+            if ( data.success ) 
             {
                 setSenaraiGuru( data.data );
             }
-        })
-    }, []);
+        } );
+    }, [] );
 
-    useEffect( () => {
+    useEffect( () =>
+    {
         console.log( tingkatan );
-    }, [tingkatan])
+    }, [tingkatan] );
 
     function submitTingkatan( e )
     {
         e.preventDefault();
-        
-        baru( tingkatan, 'token_here', 'tingkatan' ).then( data => {
+
+        API.baru( tingkatan, 'token_here', 'tingkatan' ).then( data =>
+        {
             console.log( data );
-        })
+        } );
     }
     return (
         <Box>
             <BoxHeader>
-                <i className="fas fa-plus"/> Tingkatan Baru
+                <i className="fas fa-plus" /> Tingkatan Baru
             </BoxHeader>
             <BoxBody>
                 <form onSubmit={e => submitTingkatan( e )}>
                     <div classNAme='input-container'>
                         <label htmlFor="ting">Tingkatan</label>
-                        <input 
-                            type="number" 
-                            id="id" 
-                            min="1" 
-                            value={tingkatan.kt_ting} 
-                            onChange={ e => setTingkatan( { ...tingkatan, kt_ting: e.target.value } ) }
+                        <input
+                            type="number"
+                            id="id"
+                            min="1"
+                            value={tingkatan.kt_ting}
+                            onChange={e => setTingkatan( { ...tingkatan, kt_ting: e.target.value } )}
                             required
                         />
                     </div>
 
                     <div className="input-container">
                         <label htmlFor="kelas">Nama Kelas</label>
-                        <select 
-                            id="kelas" 
-                            value={tingkatan.kt_kelas} 
-                            onChange={ e => setTingkatan( { ...tingkatan, kt_kelas: e.target.value} ) } 
+                        <select
+                            id="kelas"
+                            value={tingkatan.kt_kelas}
+                            onChange={e => setTingkatan( { ...tingkatan, kt_kelas: e.target.value } )}
                         >
                             {
                                 senaraiKelas.map( kelas => (
-                                    <option key={kelas.k_id} value={kelas.k_id}> { kelas.k_nama } </option>
-                                ))
+                                    <option key={kelas.k_id} value={kelas.k_id}> {kelas.k_nama} </option>
+                                ) )
                             }
                         </select>
                     </div>
@@ -84,12 +88,12 @@ export function TingkatanBaru()
                         <select
                             id="guru"
                             value={tingkatan.kt_guru}
-                            onChange={ e => setTingkatan( { ...tingkatan, kt_guru: e.target.value})}
+                            onChange={e => setTingkatan( { ...tingkatan, kt_guru: e.target.value } )}
                         >
                             {
                                 senaraiGuru.map( guru => (
                                     <option key={guru.g_id} value={guru.g_id}> {guru.g_nama} </option>
-                                ))
+                                ) )
                             }
                         </select>
                     </div>

@@ -1,32 +1,35 @@
 import { createContext, useEffect, useState } from "react";
-import { getKuiz } from "../utils";
+import { API } from "../utils";
 
-export const KuizContext = createContext({});
+export const KuizContext = createContext( {} );
 
 export function KuizContextProvider( { idKuiz = null, ...rest } )
 {
-    let [kuiz, setKuiz] = useState({});
+  let [kuiz, setKuiz] = useState( {} );
 
-    useEffect( () => {
+  useEffect( () =>
+  {
 
-        if( idKuiz !== null )
+    if ( idKuiz !== null )
+    {
+      API.getKuiz( idKuiz ).then( data =>
+      {
+        if ( data.success )
         {
-            getKuiz(idKuiz).then( data => {
-                if( data.success )
-                {
-                    setKuiz( data.data );
-                }
-            })
+          setKuiz( data.data );
         }
+      } );
+    }
 
-        return () => {
-            setKuiz( {} );
-        }
-    }, [ idKuiz ] );
+    return () =>
+    {
+      setKuiz( {} );
+    };
+  }, [idKuiz] );
 
-    return (
-        <KuizContext.Provider value ={ { kuiz, setKuiz } } {...rest}>
-            
-        </KuizContext.Provider>
-    )
+  return (
+    <KuizContext.Provider value={{ kuiz, setKuiz }} {...rest}>
+
+    </KuizContext.Provider>
+  );
 }

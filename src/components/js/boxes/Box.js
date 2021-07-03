@@ -1,8 +1,7 @@
 import React from 'react';
-import '../../css/Box.css';
-import '../../css/Box.scss';
 
-export function Box({ className = '', children, ...rest })
+
+export function Box( { className = '', children, ...rest } )
 {
     return (
         <div className={`box ${className}`} {...rest} >
@@ -11,11 +10,11 @@ export function Box({ className = '', children, ...rest })
     );
 }
 
-export function BoxHeader( { className = '', children, right, ...rest} )
+export function BoxHeader( { className = '', children, right, ...rest } )
 {
     return (
         <div className={`box-header ${className}`} {...rest}>
-            <h3 style={{display: 'inline-block'}}>{children}</h3>
+            <h3 style={{ display: 'inline-block' }}>{children}</h3>
             <div className="header-right">
                 {
                     right
@@ -34,7 +33,7 @@ export function BoxBody( { className = '', children, ...rest } )
     );
 }
 
-const exportFunc = {Box, BoxHeader, BoxBody};
+const exportFunc = { Box, BoxHeader, BoxBody };
 
 export default exportFunc;
 

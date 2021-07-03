@@ -1,23 +1,21 @@
 import { createContext, useEffect, useState } from "react";
-import { login } from "../utils";
+import { API, ErrorCallback } from "../utils";
 
 export const UserContext = createContext();
 
 const defaultUser = {
-    nokp: '',
-    katalaluan: '',
-    jenis: 'murid',
-    loggedin: false,
-    token: null,
-    fail: false,
-    failMessage: '',
-    data: {}
+  jenis: 'murid',
+  loggedin: false,
+  token: null,
+  fail: false,
+  failMessage: '',
+  data: {}
 };
 
 export function getUser()
 {
-  const user = localStorage.getItem('user');
-  if( typeof user !== 'string' )
+  const user = localStorage.getItem( 'user' );
+  if ( typeof user !== 'string' )
   {
     return null;
   }
@@ -29,172 +27,78 @@ export function getUser()
       const parsed = JSON.parse( user );
       return parsed;
     }
-    catch( e )
+    catch ( e )
     {
       return null;
     }
   }
 }
 
-export function UserContextProvider( {children = {}, ...rest} )
+export function UserContextProvider( props )
 {
-    
-    let [user, setUser] = useState( () => { return getUser() || defaultUser });
 
-    async function userLogin()
-    {
-        // console.log( 'Yes' );
-        // setUser( {...user, loggedin: true} );
-        // console.log( 'No' );
-        const data = await login( user.nokp, user.katalaluan, user.jenis );
+  let [user, setUser] = useState( () => { return getUser() || defaultUser; } );
 
-        // console.log( data );
-        // console.log( data );
-        if( data.success )
-        {
-            user = {
-                ...user,
-                loggedin: true,
-
-                //rest
-                nokp: '',
-                katalaluan: '',
-                data: data.data.data,
-                token: data.data.token
-            };
-
-            setUser( {...user} );
-
-            return true;
-        }
-        else
-        {
-            setUser( {
-                ...user,
-                loggedin: false,
-                fail: true,
-                failMessage: data.message
-            } );
-        }
-
-        return false;
-    }
-
-    useEffect( () => {
-      if( user.loggedin )
-      {
-        localStorage.setItem( 'user', JSON.stringify( user ) );
-      }
-    }, [user]);
-
-    function userLogout()
-    {
-        setUser( {...defaultUser} )
-        localStorage.removeItem( 'user' );
-    }
-
-
-    return (
-        <UserContext.Provider value={ {user, setUser, userLogin, userLogout} }>
-            {children}
-        </UserContext.Provider>
-    )
-}
-
-/* 
-
-  useEffect( () => {
-    // console.log( userData );
-    console.log( process.env.PUBLIC_URL );
-
-    if( userData.loggedin === true )
-    {
-      localStorage.setItem( 'user', JSON.stringify( userData ) );
-    }
-  }, [userData] );
-
-  async function login()
+  useEffect( () =>
   {
-    setUserData(
-      {
-        ...userData,
-        fail: false,
-        failMessage: '',
-        token: null
-      }
-    );
-    setRedirect( null )
-    
-
-    const data = { 
-      nokp: userData.nokp,
-      katalaluan: userData.katalaluan,
-      jenis: userData.jenis
-    };
-    // console.log( data );
-
-    const request = await fetch( 'http://localhost/nsejarah-react/api/login.php',
+    ErrorCallback.setCallback( 401, () =>
     {
-      method: 'POST',
-      headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-      body: JSON.stringify( data )
+      console.log( 'purge user' );
+      logout();
     } );
+  }, [] );
 
-    const status = request.status;
-    if( status >= 200 && status <= 299 )
+  async function login( nokp, katalaluan, jenis = 'murid' )
+  {
+    const data = await API.login( nokp, katalaluan, jenis );
+    if ( data.success )
     {
-      const jwt = await request.text();
-      setUserData( { ...userData, token: jwt, fail: false, nokp: '', katalaluan: '', loggedin: true } );
-      setRedirect( <Redirect to={userData.jenis === 'murid' ? '/kuiz?class_only=1' : '/guru'}/> );
+      user = {
+        ...user,
+        loggedin: true,
+        jenis: jenis,
+
+        //rest
+        data: data.data.data,
+        token: data.data.token
+      };
+
+      setUser( { ...user } );
+
+      return true;
     }
     else
     {
-      console.log( await request.text() );
-      setUserData(
-        {
-          ...userData,
-          loggedin: false,
-          fail: true,
-          failMessage: 'Ralat pada katalaluan atau nokp'
-        }
-      );
-    }
-  };
-
-  async function logout()
-  {
-    setUserData( 
-      {
-        ...userData,
+      setUser( {
+        ...user,
+        jenis: jenis,
         loggedin: false,
-        token: null,
-        fail: false,
-        failMessage: false,
-        jenis: 'murid'
-      }
-     );
+        fail: true,
+        failMessage: data.message
+      } );
+    }
 
-     //clear local storage
-     localStorage.removeItem( 'user' );
+    return false;
   }
 
-  async function getUserData()
+  useEffect( () =>
   {
-    if( !userData.loggedin ) return false;
+    if ( user.loggedin )
+    {
+      localStorage.setItem( 'user', JSON.stringify( user ) );
+    }
+  }, [user] );
 
-    const token = userData.token;
-
-    const request = await fetch('http://localhost/nsejarah-react/api/user.php', {
-      method: "GET",
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await request.json();
-    // console.log( data );
-
-    return data;
-
+  function logout()
+  {
+    console.log( 'logout' );
+    setUser( { ...defaultUser } );
+    localStorage.removeItem( 'user' );
   }
- */
+
+
+  return (
+    <UserContext.Provider value={{ ...user, setUser, login, logout }} {...props}>
+    </UserContext.Provider>
+  );
+}
