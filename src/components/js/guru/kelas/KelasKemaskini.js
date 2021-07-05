@@ -10,6 +10,7 @@ export function KelasKemaskini()
 
     let { idKelas } = useParams();
     let [kelas, setKelas] = useState( {} );
+    let [status, setStatus] = useState( null );
     let history = useHistory();
     const user = useContext( UserContext );
 
@@ -25,11 +26,17 @@ export function KelasKemaskini()
     function handleSubmit( e )
     {
         e.preventDefault();
+        setStatus( null );
         API.kemaskini( kelas, user.token, 'kelas' ).then( data =>
         {
             if ( data.success )
+            {
                 // console.log( data );
+                alert( 'Kelas berjaya dikemaskini' );
                 history.push( Url( '/guru/tingkatan' ), { from: history.location } );
+            }
+
+            setStatus( data );
         } );
     }
 
@@ -42,6 +49,12 @@ export function KelasKemaskini()
                 {
                     kelas.hasOwnProperty( 'k_id' ) &&
                     <form onSubmit={e => handleSubmit( e )}>
+                        {
+                            status && !status.success &&
+                            <h4 className="status-fail">
+                                {status.message}
+                            </h4>
+                        }
                         <div className="input-container">
                             <label htmlFor="nama">Nama Kelas</label>
                             <input
@@ -53,7 +66,7 @@ export function KelasKemaskini()
                             />
                         </div>
                         <button>
-                            Kemaskini Kelas
+                            <i className="fas fa-arrow-right"/> Kemaskini Kelas
                         </button>
                     </form>
                 }

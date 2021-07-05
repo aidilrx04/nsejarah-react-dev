@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { Redirect, useParams } from "react-router";
+import { useParams } from "react-router";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import { API, Url, useTitle } from "../../utils";
 import { UserContext } from '../../contexts/UserContext';
+import { useHistory } from "react-router-dom";
 
 export function MuridKemaskini()
 {
@@ -14,7 +15,8 @@ export function MuridKemaskini()
     let [newMurid, setNewMurid] = useState( {} );
     let [senaraiTing, setSenaraiTing] = useState( [] );
     let [disabled, setDisabled] = useState( false );
-    let [redirect, setRedirect] = useState( null );
+    let [status, setStatus] = useState( null );
+    const history = useHistory();
 
 
     useEffect( () =>
@@ -64,20 +66,23 @@ export function MuridKemaskini()
     {
         e.preventDefault();
         setDisabled( true );
+        setStatus( null );
 
         await API.kemaskini( newMurid, user.token, 'murid' ).then( data =>
         {
-            alert( 'Data berjaya dikemaskini' );
-            setRedirect( `/guru/murid/${newMurid.m_id}` );
+            if ( data.success )
+            {
+                alert( 'Data berjaya dikemaskini' );
+                history.push( Url( `/guru/murid/${newMurid.m_id}` ) );
+            }
+            setStatus( data );
             setDisabled( false );
         } );
 
     }
     return (
         <Box>
-            {
-                redirect && <Redirect to={Url( redirect )} />
-            }
+
             <BoxHeader>
                 <i className="fas fa-user-cog" /> Kemaskini Murid
             </BoxHeader>
@@ -85,6 +90,12 @@ export function MuridKemaskini()
                 {
                     murid.hasOwnProperty( 'm_id' ) &&
                     <form onSubmit={e => handleSubmit( e )}>
+                        {
+                            status && !status.success &&
+                            <h4 className="status-fail">
+                                {status.message}
+                            </h4>
+                        }
                         <div className="input-container">
                             <label htmlFor="nokp">No. KP Murid</label>
                             <input
@@ -140,7 +151,7 @@ export function MuridKemaskini()
                         </div>
 
                         <button disabled={disabled}>
-                            Kemaskini
+                            <i className="fas fa-arrow-right"/> Kemaskini
                         </button>
                     </form>
                 }

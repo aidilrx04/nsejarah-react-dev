@@ -8,7 +8,7 @@ import
 import
 {
     useParams,
-    Redirect
+    useHistory
 } from 'react-router-dom';
 
 import Box from '../../boxes/Box';
@@ -25,7 +25,8 @@ export function GuruKemaskini()
     let [guru, setGuru] = useState( {} );
     let [newGuru, setNewGuru] = useState( {} );
     let [disabled, setDisabled] = useState( false );
-    let [redirect, setRedirect] = useState( null );
+    let [status, setStatus] = useState( null );
+    const history = useHistory();
 
 
     useEffect( () =>
@@ -42,7 +43,6 @@ export function GuruKemaskini()
         return () =>
         {
             setGuru( {} );
-            setRedirect( null );
         };
     }, [idGuru] );
 
@@ -55,20 +55,9 @@ export function GuruKemaskini()
 
         return () =>
         {
-
+            setNewGuru( g => { } );
         };
     }, [guru] );
-
-    useEffect( () =>
-    {
-        return () =>
-        {
-            // if( newGuru.hasOwnProperty( 'g_id' ) )
-            // {
-            //     setNewGuru( {} );
-            // }
-        };
-    }, [newGuru] );
 
     function handleChangeNokp( e )
     {
@@ -91,60 +80,29 @@ export function GuruKemaskini()
         setNewGuru( { ...newGuru, g_jenis: e.target.value } );
     }
 
-    function isSame()
-    {
-        let same = true;
-        switch ( true )
-        {
-            case newGuru.g_nokp !== guru.g_nokp:
-                same = false;
-                break;
-            case newGuru.g_nama !== guru.g_nama:
-                same = false;
-                break;
-            case newGuru.g_katalaluan !== guru.g_katalaluan:
-                same = false;
-                break;
-            case newGuru.g_jenis !== guru.g_jenis:
-                same = false;
-                break;
-
-            default:
-                same = true;
-        }
-
-        return same;
-    }
-
     async function handleSubmitForm( event )
     {
         setDisabled( true );
         event.preventDefault();
+        setStatus( null );
 
         console.log( newGuru );
-        API.kemaskini( newGuru, user.token, 'guru' ).then( resp =>
+        API.kemaskini( newGuru, user.token, 'guru' ).then( data =>
         {
-            if ( resp.success )
+            console.log( data );
+            if ( data.success )
             {
-                API.getGuru( resp.data.g_id ).then( data =>
-                {
-                    setGuru( data.data );
-
-                    setRedirect( `/guru/guru/${data.data.g_id}` );
-                } );
+                alert( 'Guru berjaya dikemaskini' );
+                history.push( Url( `/guru/guru/${data.data.g_id}` ) );
             }
-
+            setStatus( data );
             setDisabled( false );
         } );
-        // .catch( err => console.log( err ) );
-
     }
 
     return (
         <Box.Box>
-            {
-                redirect !== null && <Redirect to={Url( redirect )} />
-            }
+
             <Box.BoxHeader>
                 <i className="fas fa-pen" /> Kemaskini Guru
             </Box.BoxHeader>
@@ -152,6 +110,12 @@ export function GuruKemaskini()
                 {
                     guru.hasOwnProperty( 'g_id' ) &&
                     <form onSubmit={e => handleSubmitForm( e )}>
+                        {
+                            status && !status.success &&
+                            <h4 className="status-fail">
+                                {status.message}
+                            </h4>
+                        }
                         <div className="input-container">
                             <label htmlFor="nokp">No. KP Guru</label>
                             <input
@@ -203,11 +167,9 @@ export function GuruKemaskini()
                                 <option value="guru"> Guru </option>
                             </select>
                         </div>
-                        <br />
-                        <button
-                            className="submit-btn"
-                            disabled={isSame() || disabled}
-                        >Kemaskini</button>
+                        <button disabled={disabled}>
+                            <i className="fas fa-arrow-right" /> Kemaskini
+                        </button>
                     </form>}
             </Box.BoxBody>
         </Box.Box>

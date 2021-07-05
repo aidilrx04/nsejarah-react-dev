@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Redirect, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import ErrorBox from "../../boxes/ErrorBox";
 import { UserContext } from "../../contexts/UserContext";
@@ -16,8 +16,8 @@ export function TingkatanKemaskini()
     let [senaraiGuru, setSenaraiGuru] = useState( [] );
     let [senaraiKelas, setSenaraiKelas] = useState( [] );
     let [disabled, setDisabled] = useState( false );
-    let [redirect, setRedirect] = useState( null );
-
+    let [status, setStatus] = useState( null );
+    const history = useHistory();
 
     useEffect( () =>
     {
@@ -58,23 +58,22 @@ export function TingkatanKemaskini()
     {
         e.preventDefault();
         setDisabled( true );
+        setStatus( null );
 
         API.kemaskini( newTingkatan, user.token, 'tingkatan' ).then( data =>
         {
             if ( data.success )
             {
-                setRedirect( <Redirect to={Url( `/guru/tingkatan/${newTingkatan.kt_id}` )} /> );
+                alert( 'Tingkatan berjaya dikemaskini' );
+                history.push( Url( `/guru/tingkatan/${data.data.kt_id}` ) );
             }
-            else
-            {
-                setDisabled( false );
-            }
+            setDisabled( false );
+            setStatus( data );
         } );
     }
 
     return (
         <>
-            {redirect}
             {
                 tingkatan.hasOwnProperty( 'kt_id' ) &&
                 <Box>
@@ -83,6 +82,12 @@ export function TingkatanKemaskini()
                     </BoxHeader>
                     <BoxBody>
                         <form onSubmit={e => handleSubmit( e )}>
+                            {
+                                status && !status.success &&
+                                <h4 className="status-fail">
+                                    {status.message}
+                                </h4>
+                            }
                             <div className="input-container">
                                 <label htmlFor="ting">Tingkatan: </label>
                                 <input
@@ -134,7 +139,7 @@ export function TingkatanKemaskini()
                             </div>
 
                             <button disabled={disabled}>
-                                Kemaskini
+                                <i className="fas fa-arrow-right" /> Kemaskini
                             </button>
                         </form>
                     </BoxBody>

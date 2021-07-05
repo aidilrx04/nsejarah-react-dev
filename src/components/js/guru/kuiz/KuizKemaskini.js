@@ -20,10 +20,6 @@ export function KuizKemaskini()
     let [disabled, setDisabled] = useState( false ); //for kuiz submisison
     const user = useContext( UserContext );
 
-    useEffect( () =>
-    {
-        console.log( disabled );
-    }, [disabled] );
 
     // //test
     // useEffect( () =>
@@ -93,7 +89,7 @@ function KemaskiniKuizDetail()
 {
     const user = useContext( UserContext );
     const { kuiz, setKuiz, disabled, setDisabled } = useContext( KuizContext );
-    let [kemaskiniData, setKemaskiniData] = useState( {} );
+    let [status, setStatus] = useState( null );
 
     useEffect( () => document.title = 'Kemaskini Kuiz', [] );
 
@@ -102,18 +98,16 @@ function KemaskiniKuizDetail()
     {
         e.preventDefault();
         setDisabled( true );
+        setStatus( null );
 
         API.kemaskini( kuiz, user.token, 'kuiz' ).then( data =>
         {
             console.log( data );
             if ( data.success )
             {
-                setKemaskiniData( data );
+                alert( 'Kuiz berjaya dikemaskini' );
             }
-            else
-            {
-                setKemaskiniData( data );
-            }
+            setStatus( data );
 
             setDisabled( false );
         } );
@@ -126,20 +120,22 @@ function KemaskiniKuizDetail()
                     <BoxHeader>
                         <i className="fas fa-pen" /> Kemaskini Kuiz
                     </BoxHeader>
+                    {console.log( kuiz )}
                     {
-                        kuiz.hasOwnProperty( 'kz_id' ) &&
+                        kuiz.hasOwnProperty('kz_id') &&
                         <BoxBody>
+                           
 
                             {
-                                kemaskiniData.hasOwnProperty( 'success' ) &&
+                                status && status.hasOwnProperty( 'success' ) &&
                                 <>
                                     {
-                                        kemaskiniData.success === true &&
-                                        <h4 className="status-success"> {kemaskiniData.message} </h4>
+                                        status.success === true &&
+                                        <h4 className="status-success"> {status.message} </h4>
                                     }
                                     {
-                                        kemaskiniData.success === false &&
-                                        <h4 className="status-fail"> {kemaskiniData.message} </h4>
+                                        status.success === false &&
+                                        <h4 className="status-fail"> {status.message} </h4>
                                     }
                                 </>
                             }
@@ -191,8 +187,9 @@ function KemaskiniKuizDetail()
                             </div>
 
 
-                            <button type="button" onClick={() => console.log( kuiz )}>Log kuiz</button>
-                            <button type="submit" /* onClick={() => console.log(kuiz)} */ disabled={disabled}>Submit kuiz</button>
+                            <button type="submit" disabled={disabled}>
+                                <i className="fas fa-arrow-right" /> Submit kuiz
+                            </button>
                         </BoxBody>
                     }
                 </Box>
@@ -244,26 +241,15 @@ function DisplaySoalan()
                     type="button"
                     onClick={() =>
                     {
-                        //   console.log( {
-                        //     s_id: 'new'  /* (parseInt( kuiz.soalan[kuiz.soalan.length - 1].s_id ) + 1).toString() */,
-                        //     s_teks: 'Teks Soalan',
-                        //     jawapan: [
-                        //         { j_id: parseInt( kuiz.soalan[kuiz.soalan.length - 1].jawapan[kuiz.soalan[kuiz.soalan.length - 1].jawapan.length - 1].j_id ) + 1, j_teks: 'Teks Jawapan' }
-                        //     ],
-                        //     jawapan_betul: {}
-                        // } );
-                        let soalanLength = kuiz.soalan.length;
-                        let lastSoalan = kuiz.soalan[soalanLength - 1];
-                        let lastJawapanIndex = lastSoalan.jawapan[lastSoalan.jawapan.length - 1].j_id;
                         return setKuiz( {
                             ...kuiz, soalan: [...kuiz.soalan, {
                                 s_id: 'new-' + rand(),
                                 s_teks: '',
                                 jawapan: [
-                                    { j_id: parseInt( lastJawapanIndex ) + 1, j_teks: '' },
-                                    { j_id: parseInt( lastJawapanIndex ) + 2, j_teks: '' },
-                                    { j_id: parseInt( lastJawapanIndex ) + 3, j_teks: '' },
-                                    { j_id: parseInt( lastJawapanIndex ) + 4, j_teks: '' },
+                                    { j_id: rand(), j_teks: '' },
+                                    { j_id: rand(), j_teks: '' },
+                                    { j_id: rand(), j_teks: '' },
+                                    { j_id: rand(), j_teks: '' },
                                 ],
                                 jawapan_betul: {}
                             }]
