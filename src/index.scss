@@ -1,6 +1,13 @@
 @import "./components/css/mixins";
 @import "./components/css/colors";
 
+*
+{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
 .box {
 	margin-bottom: 10px;
 }

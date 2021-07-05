@@ -1,15 +1,6 @@
-/* 
-$color1: #4A00E0;
-$color2: #200061; 
-*/
 
-* {
-	margin: 0;
-	padding: 0;
-}
 .box {
 	background-color: #fff;
-	/* background-color: blue; */
 	box-shadow: 4px 4px 0px #270075;
 }
 

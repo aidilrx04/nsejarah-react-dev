@@ -2,15 +2,13 @@
 @import "./mixins";
 
 form {
-	input {
+	input, select, textarea {
 		&:not([type="radio"]):not([type="checkbox"]) {
-			$padding: 10px;
-			$border-width: 1px;
 			display: block;
-			width: calc(100% - (#{$padding} * 2) - (#{$border-width * 3}));
-			padding: 10px $padding;
+			width: 100%;
+			padding: 10px;
 			margin: 0 auto;
-			border: $border-width solid $color1;
+			border: 1px solid $color1;
 			border-radius: 5px;
 
 			&:not(:disabled) {
@@ -25,14 +23,6 @@ form {
 		&:disabled {
 			background: lightgrey;
 		}
-	}
-
-	textarea {
-		@extend input;
-	}
-	select {
-		@extend input;
-		width: 100% !important;
 	}
 
 	.input-container {
@@ -56,9 +46,10 @@ form {
 		border: 0;
 		margin: 0 2px;
 
-		&:hover {
+		&:hover, &:disabled {
 			filter: brightness(80%);
 		}
+
 	}
 }
 
@@ -98,6 +89,7 @@ form {
 		padding: 10px;
 		color: #ddd;
 		border-radius: 5px;
+		text-transform: capitalize;
 	}
 
 	&-success {
