@@ -11,7 +11,7 @@ function Padam()
     let [urlParams, setUrlParams] = useState( new URLSearchParams( window.location.search ) );
     let [data, setData] = useState( [] );
     let history = useHistory();
-    const { user } = useContext( UserContext );
+    const user = useContext( UserContext );
 
     useEffect( () =>
     {

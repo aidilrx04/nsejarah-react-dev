@@ -1,9 +1,10 @@
 // cipta murid baru components
 
 import { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import { UserContext } from "../../contexts/UserContext";
-import { API, useTitle } from "../../utils";
+import { API, Url, useTitle } from "../../utils";
 
 const template = {
     m_id: '0',
@@ -19,22 +20,22 @@ export function MuridBaru()
 
     let [murid, setMurid] = useState( () => template );
     let [senaraiTing, setSenaraiTing] = useState( [] );
-    const { user } = useContext( UserContext );
+    const user = useContext( UserContext );
+    let [status, setStatus] = useState( null );
+    let history = useHistory();
 
     useEffect( () =>
     {
-        if ( murid.m_kelas !== '' )
+        API.getListTingkatan().then( data =>
         {
-            API.getTingkatan().then( data =>
+            console.log( data );
+            if ( data.success )
             {
-                if ( data.success )
-                {
-                    setMurid( { ...murid, m_kelas: data.data[0].kt_id } );
-                    setSenaraiTing( data.data );
-                }
-            } );
-        }
-    }, [murid] );
+                setMurid( murid => ( { ...murid, m_kelas: data.data.data[0].kt_id } ) );
+                setSenaraiTing( data.data.data );
+            }
+        } );
+    }, [] );
 
     useEffect( () =>
     {
@@ -47,7 +48,11 @@ export function MuridBaru()
 
         API.baru( murid, user.token, 'murid' ).then( data =>
         {
-            console.log( data );
+            if ( data.success )
+            {
+                history.push( Url( `/guru/murid/${data.data.m_id}` ) );
+            }
+            setStatus( data );
         } );
     }
     return (
@@ -57,6 +62,12 @@ export function MuridBaru()
             </BoxHeader>
             <BoxBody>
                 <form onSubmit={e => handleSubmit( e )}>
+                    {
+                        status && !status.success &&
+                        <h4 className="status-fail">
+                            {status.message}
+                        </h4>
+                    }
                     <div className="input-container">
                         <label htmlFor="nama">Nama Murid</label>
                         <input

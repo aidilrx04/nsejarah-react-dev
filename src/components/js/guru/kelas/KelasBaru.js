@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
-import { API, useTitle } from "../../utils";
+import { API, Url, useTitle } from "../../utils";
+import { UserContext } from '../../contexts/UserContext';
+import { useHistory } from "react-router";
 
 export function KelasBaru()
 {
@@ -8,19 +10,31 @@ export function KelasBaru()
 
     let [kelas, setKelas] = useState( () => ( {
         "k_id": "123",
-        "k_nama": "Cemerlang"
+        "k_nama": ""
     } ) );
     let [disabled, setDisabled] = useState( false );
+    let [status, setStatus] = useState( null );
+
+    const user = useContext( UserContext );
+    let history = useHistory();
 
     function submitKelas( e )
     {
 
         e.preventDefault();
         setDisabled( true );
-        // !tmp only
-        API.baru( kelas, 'token_here', 'kelas' ).then( data =>
+        setStatus( null );
+
+        API.baru( kelas, user.token, 'kelas' ).then( data =>
         {
-            console.log( data );
+            if ( data.success )
+            {
+                history.push( Url( '/guru/tingkatan' ) );
+            }
+            else
+            {
+                setStatus( data );
+            }
             setDisabled( false );
         } );
     }
@@ -31,6 +45,12 @@ export function KelasBaru()
             </BoxHeader>
             <BoxBody>
                 <form onSubmit={e => submitKelas( e )}>
+                    {
+                        status && !status.success &&
+                        <h4 className="status-fail">
+                            {status.message}
+                        </h4>
+                    }
                     <div className="input-container">
                         <label htmlFor="nama">Nama Kelas</label>
                         <input
@@ -39,6 +59,7 @@ export function KelasBaru()
                             value={kelas.k_nama}
                             onChange={e => setKelas( { ...kelas, k_nama: e.target.value } )}
                             disabled={disabled}
+                            placeholder="Nama Kelas"
                         />
                     </div>
 

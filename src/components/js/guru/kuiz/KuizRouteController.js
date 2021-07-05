@@ -18,6 +18,7 @@ export default function KuizRouteController()
       <Route path={`${path}/:idKuiz/kemaskini`}>
         <KuizKemaskini />
       </Route>
+      {console.log( 'hello' )}
       <Route path={`${path}/:idKuiz`}>
         <KuizDetail />
       </Route>

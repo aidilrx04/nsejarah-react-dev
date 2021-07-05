@@ -1,7 +1,8 @@
 import { useState, createContext, useContext, useEffect } from 'react';
 import { Box, BoxHeader, BoxBody } from '../../boxes/Box';
-import { API, rand, useTitle } from '../../utils';
+import { API, rand, Url, useTitle } from '../../utils';
 import { UserContext } from '../../contexts/UserContext';
+import { useHistory } from 'react-router-dom';
 
 
 //template
@@ -68,8 +69,6 @@ const template = {
 };
 
 
-
-
 const KuizBaruContext = createContext( template );
 export function KuizBaru( { children = {}, ...rest } )
 {
@@ -77,7 +76,8 @@ export function KuizBaru( { children = {}, ...rest } )
 
     let [kuiz, setKuiz] = useState( template );
     let [disabled, setDisabled] = useState( false );
-    const { user } = useContext( UserContext );
+    let history = useHistory();
+    const user = useContext( UserContext );
 
     useEffect( () =>
     {
@@ -94,15 +94,25 @@ export function KuizBaru( { children = {}, ...rest } )
         e.preventDefault();
         setDisabled( true );
 
-        // ! tmp only
-        API.baru( kuiz, user.token, 'kuiz' ).then( data =>
+        if ( kuiz.soalan.length !== 0 )
         {
-            console.log( data );
-            if ( data.success )
+            API.baru( kuiz, user.token, 'kuiz' ).then( data =>
             {
-                window.location.href = `http://localhost:3000/guru/kuiz/${data.data.kz_id}`;
-            }
-        } );
+                console.log( data );
+                if ( data.success )
+                {
+                    // window.location.href = `http://localhost:3000/guru/kuiz/${data.data.kz_id}`;
+                    history.push( Url( `/guru/kuiz/${data.data.kz_id}` ) );
+                }
+                
+                setDisabled( false );
+            } );
+        }
+        else
+        {
+            alert( 'Kuiz hendaklah mempunyai sekurang-kurangnya satu(1) soalan' );
+            setDisabled( false );
+        }
     }
     return (
         <KuizBaruContext.Provider value={{ kuiz, setKuiz, disabled }}>
@@ -120,18 +130,29 @@ function KuizFormBox()
 {
     const { kuiz, setKuiz } = useContext( KuizBaruContext );
     let [senaraiTing, setSenaraiTing] = useState( [] );
+    const user = useContext( UserContext );
 
     useEffect( () =>
     {
-        // ! tmp only
-        API.getListTingkatanGuru( 2 ).then( data =>
+        if ( user.data )
         {
-            if ( data.success )
+            API.getListTingkatanGuru( user.data.g_id ).then( data =>
             {
-                setSenaraiTing( data.data );
-            }
-        } );
-    } );
+                console.log( data );
+                if ( data.success )
+                {
+                    setSenaraiTing( data.data.data );
+                    // default define in template
+                    if ( kuiz.kz_ting === "" ) 
+                    {
+                        kuiz.kz_ting = data.data.data[0].kt_id.toString(); // set the default value
+                        setKuiz( { ...kuiz } );
+                    }
+                }
+            } );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, kuiz] );
     return (
         <Box>
             <BoxHeader>
@@ -146,6 +167,8 @@ function KuizFormBox()
                         onChange={e => setKuiz( { ...kuiz, kz_nama: e.target.value } )}
                         value={kuiz.kz_nama}
                         maxLength="255"
+                        required
+                        placeholder="Sila masukkan nama kuiz"
                     />
                 </div>
 
@@ -154,7 +177,9 @@ function KuizFormBox()
                     <select
                         id="ting"
                         value={kuiz.kz_ting}
-                        onChange={e => setKuiz( { ...kuiz, kz_ting: e.target.value } )}>
+                        onChange={e => setKuiz( { ...kuiz, kz_ting: e.target.value } )}
+                        required
+                    >
                         {
                             senaraiTing.map( ting => (
                                 <option
@@ -171,13 +196,17 @@ function KuizFormBox()
                     <input
                         type="date"
                         value={kuiz.kz_tarikh}
-                        onChange={e => setKuiz( { ...kuiz, kz_tarikh: e.target.value } )} />
+                        onChange={e => setKuiz( { ...kuiz, kz_tarikh: e.target.value } )}
+                        required
+                    />
 
                     <label htmlFor="jenis">Jenis</label>
                     <select
                         id="jenis"
                         value={kuiz.kz_jenis}
-                        onChange={e => setKuiz( { ...kuiz, kz_jenis: e.target.value } )} >
+                        onChange={e => setKuiz( { ...kuiz, kz_jenis: e.target.value } )} 
+                        required
+                        >
                         <option value="kuiz"> Kuiz </option>
                         <option value="latihan"> Latihan </option>
                     </select>

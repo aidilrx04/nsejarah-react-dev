@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Redirect } from "react-router";
+import { useHistory } from "react-router-dom";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import { UserContext } from "../../contexts/UserContext";
 import { API, rand, Url, useTitle } from '../../utils';
@@ -16,84 +16,65 @@ export function GuruBaru()
 {
     useTitle( 'Tambah Guru' );
 
-    const { user } = useContext( UserContext );
+    const user = useContext( UserContext );
 
     let [guru, setGuru] = useState( () => template );
     let [disabled, setDisabled] = useState( false );
-    let [redirect, setRedirect] = useState( null );
-    let [baruData, setBaruData] = useState( {} );
+    let [status, setStatus] = useState( null );
     // useEffect( () => console.log( guru ), [guru]);
+    let history = useHistory();
 
     useEffect( () =>
     {
         return () =>
         {
-            if ( guru.hasOwnProperty( 'g_id' ) ) 
-            {
-                setGuru( {} );
-            }
+            setGuru( g => template );
             setDisabled( false );
-            setRedirect( null );
-            setBaruData( {} );
+            setStatus( null );
         };
-    }, [guru] );
+    }, [] );
 
-    useEffect( () =>
-    {
-        if ( redirect === true )
-        {
-            setTimeout( () =>
-            {
-                setRedirect( <Redirect to={Url( `/guru/guru/${baruData.data.g_id}` )} /> );
-            }, 2000 );
-        }
-    }, [redirect, baruData] );
 
     function handleSubmit( e )
     {
         e.preventDefault();
         setDisabled( true );
-        setBaruData( {} );
+        setStatus( null );
 
         API.baru( guru, user.token, 'guru' ).then( data =>
         {
-            // console.log( data );
-            setDisabled( false );
-            setBaruData( data );
-            setRedirect( true );
-        } )
-            .catch( err =>
+            console.log( data );
+            if ( data.success )
             {
-                console.log( err );
-                setDisabled( false );
-            } );
+                history.push( Url( `/guru/guru/${data.data.g_id}` ) );
+            }
+
+            setDisabled( false );
+            setStatus( data );
+
+        } );
     }
     return (
         <Box>
-            {redirect}
             <BoxHeader>
                 <i className="fas fa-plus" /> Tambah Guru Baru
             </BoxHeader>
             <BoxBody>
                 {
-                    baruData.success === true &&
-                    <Success>
-                        <h4> {baruData.message} </h4>
-
-                        <small>Redirect in 2 secs </small>
-                    </Success>
-                }
-                {
-                    baruData.success === false &&
-                    <Fail>
-                        <h4> {baruData.message} </h4>
-
-                    </Fail>
+                    status
+                        ? status.success ?
+                            <h4 className="status-success">
+                                {status.message}
+                            </h4>
+                            :
+                            <h4 className="status-fail"> {status.message}</h4>
+                        : ''
                 }
                 <form onSubmit={e => handleSubmit( e )}>
 
                     <div className="input-container">
                         <label htmlFor="nokp"> No. KP Guru: </label>
+                        {console.log( guru )}
                         <input
                             type="text"
                             value={guru.g_nokp}
@@ -154,23 +135,4 @@ export function GuruBaru()
         </Box>
     );
 }
-
-function Success( { children = {}, ...rest } )
-{
-    return (
-        <div style={{ background: '#00640088', color: 'darkgreen' }} {...rest}>
-            {children}
-        </div>
-    );
-}
-
-function Fail( { children = {}, ...rest } )
-{
-    return (
-        <div style={{ background: '#008b0088', color: '#008b00' }} {...rest}>
-            {children}
-        </div>
-    );
-}
-
 export default GuruBaru;
