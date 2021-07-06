@@ -100,7 +100,7 @@ export function TingkatanDetail()
                                             {
                                                 senaraiMurid.map( murid => (
                                                     <tr key={murid.m_id}>
-                                                        <td> {murid.m_id} </td>
+                                                        <td> {murid.m_nokp} </td>
                                                         <td> <Link className="table-link" to={Url( `/guru/murid/${murid.m_id}` )}>{murid.m_nama}</Link> </td>
                                                     </tr>
                                                 ) )
