@@ -1,2 +1,2 @@
-- fix all deletion link so it have some redirection after deleting content
+- fix all deletion link so it have some redirection after deleting content [/]
 - add paging to list of results in /guru

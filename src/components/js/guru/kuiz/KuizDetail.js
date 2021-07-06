@@ -77,7 +77,10 @@ export function KuizDetail()
                             <Link to={Url( `${url}/kemaskini` )} className="link bg4">
                                 <i className="fas fa-pen" /> Kemaskini
                             </Link>
-                            <Link className="link bg3" to={Url( `/guru/padam?table=kuiz&col=kz_id&val=${kuiz.kz_id}` )}>
+                            <Link
+                                className="link bg3"
+                                to={Url( `/guru/padam?table=kuiz&col=kz_id&val=${kuiz.kz_id}&redir=${Url( '/guru/kuiz' )}` )}
+                            >
                                 <i className="fas fa-trash-alt" /> Padam
                             </Link>
                         </BoxBody>

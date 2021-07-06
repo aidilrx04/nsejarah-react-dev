@@ -99,7 +99,10 @@ export function MuridDetail()
                             <Link to={Url( `${url}/kemaskini` )} className="link bg4">
                                 <i className="fas fa-pen" /> Kemaskini
                             </Link>
-                            <Link to={Url( `/guru/padam?table=murid&col=m_id&val=${murid.m_id}` )} className="link bg3">
+                            <Link
+                                to={Url( `/guru/padam?table=murid&col=m_id&val=${murid.m_id}&redir=${Url( '/guru/murid' )}` )}
+                                className="link bg3"
+                            >
                                 <i className="fas fa-trash-alt" /> Padam
                             </Link>
                         </BoxBody>

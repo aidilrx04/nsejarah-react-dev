@@ -75,7 +75,10 @@ export function TingkatanDetail()
                             <Link to={Url( `${url}/kemaskini` )} className="link bg4">
                                 <i className="fas fa-pen" /> Kemaskini
                             </Link>
-                            <Link to={Url( `/guru/padam?table=kelas_tingkatan&col=kt_id&val=${tingkatan.kt_id}` )} className="link bg3">
+                            <Link
+                                to={Url( `/guru/padam?table=kelas_tingkatan&col=kt_id&val=${tingkatan.kt_id}&redir=${Url( '/guru/tingkatan' )}` )}
+                                className="link bg3"
+                            >
                                 <i className="fas fa-trash-alt" /> Padam
                             </Link>
                         </BoxBody>

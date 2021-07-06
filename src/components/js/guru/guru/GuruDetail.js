@@ -107,7 +107,10 @@ export function GuruDetail()
                             <Link to={Url( `${url}/kemaskini` )} className="link bg4">
                                 <i className="fas fa-pen" /> Kemaskini
                             </Link>
-                            <Link to={Url( `/guru/padam?table=guru&col=g_id&val=${guru.g_id}` )} className="link bg3">
+                            <Link
+                                to={Url( `/guru/padam?table=guru&col=g_id&val=${guru.g_id}&redir=${Url( '/guru/guru' )}` )}
+                                className="link bg3"
+                            >
                                 <i className="fas fa-trash-alt" /> Padam
                             </Link>
                         </Box.BoxBody>

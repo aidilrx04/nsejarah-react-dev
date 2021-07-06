@@ -152,7 +152,7 @@ export function GuruTingkatan()
                                                 </Link>
                                                 <Link
                                                     className="danger table-link"
-                                                    to={Url( `/guru/padam?table=kelas&col=k_id&val=${kelas.k_id}` )}
+                                                    to={Url( `/guru/padam?table=kelas&col=k_id&val=${kelas.k_id}&redir=${url}` )}
                                                     title="Padam Kelas"
                                                 >
                                                     <i className="fas fa-trash-alt" />
