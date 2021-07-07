@@ -3,7 +3,7 @@ import { Box, BoxHeader, BoxBody } from './boxes/Box';
 import KuizBox, { KuizBoxSkeleton } from './kuiz/KuizBox';
 import UserBox from './boxes/UserBox';
 // import {Link, useRouteMatch, useHistory} from 'react-router-dom';
-import { API, useTitle } from './utils';
+import { API, useTitle, range } from './utils';
 // import RandomImageBox from './boxes/RandomImageBox';
 import NavigasiBox from './boxes/NavigasiBox';
 
@@ -248,15 +248,6 @@ function ListKuizBox()
     );
 }
 
-function range( n )
-{
-    const arr = [];
-    for ( let i = 0; i < n; i++ )
-    {
-        arr.push( i );
-    }
 
-    return arr;
-}
 
 export default Main;

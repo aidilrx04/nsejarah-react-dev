@@ -245,9 +245,9 @@ export class API
         return request;
     }
 
-    static async getGuru( idGuru = null )
+    static async getGuru( idGuru )
     {
-        let tambahan = idGuru !== null ? `?id_guru=${idGuru}` : '';
+        let tambahan = `?id_guru=${idGuru}`;
         const target = '/api/guru.php';
         const request = await this.request( target + tambahan );
 
@@ -338,6 +338,17 @@ export function Url( url )
 export function clearUrl( url )
 {
     return url.replace( /([^:]\/)\/+/g, "$1" );
+}
+
+export function range( n )
+{
+    const arr = [];
+    for ( let i = 0; i < n; i++ )
+    {
+        arr.push( i );
+    }
+
+    return arr;
 }
 
 // + react
