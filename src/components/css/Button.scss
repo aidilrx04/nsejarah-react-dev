@@ -1,16 +1,15 @@
-@import 'colors';
-@import 'mixins';
+@import "colors";
+@import "mixins";
 
-button
-{
-    padding: 5px 10px;
-    border: 1px solid grey;
-    border-radius: 3px;
-    cursor: pointer;
+button:not(:disabled) {
+	padding: 5px 10px;
+	border: 1px solid grey;
+	border-radius: 3px;
+	cursor: pointer;
 
-    @include background-colors(
-        lightgrey,
-        darkgrey,
-        grey
-    )
+	@include background-colors(lightgrey, darkgrey, grey);
+}
+button:disabled {
+	background-color: grey;
+	border: 1px solid grey;
 }

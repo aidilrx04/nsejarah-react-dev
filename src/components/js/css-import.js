@@ -12,3 +12,4 @@ import '../css/KuizForm.scss';
 import '../css/JawabKuiz.scss';
 import '../css/KuizBox.scss';
 import '../css/Ulangkaji.scss';
+import '../css/Paging.scss';

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const API_URL = 'http://localhost/nsejarah-react/';
 export const PUBLIC_URL = process.env.PUBLIC_URL;
@@ -202,10 +202,10 @@ export class API
         return request;
     }
 
-    static async getListKuiz()
+    static async getListKuiz( limit = 10, page = 1 )
     {
         const target = '/api/kuiz.php';
-        return await this.request( `${target}` );
+        return await this.request( `${target}?limit=${limit}&page=${page}` );
     }
 
     static async searchKuiz( keyword = undefined, options = {} )
@@ -237,10 +237,10 @@ export class API
         const request = await this.request( `${target}?id_kuiz=${idKuiz}` );
         return request;
     }
-    static async getKuizByGuru( idGuru )
+    static async getKuizByGuru( idGuru, limit = 10, page = 1 )
     {
         const target = '/api/kuiz.php';
-        const request = await this.request( `${target}?id_guru=${idGuru}&limit=1000000` );
+        const request = await this.request( `${target}?id_guru=${idGuru}&limit=${limit}&page=${page}` );
 
         return request;
     }
@@ -268,6 +268,11 @@ export class API
         const request = await this.request( target + tambahan );
 
         return request;
+    }
+
+    static async getListMurid( limit = 10, page = 1 )
+    {
+        return await this.request( `/api/murid.php?limit=${limit}&page=${page}` );
     }
 
     static async getMuridTing( idTing )
@@ -298,10 +303,10 @@ export class API
         return await this.request( target + `?limit=${limit}&page=${page}` );
     }
 
-    static async getListTingkatanGuru( idGuru )
+    static async getListTingkatanGuru( idGuru, limit = 10, page = 1 )
     {
         const target = '/api/tingkatan.php';
-        const request = await this.request( target + '?id_guru=' + idGuru );
+        const request = await this.request( `${target}?id_guru=${idGuru}&limit=${limit}&page=${page}` );
 
         return request;
     }
@@ -361,4 +366,56 @@ export function range( n )
 export function useTitle( title, separator = '|', postfix = 'NSejarah' )
 {
     useEffect( () => document.title = `${title} ${separator} ${postfix}`, [title, separator, postfix] );
+}
+
+export function usePaging( initial = {} )
+{
+    const template = {
+        limit: 10,
+        page: 1,
+        count: 0,
+        has_next: false,
+        init: true,
+        loading: true
+    };
+    const [paging, setPaging] = useState( () => ( { ...template, ...initial } ) );
+
+    function displayPaging()
+    {
+        return (
+            <div className="paging">
+                {
+                    true &&
+                    <button
+                        className="prev-page"
+                        disabled={paging.page === 1 || paging.loading}
+                        onClick={() => setPaging( p => ( { ...p, loading: true, page: p.page - 1 } ) )}
+                    >
+                        &lt; Sebelumnya
+                    </button>
+
+                }
+
+                <span className={`current-page show`}>
+                    {paging.page}
+                </span>
+                {
+                    true &&
+                    <button
+                        className="next-page"
+                        disabled={!paging.has_next || paging.loading}
+                        onClick={() =>
+                        {
+                            setPaging( p => ( { ...p, loading: true, page: p.page + 1 } ) );
+                        }}
+                    >
+                        Seterusnya &gt;
+                    </button>
+                }
+
+            </div>
+        );
+    }
+
+    return [paging, setPaging, displayPaging];
 }

@@ -1,0 +1,38 @@
+@import "colors";
+@import "mixins";
+
+.paging {
+	margin: 5px auto;
+	@include flex(flex, center, center);
+
+	& > * {
+		width: auto;
+		margin: 0 2px;
+		padding: 5px 10px;
+		@include background-colors(
+			$color2 !important,
+			darken($color2, 10) !important,
+			darken($color2, 10) !important
+		);
+		color: #fefefe;
+		border: none;
+		border-radius: 3px;
+		cursor: pointer;
+		// &:not(:disabled) {
+		// 	cursor: pointer;
+		// }
+		&:disabled {
+			cursor: not-allowed;
+			background-color: darken($color2, 20) !important;
+		}
+	}
+
+	.current-page {
+		&.no-event {
+			pointer-events: none;
+		}
+		&.hidden {
+			display: none;
+		}
+	}
+}
