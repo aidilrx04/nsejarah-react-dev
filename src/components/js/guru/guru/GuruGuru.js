@@ -9,7 +9,8 @@ import
     useEffect
 } from 'react';
 import Box from '../../boxes/Box';
-import { API, Url, useTitle } from '../../utils';
+import { API, range, Url, usePaging, useTitle } from '../../utils';
+import Skeleton from "react-loading-skeleton";
 
 
 export function GuruGuru()
@@ -18,43 +19,42 @@ export function GuruGuru()
 
     let { url } = useRouteMatch();
     let [senaraiGuru, setSenaraiGuru] = useState( [] );
-    let [failToFetch, setFailToFetch] = useState( false );
-    let [fetched, setFetched] = useState( false );
-
-    useEffect( () =>
-    {
-        if ( failToFetch === false && fetched === false )
-        {
-            API.getGuru().then( data =>
-            {
-                console.log( data );
-                if ( data.success === true )
-                {
-                    setSenaraiGuru( data.data.data );
-                    setFailToFetch( false );
-                    setFetched( true );
-                }
-                else
-                {
-                    setFailToFetch( true );
-                }
-            } );
-        }
-    }, [failToFetch, fetched] );
+    const [paging, setPaging, displayPaging] = usePaging();
 
     useEffect( () =>
     {
         return () =>
         {
-            setFetched( false );
-            setFailToFetch( false );
-            if ( senaraiGuru.length > 0 )
-            {
-                console.log( 'heelo' );
-                setSenaraiGuru( [] );
-            }
+            setSenaraiGuru( () => [] );
         };
-    }, [senaraiGuru] );
+    }, [] );
+
+
+    useEffect( () =>
+    {
+        if ( paging.loading )
+        {
+            API.getListGuru( paging.limit, paging.page ).then( data =>
+            {
+                console.log( data );
+                if ( data.success === true )
+                {
+                    setSenaraiGuru( data.data.data );
+                }
+                else
+                {
+                    setSenaraiGuru( [] );
+                }
+                setPaging( p =>
+                {
+                    p = { ...p, loading: false };
+                    return data.success ? ( { ...p, ...data.data.paging } ) : ( { ...p } );
+                } );
+            } );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paging] );
+
     return (
         <Box.Box>
             <Box.BoxHeader>
@@ -62,22 +62,24 @@ export function GuruGuru()
             </Box.BoxHeader>
             <Box.BoxBody>
                 {
-                    senaraiGuru.length > 0 &&
-                    <>
-                        <h4>Senarai Guru</h4>
-                        <table className="table table-content center">
-                            <thead>
-                                <tr>
-                                    <th>No. KP</th>
-                                    <th>Nama</th>
-                                    <th>Katalaluan</th>
-                                    <th>Jenis</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    senaraiGuru.map( guru => (
+                    console.log( paging )
+                }
+                <h4>Senarai Guru</h4>
+                <table className="table table-content center">
+                    <thead>
+                        <tr>
+                            <th>No. KP</th>
+                            <th>Nama</th>
+                            <th>Katalaluan</th>
+                            <th>Jenis</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            ( !paging.loading )
+                                ? senaraiGuru.length > 0
+                                    ? senaraiGuru.map( guru => (
                                         <tr key={senaraiGuru.indexOf( guru )}>
                                             <td> {guru.g_nokp} </td>
                                             <td> {guru.g_nama} </td>
@@ -109,19 +111,35 @@ export function GuruGuru()
                                             </td>
                                         </tr>
                                     ) )
-                                }
-                            </tbody>
-                        </table>
-                    </>
+                                    : <tr>
+                                        <td colSpan="99999">
+                                            Tiada data dijumpai
+                                        </td>
+                                    </tr>
+                                : <>
+                                    {
+                                        range( paging.limit ).map( n => (
+                                            <tr key={n}>
+                                                <td><Skeleton /></td>
+                                                <td><Skeleton /></td>
+                                                <td><Skeleton /></td>
+                                                <td><Skeleton /></td>
+                                                <td><Skeleton /></td>
+                                            </tr>
+                                        ) )
+                                    }
+                                </>
+                        }
+                    </tbody>
+                </table>
+                {
+                    displayPaging()
                 }
                 <Link to={Url( `${url}/baru` )} className="link bg5" style={{ marginTop: '10px' }}> <i className="fas fa-plus" /> Tambah Guru </Link>
             </Box.BoxBody>
-        </Box.Box>
+        </Box.Box >
     );
 }
-
-
-
 
 
 export default GuruGuru;

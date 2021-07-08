@@ -9,28 +9,56 @@ import
     useEffect
 } from 'react';
 import Box from '../../boxes/Box';
-import { API, Url, useTitle } from '../../utils';
+import { API, range, Url, usePaging, useTitle } from '../../utils';
+import Skeleton from 'react-loading-skeleton';
 
 export function GuruMurid( { user, ...rest } )
 {
     useTitle( 'Pengurusan Murid' );
 
-    let [senaraiMurid, setSenaraMurid] = useState( [] );
+    let [senaraiMurid, setSenaraiMurid] = useState( [] );
+    const [paging, setPaging, displayPaging] = usePaging( { limit: 10 } );
     let { url } = useRouteMatch();
 
     useEffect( () =>
     {
-        API.getMurid().then( data =>
-        {
-            console.log( data );
-            setSenaraMurid( data.data );
-        } );
         return () =>
         {
-            console.log( 'hello 2' );
-            setSenaraMurid( [] );
+            setSenaraiMurid( [] );
         };
     }, [] );
+
+    useEffect( () =>
+    {
+        if ( paging.loading )
+        {
+            API.getListMurid( paging.limit, paging.page ).then( data =>
+            {
+                if ( data.success )
+                {
+                    setSenaraiMurid( data.data.data );
+                }
+                else
+                {
+                    setSenaraiMurid( [] );
+                }
+
+                setPaging( p =>
+                {
+
+                    p = {
+                        ...p,
+                        loading: false,
+                    };
+
+                    return (
+                        data.success ? { ...p, ...data.data.paging } : { ...p }
+                    );
+                } );
+            } );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paging] );
 
     return (
         <Box.Box>
@@ -38,21 +66,21 @@ export function GuruMurid( { user, ...rest } )
                 <i className="fas fa-users" /> Pengurusan Murid
             </Box.BoxHeader>
             <Box.BoxBody>
-                {
-                    senaraiMurid.length > 0 &&
-                    <table className="table table-content center">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>No. KP</th>
-                                <th>Katalaluan</th>
-                                <th>Tingkatan</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                senaraiMurid.map( murid => (
+                <h4>Senarai Murid</h4>
+                <table className="table table-content center">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>No. KP</th>
+                            <th>Katalaluan</th>
+                            <th>Tingkatan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            !paging.loading
+                                ? senaraiMurid.length > 0 ? senaraiMurid.map( murid => (
                                     <tr key={senaraiMurid.indexOf( murid )} >
                                         <td> {murid.m_nama} </td>
                                         <td> {murid.m_nokp} </td>
@@ -84,10 +112,21 @@ export function GuruMurid( { user, ...rest } )
 
                                         </td>
                                     </tr>
+                                ) ) : <tr><td colSpan="9999">Tiada data murid dijumpai</td></tr>
+                                : range( paging.limit ).map( n => (
+                                    <tr key={n}>
+                                        <td><Skeleton /></td>
+                                        <td><Skeleton /></td>
+                                        <td><Skeleton /></td>
+                                        <td><Skeleton /></td>
+                                        <td><Skeleton /></td>
+                                    </tr>
                                 ) )
-                            }
-                        </tbody>
-                    </table>
+                        }
+                    </tbody>
+                </table>
+                {
+                    displayPaging()
                 }
                 <Link className="link bg5" style={{ marginTop: '10px' }} to={Url( `${url}/baru` )}>
                     <i className="fas fa-plus" /> Tambah Murid

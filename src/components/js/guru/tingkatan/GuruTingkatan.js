@@ -11,7 +11,8 @@ import
 
 import Box from '../../boxes/Box';
 
-import { API, Url, useTitle } from '../../utils';
+import { API, range, Url, usePaging, useTitle } from '../../utils';
+import Skeleton from 'react-loading-skeleton';
 
 
 export function GuruTingkatan()
@@ -21,43 +22,63 @@ export function GuruTingkatan()
     let { url } = useRouteMatch();
     let [senaraiTingkatan, setSenaraiTingkatan] = useState( [] );
     let [senaraiKelas, setSenaraiKelas] = useState( [] );
-    //eslint-disable-next-line
-    let [failed, setFailed] = useState( false );
-
-
+    const [tPaging, setTPaging, displayTPaging] = usePaging(); // T = Tingkatan
+    const [kPaging, setKPaging, displayKPaging] = usePaging(); // K = Kelas
 
     useEffect( () =>
     {
-        // if( senaraiTingkatan.length === 0 && failed === false )
-        // {
-        API.getListTingkatan( 200, 1 ).then( data =>
-        {
-            if ( data.success )
-            {
-                setSenaraiTingkatan( data.data.data );
-            }
-            else
-            {
-                setFailed( true );
-            }
-        } );
-
-        API.getListKelas().then( data =>
-        {
-            console.log( data );
-            if ( data.success )
-            {
-                setSenaraiKelas( data.data.data );
-            }
-        } );
-
         return () =>
         {
-            setFailed( false );
-            setSenaraiTingkatan( [] );
             setSenaraiKelas( [] );
+            setSenaraiTingkatan( [] );
         };
     }, [] );
+
+    useEffect( () =>
+    {
+        if ( tPaging.loading )
+        {
+            API.getListTingkatan( tPaging.limit, tPaging.page ).then( data =>
+            {
+                console.log( data );
+                setSenaraiTingkatan( data.success ? data.data.data : [] );
+                setTPaging( p =>
+                {
+                    p = {
+                        ...p,
+                        loading: false
+                    };
+
+                    return data.success ? { ...p, ...data.data.paging } : p;
+                } );
+            } );
+        }
+
+
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tPaging] );
+
+    useEffect( () =>
+    {
+        if ( kPaging.loading )
+        {
+            API.getListKelas( kPaging.limit, kPaging.page ).then( data =>
+            {
+                setSenaraiKelas( data.success ? data.data.data : [] );
+                setKPaging( p =>
+                {
+                    p = {
+                        ...p,
+                        loading: false
+                    };
+
+                    return data.success ? { ...p, ...data.data.paging } : p;
+                } );
+            } );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [kPaging] );
 
     return (
         <>
@@ -66,22 +87,21 @@ export function GuruTingkatan()
                     <i className="fas fa-list-ol" /> Tingkatan
                 </Box.BoxHeader>
                 <Box.BoxBody>
-                    {
-                        senaraiTingkatan.length > 0 &&
-                        <>
-                            <h3>Senarai Tingkatan</h3>
-                            <table className="table table-content center">
-                                <thead>
-                                    <tr>
-                                        <th>Tingkatan</th>
-                                        <th>Nama Tingkatan</th>
-                                        <th>Guru</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        senaraiTingkatan.map( ting => (
+                    <h3>Senarai Tingkatan</h3>
+                    <table className="table table-content center">
+                        <thead>
+                            <tr>
+                                <th>Tingkatan</th>
+                                <th>Nama Tingkatan</th>
+                                <th>Guru</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                !tPaging.loading
+                                    ? senaraiTingkatan.length > 0
+                                        ? senaraiTingkatan.map( ting => (
                                             <tr key={senaraiTingkatan.indexOf( ting )}>
                                                 <td> {ting.kt_ting} </td>
                                                 <td> {ting.kelas.k_nama} </td>
@@ -111,10 +131,20 @@ export function GuruTingkatan()
                                                 </td>
                                             </tr>
                                         ) )
-                                    }
-                                </tbody>
-                            </table>
-                        </>
+                                        : <tr><td colSpan="99999">Tiada data dijumpai</td></tr>
+                                    : range( tPaging.limit ).map( n => (
+                                        <tr key={n}>
+                                            <td><Skeleton /></td>
+                                            <td><Skeleton /></td>
+                                            <td><Skeleton /></td>
+                                            <td><Skeleton /></td>
+                                        </tr>
+                                    ) )
+                            }
+                        </tbody>
+                    </table>
+                    {
+                        displayTPaging()
                     }
                     <Link to={Url( `${url}/baru` )} className="link bg5" style={{ marginTop: '10px' }}>
                         <i className="fas fa-plus" /> Tambah Tingkatan
@@ -122,54 +152,65 @@ export function GuruTingkatan()
                 </Box.BoxBody>
             </Box.Box>
 
-            {
-                senaraiKelas.length > 0 &&
-                <Box.Box>
-                    <Box.BoxHeader>
-                        <i className="fas fa-list-ul" /> Pengurusan Kelas
-                    </Box.BoxHeader>
-                    <Box.BoxBody>
-                        <h3>Senarai Kelas</h3>
-                        <table className="table table-content center">
-                            <thead>
-                                <tr>
-                                    <th>Nama Kelas</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    senaraiKelas.map( kelas => (
-                                        <tr key={kelas.k_id}>
-                                            <td> {kelas.k_nama} </td>
-                                            <td className="table-link-container">
-                                                <Link
-                                                    className="success table-link"
-                                                    to={Url( `/guru/kelas/${kelas.k_id}/kemaskini` )}
-                                                    title="Kemaskini Kelas"
-                                                >
-                                                    <i className="fas fa-pen" />
-                                                </Link>
-                                                <Link
-                                                    className="danger table-link"
-                                                    to={Url( `/guru/padam?table=kelas&col=k_id&val=${kelas.k_id}&redir=${url}` )}
-                                                    title="Padam Kelas"
-                                                >
-                                                    <i className="fas fa-trash-alt" />
-                                                </Link>
-                                            </td>
+            <Box.Box>
+                <Box.BoxHeader>
+                    <i className="fas fa-list-ul" /> Pengurusan Kelas
+                </Box.BoxHeader>
+                <Box.BoxBody>
+                    <h3>Senarai Kelas</h3>
+                    <table className="table table-content center">
+                        <thead>
+                            <tr>
+                                <th>Nama Kelas</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                !kPaging.loading
+                                    ? senaraiKelas.length > 0
+                                        ? senaraiKelas.map( kelas => (
+                                            <tr key={kelas.k_id}>
+                                                <td> {kelas.k_nama} </td>
+                                                <td className="table-link-container">
+                                                    <Link
+                                                        className="success table-link"
+                                                        to={Url( `/guru/kelas/${kelas.k_id}/kemaskini` )}
+                                                        title="Kemaskini Kelas"
+                                                    >
+                                                        <i className="fas fa-pen" />
+                                                    </Link>
+                                                    <Link
+                                                        className="danger table-link"
+                                                        to={Url( `/guru/padam?table=kelas&col=k_id&val=${kelas.k_id}&redir=${url}` )}
+                                                        title="Padam Kelas"
+                                                    >
+                                                        <i className="fas fa-trash-alt" />
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ) )
+                                        : <tr><td colSpan="9999">Tiada data dijumpai</td></tr>
+                                    : range( kPaging.limit ).map( n => (
+                                        <tr key={n}>
+                                            <td><Skeleton /></td>
+                                            <td><Skeleton /></td>
                                         </tr>
-                                    ) )
-                                }
-                            </tbody>
-                        </table>
 
-                        <Link to={Url( `/guru/kelas/baru` )} className="link bg5" style={{ marginTop: '10px' }}>
-                            <i className="fas fa-plus" /> Tambah Kelas
-                        </Link>
-                    </Box.BoxBody>
-                </Box.Box>
-            }
+                                    ) )
+                            }
+
+                        </tbody>
+                    </table>
+                    {
+                        displayKPaging()
+                    }
+
+                    <Link to={Url( `/guru/kelas/baru` )} className="link bg5" style={{ marginTop: '10px' }}>
+                        <i className="fas fa-plus" /> Tambah Kelas
+                    </Link>
+                </Box.BoxBody>
+            </Box.Box>
         </>
     );
 }
