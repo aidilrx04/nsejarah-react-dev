@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { Link, Route } from 'react-router-dom';
+import { Link, Route, useHistory } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import ErrorBox from './boxes/ErrorBox';
 import { API, Url } from './utils';
@@ -114,12 +114,13 @@ function PrivateRoute ( { path, only, exact, ...rest } )
 
 function InvalidAccess ()
 {
+    const history = useHistory()
     return (
         <div id="mainContainer">
             <ErrorBox className="flex-12" style={ { width: '100%' } }>
                 403. Akses Tanpa Kebenaran.
                 <br />
-                <small>Anda tidak mempunyai akses terhadap laman ini. <Link to={ Url( '/' ) }>Log masuk</Link></small>
+                <small>Anda tidak mempunyai akses terhadap laman ini. <Link to={ Url( `/?redir=${history.location.pathname}` ) }>Log masuk</Link></small>
             </ErrorBox>
         </div>
     );

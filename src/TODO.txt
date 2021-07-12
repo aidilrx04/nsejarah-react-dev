@@ -4,3 +4,4 @@
 - fix rename Spinner(no longer used) to TailSpinLoader [/]
 - fix prevent content from displaying before loading is complete in *detail [/]
 - fix change tailspin loader in PrivateRoute.js to be more consistent [/]
+- add redirection from log masuk []
