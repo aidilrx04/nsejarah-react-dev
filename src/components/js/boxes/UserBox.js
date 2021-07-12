@@ -35,10 +35,6 @@ export function UserBox ( { redir = false, ...rest } )
             }
         };
     }, [ user ] );
-    useEffect( () =>
-    {
-        console.log( data );
-    }, [ data ] );
 
     async function handleSubmit ( e )
     {
