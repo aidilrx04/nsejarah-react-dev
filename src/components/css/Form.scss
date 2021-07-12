@@ -38,7 +38,7 @@ form {
 	& button {
 		color: #fefefe;
 		@include background-colors(
-			$color2,
+			$color2 !important,
 			darken($color2, 10),
 			darken($color2, 20)
 		);
@@ -64,9 +64,9 @@ form {
 	border-radius: 3px;
 
 	@include background-colors(
-		linear-gradient(to top, $color1, lighten($color1, 25)),
-		linear-gradient(to top, $color1, lighten($color1, 35)),
-		$color1
+		linear-gradient(to top, $color1, lighten($color1, 25)) !important,
+		linear-gradient(to top, $color1, lighten($color1, 35)) !important,
+		$color1 !important
 	);
 
 	// &:hover
@@ -104,9 +104,9 @@ form {
 .logout-btn {
 	@extend .submit-btn;
 	@include background-colors(
-		linear-gradient(to top, $color3, lighten($color3, 20)),
+		linear-gradient(to top, $color3, lighten($color3, 20)) !important,
 		linear-gradient(to top, $color3, lighten($color3, 25)) !important,
-		$color3
+		$color3 !important
 	);
 	border: 1px solid $color3;
 }
