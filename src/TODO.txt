@@ -2,3 +2,4 @@
 - add paging to list of results in /guru [/]
 - fix prevent content from displaying before finish loading [/]
 - fix rename Spinner(no longer used) to TailSpinLoader [/]
+- fix prevent content from displaying before loading is complete in *detail [/]
