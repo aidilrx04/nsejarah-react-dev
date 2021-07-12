@@ -5,10 +5,11 @@ import ErrorBox from './boxes/ErrorBox';
 import { API, Url } from './utils';
 import Loader from 'react-loader-spinner';
 
-function PrivateRoute( { path, only, exact, ...rest } )
+function PrivateRoute ( { path, only, exact, ...rest } )
 {
     const user = useContext( UserContext );
-    let [valid, setValid] = useState( null );
+    let [ valid, setValid ] = useState( null );
+    const [ verified, setVerified ] = useState( false );
 
     useEffect( () =>
     {
@@ -31,6 +32,8 @@ function PrivateRoute( { path, only, exact, ...rest } )
                 {
                     console.log( 'verified' );
                 }
+
+                setVerified( true );
             } );
         }
         else
@@ -42,13 +45,13 @@ function PrivateRoute( { path, only, exact, ...rest } )
         {
             setValid( null );
         };
-    }, [user, valid, path] );
+    }, [ user, valid, path ] );
 
 
     useEffect( () =>
     {
         // console.log( user );
-        if ( user.loggedin === true )
+        if ( user.loggedin === true && verified )
         {
             if ( only === 'guru' || only === 'admin' )
             {
@@ -89,7 +92,7 @@ function PrivateRoute( { path, only, exact, ...rest } )
         {
             setValid( false );
         }
-    }, [user, only, valid] );
+    }, [ user, only, valid, verified ] );
 
     return (
         <>
@@ -97,19 +100,19 @@ function PrivateRoute( { path, only, exact, ...rest } )
                 valid !== null
                     ? <>
                         {
-                            valid !== false && <Route exact={exact ? true : false} path={Url( path )} {...rest} />
+                            valid !== false && <Route exact={ exact ? true : false } path={ Url( path ) } { ...rest } />
                         }
                         {
                             valid === false && <InvalidAccess />
                         }
                     </>
-                    : <div style={{ height: '60vh', position: 'relative' }}>
-                        <span style={{
+                    : <div style={ { height: '60vh', position: 'relative' } }>
+                        <span style={ {
                             position: 'absolute',
                             left: '50%',
                             top: '50%',
                             transform: 'translate(-50%, -50%)'
-                        }}>
+                        } }>
                             <Loader type="TailSpin" color="#8E2DE2" secondaryColor="#4A00E0" />
                         </span>
                     </div>
@@ -118,14 +121,14 @@ function PrivateRoute( { path, only, exact, ...rest } )
     );
 }
 
-function InvalidAccess()
+function InvalidAccess ()
 {
     return (
         <div id="mainContainer">
-            <ErrorBox className="flex-12" style={{ width: '100%' }}>
+            <ErrorBox className="flex-12" style={ { width: '100%' } }>
                 403. Akses Tanpa Kebenaran.
                 <br />
-                <small>Anda tidak mempunyai akses terhadap laman ini. <Link to={Url( '/' )}>Log masuk</Link></small>
+                <small>Anda tidak mempunyai akses terhadap laman ini. <Link to={ Url( '/' ) }>Log masuk</Link></small>
             </ErrorBox>
         </div>
     );
