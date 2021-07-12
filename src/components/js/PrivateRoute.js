@@ -3,7 +3,7 @@ import { Link, Route } from 'react-router-dom';
 import { UserContext } from './contexts/UserContext';
 import ErrorBox from './boxes/ErrorBox';
 import { API, Url } from './utils';
-import Loader from 'react-loader-spinner';
+import TailSpinLoader from './TailSpinLoader';
 
 function PrivateRoute ( { path, only, exact, ...rest } )
 {
@@ -106,16 +106,7 @@ function PrivateRoute ( { path, only, exact, ...rest } )
                             valid === false && <InvalidAccess />
                         }
                     </>
-                    : <div style={ { height: '60vh', position: 'relative' } }>
-                        <span style={ {
-                            position: 'absolute',
-                            left: '50%',
-                            top: '50%',
-                            transform: 'translate(-50%, -50%)'
-                        } }>
-                            <Loader type="TailSpin" color="#8E2DE2" secondaryColor="#4A00E0" />
-                        </span>
-                    </div>
+                    : <TailSpinLoader />
             }
         </>
     );
