@@ -13,3 +13,4 @@ import '../css/JawabKuiz.scss';
 import '../css/KuizBox.scss';
 import '../css/Ulangkaji.scss';
 import '../css/Paging.scss';
+import '../css/TailSpinLoader.scss';
