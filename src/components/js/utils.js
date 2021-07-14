@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import URL from '../../config.json';
 
-export const API_URL = 'http://localhost/nsejarah-react/';
-export const PUBLIC_URL = process.env.PUBLIC_URL;
+export const PUBLIC_URL = URL.PUBLIC_URL;
+export const API_URL = URL.API_URL || PUBLIC_URL;
 
 //error callbacks
 export class ErrorCallback
@@ -11,7 +12,7 @@ export class ErrorCallback
 
     static call( type )
     {
-        const callbacks = this.errorCallback[type];
+        const callbacks = this.errorCallback[ type ];
 
         if ( Array.isArray( callbacks ) )
         {
@@ -24,7 +25,7 @@ export class ErrorCallback
 
     static getCallback( type = null )
     {
-        if ( type ) return this.errorCallback[type] || [];
+        if ( type ) return this.errorCallback[ type ] || [];
         return this.errorCallback;
     }
 
@@ -33,12 +34,12 @@ export class ErrorCallback
         //prevent non callback 
         if ( typeof callback !== 'function' ) return;
 
-        if ( !Array.isArray( this.errorCallback[type] ) )
+        if ( !Array.isArray( this.errorCallback[ type ] ) )
         {
-            this.errorCallback[type] = [];
+            this.errorCallback[ type ] = [];
         }
 
-        this.errorCallback[type].push( callback );
+        this.errorCallback[ type ].push( callback );
     }
 }
 
@@ -46,7 +47,7 @@ export class ErrorCallback
 export class API
 {
     static API_URL = '';
-    static CONTENT_TYPES = ['application/xxx-form-urlencoded; charset=UTF-8'];
+    static CONTENT_TYPES = [ 'application/xxx-form-urlencoded; charset=UTF-8' ];
     static options = {
         method: 'GET'
     };
@@ -54,7 +55,7 @@ export class API
 
     static setApiUrL( url )
     {
-        if ( url[url.length - 1] === '/' )
+        if ( url[ url.length - 1 ] === '/' )
         {
             url = url.substr( 0, url.length - 1 );
         }
@@ -64,12 +65,12 @@ export class API
     static setHead( head )
     {
         this.options = {
-            method: head[0],
+            method: head[ 0 ],
             headers: {
-                'Content-Type': this.CONTENT_TYPES[head[1]],
-                'Authorization': head[2] ? `Bearer ${head[2]}` : ''
+                'Content-Type': this.CONTENT_TYPES[ head[ 1 ] ],
+                'Authorization': head[ 2 ] ? `Bearer ${head[ 2 ]}` : ''
             },
-            body: head[3]
+            body: head[ 3 ]
         };
     }
 
@@ -83,7 +84,7 @@ export class API
     static async request( to, options = undefined )
     {
         if ( this.API_URL.length === 0 ) throw new Error( 'Please set url first' );
-        const request = await fetch( API_URL + to, options ? options : this.options );
+        const request = await fetch( this.API_URL + to, options ? options : this.options );
         const status = request.status;
         const response = await request.json();
         const responseStatus = parseInt( response.code );
@@ -188,7 +189,7 @@ export class API
             'POST',
             0,
             token,
-            JSON.stringify( { data: [...data] } )
+            JSON.stringify( { data: [ ...data ] } )
         ] );
         const request = await this.request( target );
         return request;
@@ -233,7 +234,7 @@ export class API
     }
     static async getLeaderboard( idKuiz )
     {
-        const target = 'api/leaderboard.php';
+        const target = '/api/leaderboard.php';
         const request = await this.request( `${target}?id_kuiz=${idKuiz}` );
         return request;
     }
@@ -321,7 +322,7 @@ export function rand()
     for ( let i = 0; i < 100; i++ )
     {
         let n = Math.floor( Math.random() * chars.length );
-        let c = chars[n];
+        let c = chars[ n ];
         r += c;
     }
     return r;
@@ -365,7 +366,7 @@ export function range( n )
  */
 export function useTitle( title, separator = '|', postfix = 'NSejarah' )
 {
-    useEffect( () => document.title = `${title} ${separator} ${postfix}`, [title, separator, postfix] );
+    useEffect( () => document.title = `${title} ${separator} ${postfix}`, [ title, separator, postfix ] );
 }
 
 export function usePaging( initial = {} )
@@ -378,7 +379,7 @@ export function usePaging( initial = {} )
         init: true,
         loading: true
     };
-    const [paging, setPaging] = useState( () => ( { ...template, ...initial } ) );
+    const [ paging, setPaging ] = useState( () => ( { ...template, ...initial } ) );
 
     function displayPaging()
     {
@@ -388,26 +389,26 @@ export function usePaging( initial = {} )
                     true &&
                     <button
                         className="prev-page"
-                        disabled={paging.page === 1 || paging.loading}
-                        onClick={() => setPaging( p => ( { ...p, loading: true, page: p.page - 1 } ) )}
+                        disabled={ paging.page === 1 || paging.loading }
+                        onClick={ () => setPaging( p => ( { ...p, loading: true, page: p.page - 1 } ) ) }
                     >
                         &lt; Sebelumnya
                     </button>
 
                 }
 
-                <span className={`current-page show`}>
-                    {paging.page}
+                <span className={ `current-page show` }>
+                    { paging.page }
                 </span>
                 {
                     true &&
                     <button
                         className="next-page"
-                        disabled={!paging.has_next || paging.loading}
-                        onClick={() =>
+                        disabled={ !paging.has_next || paging.loading }
+                        onClick={ () =>
                         {
                             setPaging( p => ( { ...p, loading: true, page: p.page + 1 } ) );
-                        }}
+                        } }
                     >
                         Seterusnya &gt;
                     </button>
@@ -417,5 +418,5 @@ export function usePaging( initial = {} )
         );
     }
 
-    return [paging, setPaging, displayPaging];
+    return [ paging, setPaging, displayPaging ];
 }

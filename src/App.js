@@ -5,10 +5,10 @@ import
 import Navbar from './components/js/Navbar';
 import Content from './components/js/Content';
 import { UserContextProvider } from './components/js/contexts/UserContext';
-import { API } from './components/js/utils';
+import { API, API_URL } from './components/js/utils';
 import './components/js/css-import';
 
-API.setApiUrL( '//localhost/nsejarah-react' );
+API.setApiUrL( API_URL );
 
 function App()
 {
