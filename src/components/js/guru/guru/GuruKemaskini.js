@@ -14,7 +14,8 @@ import
 import Box from '../../boxes/Box';
 import { API, Url, useTitle } from '../../utils';
 import { UserContext } from '../../contexts/UserContext';
-
+import TailSpinLoader from '../../TailSpinLoader';
+import ErrorBox from '../../boxes/ErrorBox';
 
 export function GuruKemaskini()
 {
@@ -22,11 +23,12 @@ export function GuruKemaskini()
 
     const user = useContext( UserContext );
     let { idGuru } = useParams();
-    let [guru, setGuru] = useState( {} );
-    let [newGuru, setNewGuru] = useState( {} );
-    let [disabled, setDisabled] = useState( false );
-    let [status, setStatus] = useState( null );
+    let [ guru, setGuru ] = useState( {} );
+    let [ newGuru, setNewGuru ] = useState( {} );
+    let [ disabled, setDisabled ] = useState( false );
+    let [ status, setStatus ] = useState( null );
     const history = useHistory();
+    const [ isLoad, setIsLoad ] = useState( false );
 
 
     useEffect( () =>
@@ -38,13 +40,15 @@ export function GuruKemaskini()
                 setGuru( data.data );
                 setNewGuru( {} );
             }
+            setIsLoad( true );
         } );
 
         return () =>
         {
             setGuru( {} );
+            setIsLoad( false );
         };
-    }, [idGuru] );
+    }, [ idGuru ] );
 
     useEffect( () =>
     {
@@ -57,7 +61,7 @@ export function GuruKemaskini()
         {
             setNewGuru( g => { } );
         };
-    }, [guru] );
+    }, [ guru ] );
 
     function handleChangeNokp( e )
     {
@@ -101,78 +105,83 @@ export function GuruKemaskini()
     }
 
     return (
-        <Box.Box>
+        isLoad
+            ? guru.hasOwnProperty( 'g_id' )
+                ? <Box.Box>
 
-            <Box.BoxHeader>
-                <i className="fas fa-pen" /> Kemaskini Guru
-            </Box.BoxHeader>
-            <Box.BoxBody>
-                {
-                    guru.hasOwnProperty( 'g_id' ) &&
-                    <form onSubmit={e => handleSubmitForm( e )}>
-                        {
-                            status && !status.success &&
-                            <h4 className="status-fail">
-                                {status.message}
-                            </h4>
-                        }
-                        <div className="input-container">
-                            <label htmlFor="nokp">No. KP Guru</label>
-                            <input
-                                defaultValue={newGuru.g_nokp}
-                                onChange={handleChangeNokp}
-                                type="text"
-                                id="nokp"
-                                maxLength="12"
-                                disabled={disabled}
-                                required
-                            />
-                        </div>
+                    <Box.BoxHeader>
+                        <i className="fas fa-pen" /> Kemaskini Guru
+                    </Box.BoxHeader>
+                    <Box.BoxBody>
+                        <form onSubmit={ e => handleSubmitForm( e ) }>
+                            {
+                                status && !status.success &&
+                                <h4 className="status-fail">
+                                    { status.message }
+                                </h4>
+                            }
+                            <div className="input-container">
+                                <label htmlFor="nokp">No. KP Guru</label>
+                                <input
+                                    defaultValue={ newGuru.g_nokp }
+                                    onChange={ handleChangeNokp }
+                                    type="text"
+                                    id="nokp"
+                                    maxLength="12"
+                                    disabled={ disabled }
+                                    required
+                                />
+                            </div>
 
-                        <div className="input-container">
-                            <label htmlFor="nama">Nama Guru</label>
-                            <input
-                                defaultValue={newGuru.g_nama}
-                                onChange={handleChangeNama}
-                                type="text"
-                                id="nama"
-                                maxLength="50"
-                                disabled={disabled}
-                                required
-                            />
-                        </div>
+                            <div className="input-container">
+                                <label htmlFor="nama">Nama Guru</label>
+                                <input
+                                    defaultValue={ newGuru.g_nama }
+                                    onChange={ handleChangeNama }
+                                    type="text"
+                                    id="nama"
+                                    maxLength="50"
+                                    disabled={ disabled }
+                                    required
+                                />
+                            </div>
 
-                        <div className="input-container">
-                            <label htmlFor="katalaluan">Katalaluan Guru</label>
-                            <input
-                                defaultValue={newGuru.g_katalaluan}
-                                onChange={handleChangeKatalaluan}
-                                type="text"
-                                id="katalaluan"
-                                maxLength="50"
-                                disabled={disabled}
-                                required
-                            />
-                        </div>
+                            <div className="input-container">
+                                <label htmlFor="katalaluan">Katalaluan Guru</label>
+                                <input
+                                    defaultValue={ newGuru.g_katalaluan }
+                                    onChange={ handleChangeKatalaluan }
+                                    type="text"
+                                    id="katalaluan"
+                                    maxLength="50"
+                                    disabled={ disabled }
+                                    required
+                                />
+                            </div>
 
-                        <div className="input-container">
-                            <label htmlFor="jenis">Jenis</label>
-                            <select
-                                id="jenis"
-                                onChange={handleChangeJenis}
-                                value={newGuru.g_jenis}
-                                disabled={disabled}
-                            >
-                                <option value="admin"> Admin </option>
-                                <option value="guru"> Guru </option>
-                            </select>
-                        </div>
-                        <button disabled={disabled}>
-                            <i className="fas fa-arrow-right" /> Kemaskini
-                        </button>
-                    </form>}
-            </Box.BoxBody>
-        </Box.Box>
+                            <div className="input-container">
+                                <label htmlFor="jenis">Jenis</label>
+                                <select
+                                    id="jenis"
+                                    onChange={ handleChangeJenis }
+                                    value={ newGuru.g_jenis }
+                                    disabled={ disabled }
+                                >
+                                    <option value="admin"> Admin </option>
+                                    <option value="guru"> Guru </option>
+                                </select>
+                            </div>
+                            <button disabled={ disabled }>
+                                <i className="fas fa-arrow-right" /> Kemaskini
+                            </button>
+                        </form>
+                    </Box.BoxBody>
+                </Box.Box>
+                : <ErrorBox>
+                    404 Data tidak dijumpai
+                </ErrorBox>
+            : <TailSpinLoader />
+
     );
 }
 

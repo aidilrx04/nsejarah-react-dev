@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
+import ErrorBox from "../../boxes/ErrorBox";
 import { UserContext } from "../../contexts/UserContext";
+import TailSpinLoader from "../../TailSpinLoader";
 import { API, Url, useTitle } from "../../utils";
 
 export function KelasKemaskini()
@@ -9,10 +11,11 @@ export function KelasKemaskini()
     useTitle( 'Kemaskini Kelas' );
 
     let { idKelas } = useParams();
-    let [kelas, setKelas] = useState( {} );
-    let [status, setStatus] = useState( null );
+    let [ kelas, setKelas ] = useState( {} );
+    let [ status, setStatus ] = useState( null );
     let history = useHistory();
     const user = useContext( UserContext );
+    const [ isLoad, setIsLoad ] = useState( false );
 
     useEffect( () =>
     {
@@ -20,8 +23,14 @@ export function KelasKemaskini()
         {
             if ( data.success ) setKelas( data.data );
             console.log( data.data );
+            setIsLoad( true );
         } );
-    }, [idKelas] );
+
+        return () =>
+        {
+            setIsLoad( false );
+        };
+    }, [ idKelas ] );
 
     function handleSubmit( e )
     {
@@ -41,37 +50,42 @@ export function KelasKemaskini()
     }
 
     return (
-        <Box>
-            <BoxHeader>
-                <i className="fas fa-pen" /> Kemaskini Kelas
-            </BoxHeader>
-            <BoxBody>
-                {
-                    kelas.hasOwnProperty( 'k_id' ) &&
-                    <form onSubmit={e => handleSubmit( e )}>
-                        {
-                            status && !status.success &&
-                            <h4 className="status-fail">
-                                {status.message}
-                            </h4>
-                        }
-                        <div className="input-container">
-                            <label htmlFor="nama">Nama Kelas</label>
-                            <input
-                                onChange={e => setKelas( { ...kelas, k_nama: e.target.value } )}
-                                value={kelas.k_nama}
-                                type="text"
-                                maxLength="255"
-                                required
-                            />
-                        </div>
-                        <button>
-                            <i className="fas fa-arrow-right"/> Kemaskini Kelas
-                        </button>
-                    </form>
-                }
-            </BoxBody>
-        </Box>
+        isLoad
+            ? kelas.hasOwnProperty( 'k_id' )
+                ? <Box>
+                    <BoxHeader>
+                        <i className="fas fa-pen" /> Kemaskini Kelas
+                    </BoxHeader>
+                    <BoxBody>
+                        <form onSubmit={ e => handleSubmit( e ) }>
+                            {
+                                status && !status.success &&
+                                <h4 className="status-fail">
+                                    { status.message }
+                                </h4>
+                            }
+                            <div className="input-container">
+                                <label htmlFor="nama">Nama Kelas</label>
+                                <input
+                                    onChange={ e => setKelas( { ...kelas, k_nama: e.target.value } ) }
+                                    value={ kelas.k_nama }
+                                    type="text"
+                                    maxLength="255"
+                                    required
+                                />
+                            </div>
+                            <button>
+                                <i className="fas fa-arrow-right" /> Kemaskini Kelas
+                            </button>
+                        </form>
+                    </BoxBody>
+                </Box>
+                : <ErrorBox>
+                    404 Data tidak dijumpai
+                </ErrorBox>
+
+            : <TailSpinLoader />
+
     );
 }
 
