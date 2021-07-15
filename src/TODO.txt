@@ -4,4 +4,7 @@
 - fix rename Spinner(no longer used) to TailSpinLoader [/]
 - fix prevent content from displaying before loading is complete in *detail [/]
 - fix change tailspin loader in PrivateRoute.js to be more consistent [/]
-- add redirection from log masuk []
+- add redirection from log masuk [/]
+- fix add limit to update kuiz
+- fix prevent content from displaying in murid update
+- add verify user when enter the web for the first (time)? []
