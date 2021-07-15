@@ -4,6 +4,7 @@ import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import { UserContext } from "../../contexts/UserContext";
 import { API, rand, useTitle } from "../../utils";
 import ErrorBox from '../../boxes/ErrorBox';
+import TailSpinLoader from "../../TailSpinLoader";
 
 
 
@@ -19,16 +20,9 @@ export function KuizKemaskini()
     let [ valid, setValid ] = useState( null );
     let [ disabled, setDisabled ] = useState( false ); //for kuiz submisison
     const user = useContext( UserContext );
+    const [ isLoad, setIsLoad ] = useState( false );
 
-
-    // //test
-    // useEffect( () =>
-    // {
-    //     if ( kuiz.hasOwnProperty( 'kz_id' ) && kuiz.kz_id !== '69' )
-    //     {
-    //         setKuiz( { ...kuiz, kz_id: '69' } );
-    //     }
-    // }, [kuiz] );
+    useEffect( () => document.title = 'Kemaskini Kuiz', [] );
 
     useEffect( () =>
     {
@@ -36,7 +30,6 @@ export function KuizKemaskini()
         {
             if ( data.success )
             {
-                console.log( data );
                 // data.data.soalan.pop();
                 data.data.padam = []; //padam soalan
                 setKuiz( data.data );
@@ -46,42 +39,36 @@ export function KuizKemaskini()
             {
                 setValid( false );
             }
+
+            setIsLoad( true );
         } );
 
         return () =>
         {
             setKuiz( {} );
+            setValid( null );
+            setDisabled( false );
         };
     }, [ idKuiz ] );
 
     useEffect( () => console.log( kuiz ), [ kuiz ] );
 
     return (
-        <>
-            {
-                valid === true && ( kuiz.kz_guru === user.data.g_id || user.data.g_jenis === 'admin' ) &&
-                <KuizContext.Provider value={ { kuiz, setKuiz, disabled, setDisabled } }>
-                    <KemaskiniKuizDetail />
-                </KuizContext.Provider>
-            }
-            {
-                //                                             bug\
-                valid === true && ( kuiz.kz_guru === user.data.g_id || user.data.g_jenis === 'admin' ) && false &&
-                <ErrorBox>
-                    403. Akses tanpa kebenaran!
-                    <br />
-                    <small>Anda cuba mengakses data yang dilindungi</small>
-                </ErrorBox>
-            }
-            {
-                valid === false &&
-                <ErrorBox>
+        isLoad
+            ? valid
+                ? kuiz.kz_guru === user.data.g_id || user.data.g_jenis === 'admin'
+                    ? <KuizContext.Provider value={ { kuiz, setKuiz, disabled, setDisabled } }>
+                        <KemaskiniKuizDetail />
+                    </KuizContext.Provider>
+                    : <ErrorBox>
+                        403. Akses tanpa kebenaran!
+                        <br />
+                        <small>Anda cuba mengakses data yang dilindungi</small>
+                    </ErrorBox>
+                : <ErrorBox>
                     404. Tiada data dijumpai!
-                    <br />
-                    <small>Tiada data kuiz dengan ID: { idKuiz } dijumpai</small>
                 </ErrorBox>
-            }
-        </>
+            : <TailSpinLoader />
     );
 }
 
@@ -91,13 +78,21 @@ function KemaskiniKuizDetail()
     const { kuiz, setKuiz, disabled, setDisabled } = useContext( KuizContext );
     let [ status, setStatus ] = useState( null );
 
-    useEffect( () => document.title = 'Kemaskini Kuiz', [] );
 
 
     function handleSubmit( e )
     {
         e.preventDefault();
+
         setDisabled( true );
+
+        if ( kuiz.soalan.length === 0 )
+        {
+            alert( 'Kuiz hendaklah mempunyai sekurang-kurangnya satu soalan' );
+            setDisabled( false );
+            return;
+        }
+
         setStatus( null );
 
         API.kemaskini( kuiz, user.token, 'kuiz' ).then( data =>
@@ -115,84 +110,78 @@ function KemaskiniKuizDetail()
 
     return (
         <>
-            <form style={ { padding: 'initial' } } onSubmit={ e => handleSubmit( e ) }>
+            <form onSubmit={ e => handleSubmit( e ) }>
                 <Box>
                     <BoxHeader>
                         <i className="fas fa-pen" /> Kemaskini Kuiz
                     </BoxHeader>
-                    { console.log( kuiz ) }
-                    {
-                        kuiz.hasOwnProperty( 'kz_id' ) &&
-                        <BoxBody>
+                    <BoxBody>
+                        {
+                            status && status.hasOwnProperty( 'success' ) &&
+                            <>
+                                {
+                                    status.success === true &&
+                                    <h4 className="status-success"> { status.message } </h4>
+                                }
+                                {
+                                    status.success === false &&
+                                    <h4 className="status-fail"> { status.message } </h4>
+                                }
+                            </>
+                        }
+
+                        <div className="input-container">
+                            <label htmlFor="nama">Nama Kuiz: </label>
+                            <input
+                                value={ kuiz.kz_nama }
+                                onChange={ e => setKuiz( { ...kuiz, kz_nama: e.target.value } ) }
+                                id="nama"
+                                maxLength="100"
+                                disabled={ disabled }
+                            />
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="tarikh">Tarikh: </label>
+                            <input
+                                type="date"
+                                value={ kuiz.kz_tarikh }
+                                onChange={ e => setKuiz( { ...kuiz, kz_tarikh: e.target.value } ) }
+                                id="tarikh"
+                                disabled={ disabled }
+                            />
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="jenis">Jenis: </label>
+                            <select
+                                id="jenis"
+                                value={ kuiz.kz_jenis }
+                                onChange={ e => setKuiz( { ...kuiz, kz_jenis: e.target.value } ) }
+                                disabled={ disabled }
+                            >
+                                <option value="kuiz"> Kuiz </option>
+                                <option value="latihan"> Latihan </option>
+                            </select>
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="masa">Masa(minit): </label>
+                            <input
+                                type="number"
+                                defaultValue={ kuiz.kz_jenis === 'kuiz' ? kuiz.kz_masa : '' }
+                                id="masa"
+                                onChange={ e => setKuiz( { ...kuiz, kz_masa: e.target.value } ) }
+                                disabled={ kuiz.kz_jenis === 'latihan' || disabled }
+                                min="1"
+                            />
+                        </div>
 
 
-                            {
-                                status && status.hasOwnProperty( 'success' ) &&
-                                <>
-                                    {
-                                        status.success === true &&
-                                        <h4 className="status-success"> { status.message } </h4>
-                                    }
-                                    {
-                                        status.success === false &&
-                                        <h4 className="status-fail"> { status.message } </h4>
-                                    }
-                                </>
-                            }
-
-                            <div className="input-container">
-                                <label htmlFor="nama">Nama Kuiz: </label>
-                                <input
-                                    value={ kuiz.kz_nama }
-                                    onChange={ e => setKuiz( { ...kuiz, kz_nama: e.target.value } ) }
-                                    id="nama"
-                                    maxLength="100"
-                                    disabled={ disabled }
-                                />
-                            </div>
-
-                            <div className="input-container">
-                                <label htmlFor="tarikh">Tarikh: </label>
-                                <input
-                                    type="date"
-                                    value={ kuiz.kz_tarikh }
-                                    onChange={ e => setKuiz( { ...kuiz, kz_tarikh: e.target.value } ) }
-                                    id="tarikh"
-                                    disabled={ disabled }
-                                />
-                            </div>
-
-                            <div className="input-container">
-                                <label htmlFor="jenis">Jenis: </label>
-                                <select
-                                    id="jenis"
-                                    value={ kuiz.kz_jenis }
-                                    onChange={ e => setKuiz( { ...kuiz, kz_jenis: e.target.value } ) }
-                                    disabled={ disabled }
-                                >
-                                    <option value="kuiz"> Kuiz </option>
-                                    <option value="latihan"> Latihan </option>
-                                </select>
-                            </div>
-
-                            <div className="input-container">
-                                <label htmlFor="masa">Masa(minit): </label>
-                                <input
-                                    type="number"
-                                    defaultValue={ kuiz.kz_jenis === 'kuiz' ? kuiz.kz_masa : '' }
-                                    id="masa"
-                                    onChange={ e => setKuiz( { ...kuiz, kz_masa: e.target.value } ) }
-                                    disabled={ kuiz.kz_jenis === 'latihan' || disabled }
-                                    min="1"
-                                />
-                            </div>
-
-
-                            <button type="submit" disabled={ disabled }>
-                                <i className="fas fa-arrow-right" /> Submit kuiz
-                            </button>
-                        </BoxBody>
-                    }
+                        <button type="submit" disabled={ disabled }>
+                            <i className="fas fa-arrow-right" /> Submit kuiz
+                        </button>
+                    </BoxBody>
                 </Box>
                 <DisplaySoalan />
             </form>
@@ -208,19 +197,8 @@ function DisplaySoalan()
 
     useEffect( () =>
     {
-        // console.log( kuiz );
-        if ( kuiz.hasOwnProperty( 'soalan' ) )
-        {
-            setSenaraiSoalan( kuiz.soalan );
-            // template = {
-            //     s_id: parseInt( kuiz.soalan[kuiz.soalan.length - 1].s_id ) + 1,
-            //     s_teks: '',
-            //     jawapan: [
-            //         { j_id: parseInt( kuiz.soalan[kuiz.soalan.length - 1].jawapan[kuiz.soalan[kuiz.soalan.length - 1].jawapan.length - 1].j_id ) + 1, j_teks: '0' }
-            //     ],
-            //     jawapan_betul: {}
-            // };
-        }
+        setSenaraiSoalan( kuiz.soalan ? kuiz.soalan : [] );
+        console.log( kuiz.soalan );
     }, [ kuiz ] );
 
     return (
@@ -232,7 +210,7 @@ function DisplaySoalan()
                 {
                     senaraiSoalan.length > 0 &&
                     senaraiSoalan.map( soalan => (
-                        <SoalanContext.Provider value={ soalan } key={ senaraiSoalan.indexOf( soalan ) }>
+                        <SoalanContext.Provider value={ soalan } key={ soalan.s_id }>
                             <Soalan />
                         </SoalanContext.Provider>
                     ) )
@@ -271,60 +249,53 @@ function Soalan()
 
     useEffect( () =>
     {
-        // console.log( kuiz );
-        if ( kuiz.hasOwnProperty( 'soalan' ) )
-        {
-            // console.log( 123);
-            if ( kuiz.soalan.indexOf( sln ) >= 0 )
-            {
-                // console.log( sln );
-                setSoalan( sln );
-            }
-        }
+        setSoalan( sln );
 
         return () =>
         {
             setSoalan( {} );
         };
-    }, [ kuiz, sln ] );
+    }, [ sln ] );
 
     useEffect( () =>
     {
-        if ( soalan.hasOwnProperty( 's_teks' ) )
+        if ( soalan.hasOwnProperty( 's_id' ) )
         {
-            let ori = {};
-            for ( let i = 0; i < kuiz.soalan.length; i++ )
+            setKuiz( kuiz =>
             {
-                if ( kuiz.soalan[ i ].s_id === soalan.s_id )
-                {
-                    ori = kuiz.soalan[ i ];
-                }
-            }
+                const soalanIndex = getSoalanIndex( soalan.s_id );
 
-            if ( !Object.is( ori, soalan ) )
-            {
-                kuiz.soalan[ kuiz.soalan.indexOf( ori ) ] = soalan;
-                setKuiz( { ...kuiz } );
-            }
+                kuiz.soalan[ soalanIndex ] = soalan;
+
+                return { ...kuiz };
+            } );
         }
-        // eslint-disable-next-line
-    }, [ kuiz, soalan ] );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ soalan ] );
 
-    function handleClick( e )
+    function getSoalanIndex( idSoalan )
     {
-        // kuiz.soalan.splice( kuiz.soalan.indexOf( soalan ) - 1, 1 );
-        // console.log( kuiz.soalan.indexOf( soalan ) );
-        let index = kuiz.soalan.indexOf( soalan );
+        const prevStateSoalan = kuiz.soalan.filter( s => s.s_id === idSoalan )[ 0 ];
+        const soalanIndex = kuiz.soalan.indexOf( prevStateSoalan );
+        return soalanIndex;
+    }
 
-        kuiz.soalan.splice( index, 1 );
-
-        //only add items if it exists
-        if ( soalan.s_id !== 'new' )
+    function handlePadamSoalan()
+    {
+        setKuiz( kuiz =>
         {
-            kuiz.padam.push( soalan );
-        }
+            const soalanIndex = getSoalanIndex( soalan.s_id );
+            kuiz.soalan.splice( soalanIndex, 1 );
 
-        setKuiz( { ...kuiz } );
+            // toString convert non string id to string to work with startsWith
+            if ( !soalan.s_id.toString().startsWith( 'new' ) )
+            {
+                // add real soalan to padam query
+                kuiz.padam.push( soalan );
+            }
+
+            return { ...kuiz };
+        } );
     }
 
     return (
@@ -354,7 +325,7 @@ function Soalan()
                     </div>
                     <button
                         type="button"
-                        onClick={ handleClick }
+                        onClick={ handlePadamSoalan }
                         disabled={ disabled }
                         className="bg3"
                     >
@@ -367,7 +338,7 @@ function Soalan()
     );
 }
 
-function Jawapan( { jwpn, ...rest } )
+function Jawapan( { jwpn } )
 {
     const soalan = useContext( SoalanContext );
     const { kuiz, setKuiz, disabled } = useContext( KuizContext );
@@ -375,22 +346,29 @@ function Jawapan( { jwpn, ...rest } )
 
     useEffect( () =>
     {
-        if ( soalan.jawapan.indexOf( jwpn ) >= 0 )
-        {
-            setJawapan( jwpn );
-        }
-    }, [ soalan, jwpn ] );
+        setJawapan( jwpn );
+    }, [ jwpn ] );
 
-    function handleChange( e )
+    function getJawapanIndex( idJawapan )
     {
-        let i = soalan.jawapan.indexOf( jwpn );
+        const jawapan = soalan.jawapan.filter( j => j.j_id === idJawapan )[ 0 ];
+        const indexJawapan = soalan.jawapan.indexOf( jawapan );
+        return indexJawapan;
+    }
 
-        soalan.jawapan[ i ].j_teks = e.target.value;
+    function handleChangeText( e )
+    {
+        setKuiz( kuiz =>
+        {
+            console.log( 'hey' );
+            const indexJawapan = getJawapanIndex( jawapan.j_id );
 
-        let ss = kuiz.soalan;
-        ss[ ss.indexOf( soalan ) ] = soalan;
+            soalan.jawapan[ indexJawapan ].j_teks = e.target.value;
 
-        setKuiz( { ...kuiz, soalan: [ ...ss ] } );
+            kuiz.soalan[ kuiz.soalan.indexOf( soalan ) ] = soalan;
+
+            return { ...kuiz };
+        } );
     }
 
     function handleClick( e )
@@ -399,9 +377,6 @@ function Jawapan( { jwpn, ...rest } )
         if ( disabled ) return;
 
         soalan.jawapan_betul = jawapan;
-
-        // let ss = kuiz.soalan;
-        // ss[ss.indexOf( soalan )] = soalan;
 
         setKuiz( { ...kuiz, soalan: [ ...kuiz.soalan ] } );
     }
@@ -412,15 +387,12 @@ function Jawapan( { jwpn, ...rest } )
         } } className="input-container">
             <input
                 defaultValue={ jawapan.j_teks }
-                onChange={ handleChange }
+                onChange={ handleChangeText }
                 style={ { marginBottom: '0', marginRight: '5px' } }
                 required
                 placeholder="Sila masukkan teks jawapan"
                 disabled={ disabled }
             />
-            {/* <button onClick={handleClick} disabled={jawapan.j_id === soalan.jawapan_betul.j_id} style={{background: jawapan.j_id === soalan.jawapan_betul.j_id ? '#00ff00dd' : 'initial', color: jawapan.j_id === soalan.jawapan_betul.j_id ? 'darkgreen' : 'initial', border: `2px solid ${jawapan.j_id === soalan.jawapan_betul.j_id ? 'darkgreen' : 'grey'}`, borderRadius: '5px', cursor: jawapan.j_id !== soalan.jawapan_betul.j_id ? 'pointer' : 'not-allowed'}}>
-                { jawapan.j_id === soalan.jawapan_betul.j_id ? <i className="fas fa-check"/> : <i className="fas fa-minus"/> }
-            </button> */}
             <div
                 style={ { border: "2px solid grey", borderRadius: '5px' } }
                 disabled={ jawapan.j_id === soalan.jawapan_betul.j_id || disabled }

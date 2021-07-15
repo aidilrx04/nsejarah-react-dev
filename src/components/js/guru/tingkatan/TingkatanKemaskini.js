@@ -13,7 +13,6 @@ export function TingkatanKemaskini()
     const user = useContext( UserContext );
     let { idTing } = useParams();
     let [ tingkatan, setTingkatan ] = useState( {} );
-    let [ newTingkatan, setNewTingkatan ] = useState( {} );
     let [ senaraiGuru, setSenaraiGuru ] = useState( [] );
     let [ senaraiKelas, setSenaraiKelas ] = useState( [] );
     let [ disabled, setDisabled ] = useState( false );
@@ -27,35 +26,36 @@ export function TingkatanKemaskini()
         {
             if ( data.success )
             {
-                console.log( data.data );
                 setTingkatan( data.data );
-                setNewTingkatan( data.data );
+
+                // fetch kelas and guru
+                API.getListGuru( 200, 1 ).then( data =>
+                {
+                    if ( data.success )
+                    {
+                        setSenaraiGuru( data.data.data );
+                    }
+                } );
+
+                API.getListKelas( 200, 1 ).then( data =>
+                {
+                    if ( data.success )
+                    {
+                        setSenaraiKelas( data.data.data );
+                    }
+                } );
             }
             setIsLoad( true );
         } );
-    }, [ idTing ] );
 
-    useEffect( () =>
-    {
-        if ( tingkatan.hasOwnProperty( 'kt_id' ) )
+        return () =>
         {
-            API.getListGuru( 200, 1 ).then( data =>
-            {
-                if ( data.success )
-                {
-                    setSenaraiGuru( data.data.data );
-                }
-            } );
-
-            API.getListKelas( 200, 1 ).then( data =>
-            {
-                if ( data.success )
-                {
-                    setSenaraiKelas( data.data.data );
-                }
-            } );
-        }
-    }, [ tingkatan ] );
+            setIsLoad( false );
+            setTingkatan( {} );
+            setSenaraiGuru( [] );
+            setSenaraiKelas( [] );
+        };
+    }, [ idTing ] );
 
     async function handleSubmit( e )
     {
@@ -63,7 +63,7 @@ export function TingkatanKemaskini()
         setDisabled( true );
         setStatus( null );
 
-        API.kemaskini( newTingkatan, user.token, 'tingkatan' ).then( data =>
+        API.kemaskini( tingkatan, user.token, 'tingkatan' ).then( data =>
         {
             if ( data.success )
             {
@@ -95,12 +95,12 @@ export function TingkatanKemaskini()
                                     <div className="input-container">
                                         <label htmlFor="ting">Tingkatan: </label>
                                         <input
-                                            onChange={ ( e ) => setNewTingkatan( { ...newTingkatan, kt_ting: e.target.value } ) }
+                                            onChange={ ( e ) => setTingkatan( { ...tingkatan, kt_ting: e.target.value } ) }
                                             type="number"
                                             id="ting"
                                             min="1"
                                             max="5"
-                                            defaultValue={ newTingkatan.kt_ting }
+                                            value={ tingkatan.kt_ting }
                                             required
                                             disabled={ disabled }
                                         />
@@ -110,8 +110,8 @@ export function TingkatanKemaskini()
                                         <label htmlFor="guru">Guru Tingkatan: </label>
                                         <select
                                             id="guru"
-                                            onChange={ ( e ) => setNewTingkatan( { ...newTingkatan, kt_guru: e.target.value } ) }
-                                            value={ newTingkatan.kt_guru }
+                                            onChange={ ( e ) => setTingkatan( { ...tingkatan, kt_guru: e.target.value } ) }
+                                            value={ tingkatan.kt_guru }
                                             disabled={ disabled }
                                         >
                                             {
@@ -127,8 +127,8 @@ export function TingkatanKemaskini()
                                     <div className="input-container">
                                         <label htmlFor="kelas">Nama Kelas: </label>
                                         <select
-                                            value={ newTingkatan.kt_kelas }
-                                            onChange={ e => setNewTingkatan( { ...newTingkatan, kt_kelas: e.target.value } ) }
+                                            value={ tingkatan.kt_kelas }
+                                            onChange={ e => setTingkatan( { ...tingkatan, kt_kelas: e.target.value } ) }
                                             id="kelas"
                                             disabled={ disabled }
                                         >

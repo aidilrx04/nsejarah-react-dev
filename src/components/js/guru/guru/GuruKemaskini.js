@@ -24,7 +24,6 @@ export function GuruKemaskini()
     const user = useContext( UserContext );
     let { idGuru } = useParams();
     let [ guru, setGuru ] = useState( {} );
-    let [ newGuru, setNewGuru ] = useState( {} );
     let [ disabled, setDisabled ] = useState( false );
     let [ status, setStatus ] = useState( null );
     const history = useHistory();
@@ -38,7 +37,6 @@ export function GuruKemaskini()
             if ( data.success )
             {
                 setGuru( data.data );
-                setNewGuru( {} );
             }
             setIsLoad( true );
         } );
@@ -50,48 +48,13 @@ export function GuruKemaskini()
         };
     }, [ idGuru ] );
 
-    useEffect( () =>
-    {
-        if ( guru.hasOwnProperty( 'g_id' ) )
-        {
-            setNewGuru( { ...guru } );
-        }
-
-        return () =>
-        {
-            setNewGuru( g => { } );
-        };
-    }, [ guru ] );
-
-    function handleChangeNokp( e )
-    {
-        setNewGuru( { ...newGuru, g_nokp: e.target.value } );
-    }
-
-    function handleChangeNama( e )
-    {
-        setNewGuru( { ...newGuru, g_nama: e.target.value } );
-    }
-
-    function handleChangeKatalaluan( e )
-    {
-        setNewGuru( { ...newGuru, g_katalaluan: e.target.value } );
-    }
-
-    function handleChangeJenis( e )
-    {
-        console.log( e.target.value );
-        setNewGuru( { ...newGuru, g_jenis: e.target.value } );
-    }
-
     async function handleSubmitForm( event )
     {
         setDisabled( true );
         event.preventDefault();
         setStatus( null );
 
-        console.log( newGuru );
-        API.kemaskini( newGuru, user.token, 'guru' ).then( data =>
+        API.kemaskini( guru, user.token, 'guru' ).then( data =>
         {
             console.log( data );
             if ( data.success )
@@ -123,8 +86,8 @@ export function GuruKemaskini()
                             <div className="input-container">
                                 <label htmlFor="nokp">No. KP Guru</label>
                                 <input
-                                    defaultValue={ newGuru.g_nokp }
-                                    onChange={ handleChangeNokp }
+                                    value={ guru.g_nokp }
+                                    onChange={ e => setGuru( { ...guru, g_nokp: e.target.value } ) }
                                     type="text"
                                     id="nokp"
                                     maxLength="12"
@@ -136,8 +99,8 @@ export function GuruKemaskini()
                             <div className="input-container">
                                 <label htmlFor="nama">Nama Guru</label>
                                 <input
-                                    defaultValue={ newGuru.g_nama }
-                                    onChange={ handleChangeNama }
+                                    value={ guru.g_nama }
+                                    onChange={ e => setGuru( { ...guru, g_nama: e.target.value } ) }
                                     type="text"
                                     id="nama"
                                     maxLength="50"
@@ -149,8 +112,8 @@ export function GuruKemaskini()
                             <div className="input-container">
                                 <label htmlFor="katalaluan">Katalaluan Guru</label>
                                 <input
-                                    defaultValue={ newGuru.g_katalaluan }
-                                    onChange={ handleChangeKatalaluan }
+                                    value={ guru.g_katalaluan }
+                                    onChange={ e => setGuru( { ...guru, g_katalaluan: e.target.value } ) }
                                     type="text"
                                     id="katalaluan"
                                     maxLength="50"
@@ -163,8 +126,8 @@ export function GuruKemaskini()
                                 <label htmlFor="jenis">Jenis</label>
                                 <select
                                     id="jenis"
-                                    onChange={ handleChangeJenis }
-                                    value={ newGuru.g_jenis }
+                                    onChange={ e => setGuru( { ...guru, g_jenis: e.target.value } ) }
+                                    value={ guru.g_jenis }
                                     disabled={ disabled }
                                 >
                                     <option value="admin"> Admin </option>

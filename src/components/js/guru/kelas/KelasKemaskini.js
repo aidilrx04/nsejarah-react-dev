@@ -29,6 +29,7 @@ export function KelasKemaskini()
         return () =>
         {
             setIsLoad( false );
+            setKelas( {} );
         };
     }, [ idKelas ] );
 

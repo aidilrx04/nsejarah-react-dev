@@ -14,13 +14,11 @@ export function MuridKemaskini()
     const user = useContext( UserContext );
     let { idMurid } = useParams();
     let [ murid, setMurid ] = useState( {} );
-    let [ newMurid, setNewMurid ] = useState( {} );
     let [ senaraiTing, setSenaraiTing ] = useState( [] );
     let [ disabled, setDisabled ] = useState( false );
     let [ status, setStatus ] = useState( null );
     const history = useHistory();
     const [ isLoad, setIsLoad ] = useState( false );
-
 
     useEffect( () =>
     {
@@ -30,9 +28,16 @@ export function MuridKemaskini()
             {
                 setMurid( data.data );
                 console.log( data.data );
+
+                API.getListTingkatan( 200, 1 ).then( data =>
+                {
+                    if ( data.success ) setSenaraiTing( data.data.data );
+                } );
             }
             setIsLoad( true );
         } );
+
+
 
         return () =>
         {
@@ -41,44 +46,18 @@ export function MuridKemaskini()
         };
     }, [ idMurid ] );
 
-    useEffect( () =>
-    {
-        if ( murid.hasOwnProperty( 'm_id' ) )
-        {
-            API.getListTingkatan( 200, 1 ).then( data =>
-            {
-                setSenaraiTing( data.data.data );
-            } );
-
-            setNewMurid( { ...murid } );
-        }
-        return () =>
-        {
-            setSenaraiTing( [] );
-            if ( murid.hasOwnProperty( 'm_id' ) )
-            {
-                setMurid( {} );
-            }
-        };
-    }, [ murid ] );
-
-    useEffect( () =>
-    {
-        // console.log( newMurid )
-    }, [ newMurid ] );
-
     async function handleSubmit( e )
     {
         e.preventDefault();
         setDisabled( true );
         setStatus( null );
 
-        await API.kemaskini( newMurid, user.token, 'murid' ).then( data =>
+        await API.kemaskini( murid, user.token, 'murid' ).then( data =>
         {
             if ( data.success )
             {
                 alert( 'Data berjaya dikemaskini' );
-                history.push( Url( `/guru/murid/${newMurid.m_id}` ) );
+                history.push( Url( `/guru/murid/${murid.m_id}` ) );
             }
             setStatus( data );
             setDisabled( false );
@@ -105,8 +84,8 @@ export function MuridKemaskini()
                             <div className="input-container">
                                 <label htmlFor="nokp">No. KP Murid</label>
                                 <input
-                                    defaultValue={ murid.m_nokp }
-                                    onChange={ ( e ) => setNewMurid( { ...newMurid, m_nokp: e.target.value } ) }
+                                    value={ murid.m_nokp }
+                                    onChange={ ( e ) => setMurid( { ...murid, m_nokp: e.target.value } ) }
                                     type="text"
                                     maxLength="12"
                                     disabled={ disabled }
@@ -117,8 +96,8 @@ export function MuridKemaskini()
                             <div className="input-container">
                                 <label htmlFor="nama">Nama Murid</label>
                                 <input
-                                    defaultValue={ murid.m_nama }
-                                    onChange={ ( e ) => setNewMurid( { ...newMurid, m_nama: e.target.value } ) }
+                                    value={ murid.m_nama }
+                                    onChange={ ( e ) => setMurid( { ...murid, m_nama: e.target.value } ) }
                                     type="text"
                                     maxLength="50"
                                     disabled={ disabled }
@@ -129,8 +108,8 @@ export function MuridKemaskini()
                             <div className="input-container">
                                 <label htmlFor="nama">Katalaluan Murid</label>
                                 <input
-                                    defaultValue={ murid.m_katalaluan }
-                                    onChange={ ( e ) => setNewMurid( { ...newMurid, m_katalaluan: e.target.value } ) }
+                                    value={ murid.m_katalaluan }
+                                    onChange={ ( e ) => setMurid( { ...murid, m_katalaluan: e.target.value } ) }
                                     type="text"
                                     maxLength="50"
                                     disabled={ disabled }
@@ -141,8 +120,8 @@ export function MuridKemaskini()
                             <div className="input-container">
                                 <label htmlFor="kelas">Kelas Murid</label>
                                 <select
-                                    value={ newMurid.m_kelas }
-                                    onChange={ ( e ) => setNewMurid( { ...newMurid, m_kelas: e.target.value } ) }
+                                    value={ murid.m_kelas }
+                                    onChange={ ( e ) => setMurid( { ...murid, m_kelas: e.target.value } ) }
                                     disabled={ disabled }
                                 >
                                     {
