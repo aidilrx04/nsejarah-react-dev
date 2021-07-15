@@ -6,6 +6,6 @@
 - fix change tailspin loader in PrivateRoute.js to be more consistent [/]
 - add redirection from log masuk [/]
 - fix add limit to update kuiz [/]
-- fix prevent content from displaying in murid update []
+- fix prevent content from displaying in tingkatan update []
 - add verify user when enter the web for the first (time)?
 - fix display error when content not found in update 
