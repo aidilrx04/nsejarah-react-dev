@@ -312,7 +312,25 @@ export class API
         return request;
     }
 
+    static async verify( token )
+    {
+        const resp = await API.request( '/api/user.php?type=verify', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        } );
 
+        if ( resp.success )
+        {
+            console.log( 'User verified' );
+        }
+        else
+        {
+            console.log( 'User is not verified' );
+        }
+
+        return resp;
+    }
 }
 
 export function rand()

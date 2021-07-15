@@ -4,9 +4,10 @@ import
 } from 'react-router-dom';
 import Navbar from './components/js/Navbar';
 import Content from './components/js/Content';
-import { UserContextProvider } from './components/js/contexts/UserContext';
+import { UserContext, UserContextProvider } from './components/js/contexts/UserContext';
 import { API, API_URL } from './components/js/utils';
 import './components/js/css-import';
+import { useContext, useEffect } from 'react';
 
 API.setApiUrL( API_URL );
 
@@ -16,6 +17,7 @@ function App()
     <>
       <Router>
         <UserContextProvider>
+          <Verify />
           <Navbar />
           <Content />
         </UserContextProvider>
@@ -23,6 +25,20 @@ function App()
       </Router>
     </>
   );
+}
+
+function Verify()
+{
+  const user = useContext( UserContext );
+  useEffect( () =>
+  {
+    if ( user.loggedin && user.token.length > 0 )
+    {
+      //verify user when they enter the web
+      API.verify( user.token );
+    }
+  }, [ user ] );
+  return null;
 }
 
 function Footer()

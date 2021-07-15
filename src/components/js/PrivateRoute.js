@@ -5,7 +5,7 @@ import ErrorBox from './boxes/ErrorBox';
 import { API, Url } from './utils';
 import TailSpinLoader from './TailSpinLoader';
 
-function PrivateRoute ( { path, only, exact, ...rest } )
+function PrivateRoute( { path, only, exact, ...rest } )
 {
     const user = useContext( UserContext );
     let [ valid, setValid ] = useState( null );
@@ -17,24 +17,11 @@ function PrivateRoute ( { path, only, exact, ...rest } )
         // verify each request from server
         if ( user.loggedin && user.token.length > 0 )
         {
-            API.request( '/api/user.php?type=verify', {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            } ).then( data =>
-            {
-                // console.log( data );
-                if ( !data.success )
+            API.verify( user.token )
+                .then( () =>
                 {
-                    console.log( 'user not verified' );
-                }
-                else
-                {
-                    console.log( 'verified' );
-                }
-
-                setVerified( true );
-            } );
+                    setVerified( true );
+                } );
         }
         else
         {
@@ -112,9 +99,9 @@ function PrivateRoute ( { path, only, exact, ...rest } )
     );
 }
 
-function InvalidAccess ()
+function InvalidAccess()
 {
-    const history = useHistory()
+    const history = useHistory();
     return (
         <div id="mainContainer">
             <ErrorBox className="flex-12" style={ { width: '100%' } }>

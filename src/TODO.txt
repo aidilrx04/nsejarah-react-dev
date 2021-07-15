@@ -7,5 +7,5 @@
 - add redirection from log masuk [/]
 - fix add limit to update kuiz [/]
 - fix prevent content from displaying in tingkatan update [/]
-- add verify user when enter the web for the first (time)?
+- add verify user when enter the web [/]
 - fix display error when content not found in update 
