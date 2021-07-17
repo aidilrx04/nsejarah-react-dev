@@ -4,6 +4,7 @@ import { Box, BoxBody, BoxHeader } from "../boxes/Box";
 import { KuizContext, KuizContextProvider } from '../contexts/KuizContext';
 import { MuridContext, MuridContextProvider } from '../contexts/MuridContext';
 import { API } from "../utils";
+import Soalan from "./Soalan";
 
 
 function Ulangkaji()
@@ -12,8 +13,8 @@ function Ulangkaji()
     useEffect( () => document.title = 'Skor & Ulangkaji | NSejarah', [] );
 
     return (
-        <KuizContextProvider idKuiz={idKuiz}>
-            <MuridContextProvider idMurid={idMurid}>
+        <KuizContextProvider idKuiz={ idKuiz }>
+            <MuridContextProvider idMurid={ idMurid }>
                 <SkorMuridBox />
                 <UlangkajiJawapanBox />
             </MuridContextProvider>
@@ -25,7 +26,7 @@ function SkorMuridBox()
 {
     let { kuiz } = useContext( KuizContext );
     let { murid } = useContext( MuridContext );
-    let [skor, setSkor] = useState( {} );
+    let [ skor, setSkor ] = useState( {} );
 
     useEffect( () =>
     {
@@ -40,7 +41,7 @@ function SkorMuridBox()
                 }
             } );
         }
-    }, [kuiz, murid] );
+    }, [ kuiz, murid ] );
     return (
         <Box id="skor">
             <BoxHeader>
@@ -50,9 +51,9 @@ function SkorMuridBox()
                 {
                     skor.hasOwnProperty( 'murid' ) &&
                     <>
-                        <li>Skor: {skor.skor} </li>
-                        <li>Soalan: {skor.jumlah} </li>
-                        <li>Jawapan Betul: {skor.jumlah_betul} </li>
+                        <li>Skor: { skor.skor } </li>
+                        <li>Soalan: { skor.jumlah } </li>
+                        <li>Jawapan Betul: { skor.jumlah_betul } </li>
                     </>
                 }
             </BoxBody>
@@ -64,7 +65,7 @@ function UlangkajiJawapanBox()
 {
     let { kuiz } = useContext( KuizContext );
     let { murid } = useContext( MuridContext );
-    let [jawapanMurid, setJawapanMurid] = useState( [] );
+    let [ jawapanMurid, setJawapanMurid ] = useState( [] );
 
     useEffect( () =>
     {
@@ -79,7 +80,7 @@ function UlangkajiJawapanBox()
                 }
             } );
         }
-    }, [kuiz, murid] );
+    }, [ kuiz, murid ] );
 
     return (
         // <div ref={r => {ref = r}}>
@@ -91,7 +92,7 @@ function UlangkajiJawapanBox()
                 {
                     jawapanMurid.length > 0 &&
                     jawapanMurid.map( jawapan => (
-                        <JawapanMurid key={jawapan.jm_id} jawapan_murid={jawapan} />
+                        <JawapanMurid key={ jawapan.jm_id } jawapan_murid={ jawapan } />
                     ) )
                 }
             </BoxBody>
@@ -102,7 +103,7 @@ function UlangkajiJawapanBox()
 
 function JawapanMurid( { jawapan_murid, ...rest } )
 {
-    let [soalan, setSoalan] = useState( {} );
+    let [ soalan, setSoalan ] = useState( {} );
 
     useEffect( () =>
     {
@@ -114,48 +115,27 @@ function JawapanMurid( { jawapan_murid, ...rest } )
                 setSoalan( data.data );
             }
         } );
-    }, [jawapan_murid.jm_soalan] );
+    }, [ jawapan_murid.jm_soalan ] );
 
     // useEffect( () => console.log( soalan ), [soalan]);
 
     return (
-        soalan.hasOwnProperty( 's_id' ) &&
-        <div className="soalan">
-            <p className="soalan-teks">
-                <span>
-                    {
-                        soalan.s_teks
-                    }
-                </span>
-
-                {
-                    soalan.s_gambar
-                        ? <img className="soalan-teks-gambar" src={soalan.s_gambar} alt="" />
-                        : ''
-                }
-            </p>
-
-            <div className="soalan-jawapan-container">
-                {
-                    soalan.jawapan.map( jawapan =>
-                    {
-                        // let status = jawapan_murid.jm_jawapan === jawapan.j_id ? jawapan_murid.jm_jawapan === soalan.jawapan_betul.j_id : null
-                        return ( <div key={jawapan.j_id} className={`soalan-jawapan ${soalan.jawapan_betul.j_id === jawapan.j_id ? 'soalan-jawapan-betul' : jawapan_murid.jm_jawapan === jawapan.j_id && jawapan_murid.jm_jawapan !== soalan.jawapan_betul.j_id ? 'soalan-jawapan-salah' : ''}`}>
-                            <span>
-                                {jawapan.j_teks} {
-                                    soalan.jawapan_betul.j_id === jawapan.j_id &&
-                                    <i className="fas fa-check" />
-                                } {
-                                    jawapan_murid.jm_jawapan === jawapan.j_id
-                                    && jawapan_murid.jm_jawapan !== soalan.jawapan_betul.j_id
-                                    && <i className="fas fa-times" />
-                                }
-                            </span>
-                        </div> );
-                    } )
-                }
-            </div>
-        </div>
+        <>
+            { console.log( { ...soalan, jawapan_murid: jawapan_murid.jm_jawapan } ) }
+            {
+                soalan.hasOwnProperty( 's_id' )
+                    ? <Soalan soalan={ { ...soalan, jawapan_murid: jawapan_murid.jm_jawapan } } disabled={ true } style={ {
+                        marginBottom: '10px',
+                        borderLeft: `10px solid ${jawapan_murid.jm_jawapan
+                            ? jawapan_murid.jm_jawapan === soalan.jawapan_betul.j_id
+                                ? 'green'
+                                : 'red'
+                            : 'yellow'}`,
+                        borderRadius: '5px'
+                    } } />
+                    : ''
+            }
+        </>
     );
 }
 

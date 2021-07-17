@@ -14,8 +14,8 @@ const KuizContext = createContext();
 
 function KuizRouteController()
 {
-    let [kuiz, setKuiz] = useState( {} );
-    let [valid, setValid] = useState( true );
+    let [ kuiz, setKuiz ] = useState( {} );
+    let [ valid, setValid ] = useState( true );
     let { idKuiz } = useParams();
 
     useTitle( `${kuiz.kz_nama ? kuiz.kz_nama + ' | ' : ''} Kuiz` );
@@ -39,7 +39,7 @@ function KuizRouteController()
             setKuiz( {} );
             setValid( true );
         };
-    }, [idKuiz] );
+    }, [ idKuiz ] );
 
     useState( () =>
     {
@@ -49,13 +49,13 @@ function KuizRouteController()
             const limit = 20;
             document.title = `${kuiz.kz_nama.substr( 0, len > limit ? limit : len )} | NSejarah`;
         }
-    }, [kuiz] );
+    }, [ kuiz ] );
 
     return (
         <div id="mainContainer">
             {
                 valid &&
-                <KuizContext.Provider value={{ kuiz, setKuiz }}>
+                <KuizContext.Provider value={ { kuiz, setKuiz } }>
                     <KuizDetail />
                 </KuizContext.Provider>
             }
@@ -78,7 +78,7 @@ function KuizDetail()
     let { path, url } = useRouteMatch();
     let history = useHistory();
 
-    let [isAnswered, setIsAnswered] = useState( checkIsAnswered().then( data => setIsAnswered( data ) ) );
+    let [ isAnswered, setIsAnswered ] = useState( checkIsAnswered().then( data => setIsAnswered( data ) ) );
 
     async function checkIsAnswered()
     {
@@ -90,16 +90,16 @@ function KuizDetail()
     }
     return (
         <Switch>
-            <Route path={( `${path}/answer` )}>
-                <JawabKuiz style={{ width: '100%' }} />
+            <Route path={ ( `${path}/answer` ) }>
+                <JawabKuiz style={ { width: '100%' } } />
             </Route>
 
-            <Route exact path={( path )}>
+            <Route exact path={ ( path ) }>
                 <div id="main">
                     <Box
-                        style={{
+                        style={ {
                             width: '100%'
-                        }}
+                        } }
                     >
                         <BoxHeader>
                             <i className="fas fa-book" /> Kuiz
@@ -108,14 +108,14 @@ function KuizDetail()
                             {
                                 kuiz.hasOwnProperty( 'kz_id' ) ?
                                     <>
-                                        <h2> {kuiz.kz_nama} </h2>
+                                        <h2> { kuiz.kz_nama } </h2>
                                         <p>
-                                            <b>ID: </b> {kuiz.kz_id} <br />
-                                            <b>Nama Kuiz: </b> {kuiz.kz_nama} <br />
-                                            <b>Guru: </b> {kuiz.guru.g_nama} <br />
-                                            <b>Jenis: </b> {kuiz.kz_jenis} <br />
-                                            <b>Tarikh: </b> {kuiz.kz_tarikh} <br />
-                                            <b>Masa: </b> {kuiz.kz_masa ? kuiz.kz_masa : 'Tiada'} <br />
+                                            <b>ID: </b> { kuiz.kz_id } <br />
+                                            <b>Nama Kuiz: </b> { kuiz.kz_nama } <br />
+                                            <b>Guru: </b> { kuiz.guru.g_nama } <br />
+                                            <b>Jenis: </b> { kuiz.kz_jenis } <br />
+                                            <b>Tarikh: </b> { kuiz.kz_tarikh } <br />
+                                            <b>Masa: </b> { kuiz.kz_masa ? kuiz.kz_masa : 'Tiada' } <br />
 
                                         </p>
 
@@ -124,17 +124,17 @@ function KuizDetail()
                                             <>
                                                 {
                                                     isAnswered === false &&
-                                                    <button onClick={() =>
+                                                    <button onClick={ () =>
                                                     {
                                                         history.push( Url( `${url}/answer` ), { from: history.location } );
-                                                    }}>Jawab Kuiz</button>
+                                                    } }>Jawab Kuiz</button>
                                                 }
                                                 {
                                                     isAnswered === true &&
-                                                    <button onClick={() =>
+                                                    <button onClick={ () =>
                                                     {
                                                         history.push( Url( `${url}/ulangkaji/${user.data.m_id}` ), { from: history.location } );
-                                                    }}>
+                                                    } }>
                                                         Ulangkaji
                                                     </button>
                                                 }
@@ -167,7 +167,7 @@ function KuizDetail()
                 </div>
             </Route>
 
-            <Route path={( `${path}/ulangkaji/:idMurid` )}>
+            <Route path={ ( `${path}/ulangkaji/:idMurid` ) }>
                 <div id="main">
                     <Ulangkaji />
                 </div>
@@ -192,14 +192,12 @@ function KuizDetail()
 export function KuizLeaderBoard()
 {
     let { idKuiz } = useParams();
-    let [kuiz, setKuiz] = useState( {} );
-    let [muridJawab, setMuridJawab] = useState( [] );
-    let [muridTidakJawab, setMuridTidakJawab] = useState( [] );
-    let [order, setOrder] = useState( 1 );
-    let [tmp, setTmp] = useState( [] );
-    let [loaded, setLoaded] = useState( false );
-
-
+    let [ kuiz, setKuiz ] = useState( {} );
+    let [ muridJawab, setMuridJawab ] = useState( [] );
+    let [ muridTidakJawab, setMuridTidakJawab ] = useState( [] );
+    let [ order, setOrder ] = useState( 1 );
+    let [ tmp, setTmp ] = useState( [] );
+    let [ loaded, setLoaded ] = useState( false );
 
     useEffect( () =>
     {
@@ -212,7 +210,7 @@ export function KuizLeaderBoard()
         {
             setKuiz( {} );
         };
-    }, [idKuiz] );
+    }, [ idKuiz ] );
 
     useEffect( () =>
     {
@@ -226,13 +224,13 @@ export function KuizLeaderBoard()
                     let sorted = sortSkor( data.data.murid_jawab, 1 );
                     // console.log( data.data.murid_jawab);
                     setMuridJawab( sorted );
-                    setTmp( [...sorted] );
+                    setTmp( [ ...sorted ] );
                     setMuridTidakJawab( data.data.murid_tidak_jawab );
                 }
                 setLoaded( true );
             } );
         }
-    }, [kuiz] );
+    }, [ kuiz ] );
 
     useEffect( () =>
     {
@@ -243,17 +241,17 @@ export function KuizLeaderBoard()
             {
                 case 0:
                     console.log( 'terendah' );
-                    setMuridJawab( [...muridJawab.reverse()] );
+                    setMuridJawab( [ ...muridJawab.reverse() ] );
                     break;
                 case 1:
-                    setMuridJawab( [...tmp] );
+                    setMuridJawab( [ ...tmp ] );
                     break;
                 default:
                     break;
             }
         }
         //eslint-disable-next-line
-    }, [order] );
+    }, [ order ] );
 
     function sortSkor( skor, order )
     {
@@ -282,20 +280,20 @@ export function KuizLeaderBoard()
         <Box id="kuiz-leaderboard">
             <BoxHeader right={
                 <select
-                    value={order}
-                    onChange={e => setOrder( parseInt( e.target.value ) )}
-                    style={{
+                    value={ order }
+                    onChange={ e => setOrder( parseInt( e.target.value ) ) }
+                    style={ {
                         padding: 0,
                         fontSize: '1em',
                         backgroundColor: 'transparent',
                         border: 'none',
                         outline: 'none',
                         color: 'white'
-                    }}
+                    } }
                 >
-                    <option style={{ color: 'grey' }} disabled>Susun</option>
-                    <option style={{ color: 'black' }} value={0}>Terendah</option>
-                    <option style={{ color: 'black' }} value={1}>Tertinggi</option>
+                    <option style={ { color: 'grey' } } disabled>Susun</option>
+                    <option style={ { color: 'black' } } value={ 0 }>Terendah</option>
+                    <option style={ { color: 'black' } } value={ 1 }>Tertinggi</option>
                 </select>
             }>
                 <i className="fas fa-award" /> Papan Tangga(Leaderboard)
@@ -312,19 +310,19 @@ export function KuizLeaderBoard()
                     <tbody>
                         {
                             muridJawab.map( skor => (
-                                <tr key={muridJawab.indexOf( skor )}>
-                                    <td> {order === 1 ? muridJawab.indexOf( skor ) + 1 : muridJawab.length - muridJawab.indexOf( skor )} </td>
-                                    <td> {skor.murid.m_nama} </td>
-                                    <td> {skor.skor}% </td>
+                                <tr key={ muridJawab.indexOf( skor ) }>
+                                    <td> { order === 1 ? muridJawab.indexOf( skor ) + 1 : muridJawab.length - muridJawab.indexOf( skor ) } </td>
+                                    <td> { skor.murid.m_nama } </td>
+                                    <td> { skor.skor }% </td>
                                 </tr>
 
                             ) )
                         }
                         {
                             muridTidakJawab.map( murid => (
-                                <tr key={murid.m_id}>
+                                <tr key={ murid.m_id }>
                                     <td> <i className="fas fa-minus" /> </td>
-                                    <td> {murid.m_nama} </td>
+                                    <td> { murid.m_nama } </td>
                                     <td> <i className="fas fa-minus" /> </td>
                                 </tr>
                             ) )
