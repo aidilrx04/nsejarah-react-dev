@@ -40,12 +40,12 @@ export default function Soalan( {
                     senaraiJawapan.map( jawapan => (
                         <button
                             key={ jawapan.j_id }
-                            className={ `soalan-jawapan ${soalan.jawapan_murid || showAnswer
+                            className={ `soalan-jawapan ${soalan.jawapan_murid !== undefined
                                 ? soalan.jawapan_murid === jawapan.j_id
                                     ? soalan.jawapan_murid === soalan.jawapan_betul.j_id
                                         ? 'jawapan-betul'
                                         : 'jawapan-salah'
-                                    : showAnswer && soalan.jawapan_betul.j_id === jawapan.j_id
+                                    : soalan.jawapan_betul.j_id === jawapan.j_id
                                         ? 'jawapan-betul'
                                         : ''
                                 : ''
@@ -58,11 +58,23 @@ export default function Soalan( {
                                     update_callback( soalan );
                             } }
                         >
-                            { jawapan.j_teks }
+                            <span>
+                                { jawapan.j_teks } {
+                                    soalan.jawapan_murid !== undefined
+                                        ? soalan.jawapan_murid === jawapan.j_id
+                                            ? soalan.jawapan_murid === soalan.jawapan_betul.j_id
+                                                ? <i className="fas fa-check" />
+                                                : <i className="fas fa-times" />
+                                            : jawapan.j_id === soalan.jawapan_betul.j_id
+                                                ? <i className="fas fa-check" />
+                                                : ''
+                                        : ''
+                                }
+                            </span>
                         </button>
                     ) )
                 }
             </div>
-        </div>
+        </div >
     );
 }

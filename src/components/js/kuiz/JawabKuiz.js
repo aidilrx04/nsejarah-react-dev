@@ -184,6 +184,7 @@ function DisplayKuiz( { kuizObj } )
         {
             setTimeFormat( `${minit}:${saat}` );
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ seconds, start, delay ] );
 
     function updateSoalan( updatedSoalan )
@@ -194,17 +195,13 @@ function DisplayKuiz( { kuizObj } )
         const correct = updatedSoalan.jawapan_murid === updatedSoalan.jawapan_betul.j_id;
         console.log( correct );
         setStatus( {
-            message: correct ? "BETUL" : "SALAH",
+            message: correct ? "BETUL ✔" : <>SALAH <i className="fas fa-times" /></>,
             code: correct
         } );
 
         setKuiz( { ...kuiz, soalan: senaraiSoalan } );
 
-        if ( currentSoalan === senaraiSoalan.length - 1 )
-        {
-            setStart( false );
-        }
-
+        setStart( false );
         setTimeout( () =>
         {
             // check if soalan is the last one,
@@ -227,6 +224,7 @@ function DisplayKuiz( { kuizObj } )
             }
             else
             {
+                setStart( true );
                 setCurrentSoalan( cs => cs + 1 );
                 setStatus( null );
             }
@@ -343,6 +341,7 @@ function DisplayKuiz( { kuizObj } )
                     update_callback={ updateSoalan }
                     disabled={ senaraiSoalan[ currentSoalan ].jawapan_murid ? true : false }
                     shuffle={ true }
+                    showAnswer={ false }
                 />
             </BoxBody>
         </Box>
