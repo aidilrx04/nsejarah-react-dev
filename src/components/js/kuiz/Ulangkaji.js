@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Box, BoxBody, BoxHeader } from "../boxes/Box";
 // import { KuizContext, KuizContextProvider } from '../contexts/KuizContext';
@@ -15,6 +15,7 @@ function Ulangkaji()
     useEffect( () => document.title = 'Skor & Ulangkaji | NSejarah', [] );
     const [ kuiz, setKuiz ] = useState( {} );
     const [ murid, setMurid ] = useState( {} );
+    const [ jawapanMurid, setJawapanMurid ] = useState( {} );
     const [ isLoad, setIsLoad ] = useState( false );
     const [ status, setStatus ] = useState( null );
 
@@ -36,6 +37,7 @@ function Ulangkaji()
                             console.log( dataJawapanMurid );
                             if ( dataJawapanMurid.success )
                             {
+                                setJawapanMurid( dataJawapanMurid.data );
                                 setStatus( { success: true } );
                                 setIsLoad( true );
                             }
@@ -66,8 +68,8 @@ function Ulangkaji()
         isLoad
             ? status.success
                 ? <>
-                    <SkorMuridBox kuiz={ kuiz } murid={ murid } />
-                    <UlangkajiJawapanBox kuiz={ kuiz } murid={ murid } />
+                    <SkorMuridBox jawapanMurid={ jawapanMurid } />
+                    <UlangkajiJawapanBox jawapanMurid={ jawapanMurid } />
                 </>
                 : <ErrorBox>
                     404 Tiada data dijumpai
@@ -76,24 +78,8 @@ function Ulangkaji()
     );
 }
 
-function SkorMuridBox( { kuiz, murid } )
+function SkorMuridBox( { jawapanMurid } )
 {
-    let [ skor, setSkor ] = useState( {} );
-
-    useEffect( () =>
-    {
-        if ( kuiz.kz_id && murid.m_id )
-        {
-            API.getJawapanMurid( murid.m_id, kuiz.kz_id ).then( data =>
-            {
-                // console.log( data );
-                if ( data.success )
-                {
-                    setSkor( data.data );
-                }
-            } );
-        }
-    }, [ kuiz, murid ] );
     return (
         <Box id="skor">
             <BoxHeader>
@@ -101,11 +87,11 @@ function SkorMuridBox( { kuiz, murid } )
             </BoxHeader>
             <BoxBody>
                 {
-                    skor.hasOwnProperty( 'murid' ) &&
+                    jawapanMurid.hasOwnProperty( 'murid' ) &&
                     <>
-                        <li>Skor: { skor.skor } </li>
-                        <li>Soalan: { skor.jumlah } </li>
-                        <li>Jawapan Betul: { skor.jumlah_betul } </li>
+                        <li>Skor: { jawapanMurid.skor } </li>
+                        <li>Soalan: { jawapanMurid.jumlah } </li>
+                        <li>Jawapan Betul: { jawapanMurid.jumlah_betul } </li>
                     </>
                 }
             </BoxBody>
@@ -113,26 +99,8 @@ function SkorMuridBox( { kuiz, murid } )
     );
 }
 
-function UlangkajiJawapanBox( { kuiz, murid } )
+function UlangkajiJawapanBox( { jawapanMurid } )
 {
-    let [ jawapanMurid, setJawapanMurid ] = useState( [] );
-
-    useEffect( () =>
-    {
-        console.log( murid );
-        if ( kuiz.kz_id && murid.m_id )
-        {
-            API.getJawapanMurid( murid.m_id, kuiz.kz_id ).then( data =>
-            {
-                console.log( data.data );
-                if ( data.success )
-                {
-                    setJawapanMurid( data.data.jawapan_murid );
-                }
-            } );
-        }
-    }, [ kuiz, murid ] );
-
     return (
         // <div ref={r => {ref = r}}>
         <Box id='ulangkaji'>
@@ -172,7 +140,6 @@ function JawapanMurid( { jawapan_murid, ...rest } )
 
     return (
         <>
-            { console.log( { ...soalan, jawapan_murid: jawapan_murid.jm_jawapan } ) }
             {
                 soalan.hasOwnProperty( 's_id' )
                     ? <Soalan soalan={ { ...soalan, jawapan_murid: jawapan_murid.jm_jawapan } } disabled={ true } style={ {
