@@ -13,8 +13,6 @@ function Ulangkaji()
 {
     let { idKuiz, idMurid } = useParams();
     useEffect( () => document.title = 'Skor & Ulangkaji | NSejarah', [] );
-    const [ kuiz, setKuiz ] = useState( {} );
-    const [ murid, setMurid ] = useState( {} );
     const [ jawapanMurid, setJawapanMurid ] = useState( {} );
     const [ isLoad, setIsLoad ] = useState( false );
     const [ status, setStatus ] = useState( null );
@@ -25,12 +23,10 @@ function Ulangkaji()
         {
             if ( dataKuiz.success )
             {
-                setKuiz( dataKuiz.data );
                 API.getMurid( idMurid ).then( dataMurid =>
                 {
                     if ( dataMurid.success )
                     {
-                        setMurid( dataMurid.data );
 
                         API.getJawapanMurid( dataMurid.data.m_id, dataKuiz.data.kz_id ).then( dataJawapanMurid =>
                         {
