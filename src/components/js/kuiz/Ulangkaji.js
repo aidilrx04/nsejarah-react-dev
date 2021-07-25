@@ -105,8 +105,8 @@ function UlangkajiJawapanBox( { jawapanMurid } )
             </BoxHeader>
             <BoxBody>
                 {
-                    jawapanMurid.length > 0 &&
-                    jawapanMurid.map( jawapan => (
+                    jawapanMurid.jawapan_murid.length > 0 &&
+                    jawapanMurid.jawapan_murid.map( jawapan => (
                         <JawapanMurid key={ jawapan.jm_id } jawapan_murid={ jawapan } />
                     ) )
                 }

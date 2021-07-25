@@ -1,10 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, createRef, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import { UserContext } from "../../contexts/UserContext";
-import { API, rand, useTitle } from "../../utils";
+import { API, API_URL, rand, Url, useTitle } from "../../utils";
 import ErrorBox from '../../boxes/ErrorBox';
 import TailSpinLoader from "../../TailSpinLoader";
+import { useHistory } from "react-router-dom";
 
 
 
@@ -32,6 +33,7 @@ export function KuizKemaskini()
             {
                 // data.data.soalan.pop();
                 data.data.padam = []; //padam soalan
+                data.data.gambar_padam = []; // padam gambar
                 setKuiz( data.data );
                 setValid( true );
             }
@@ -77,6 +79,7 @@ function KemaskiniKuizDetail()
     const user = useContext( UserContext );
     const { kuiz, setKuiz, disabled, setDisabled } = useContext( KuizContext );
     let [ status, setStatus ] = useState( null );
+    const history = useHistory();
 
 
 
@@ -100,7 +103,61 @@ function KemaskiniKuizDetail()
             console.log( data );
             if ( data.success )
             {
-                alert( 'Kuiz berjaya dikemaskini' );
+                // update gambar
+                const newKuiz = data.data;
+                const gambarSoalan = kuiz.soalan
+                    .map( s =>
+                    {
+                        let val;
+                        if ( s.s_gambar !== null && typeof s.s_gambar !== 'string' )
+                        {
+                            for ( let i = 0; i < newKuiz.soalan.length; i++ )
+                            {
+                                if ( s.s_id === newKuiz.soalan[ i ].old_id )
+                                {
+                                    s.new_id = newKuiz.soalan[ i ].s_id;
+                                    val = s;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            val = null;
+                        }
+
+                        return val;
+                    } )
+                    .filter( s => s !== null );
+
+                if ( gambarSoalan.length > 0 )
+                {
+                    const uploadGambarData = new FormData();
+                    for ( let i = 0; i < gambarSoalan.length; i++ )
+                    {
+                        uploadGambarData.append( `${gambarSoalan[ i ].new_id}`, gambarSoalan[ i ].s_gambar );
+                    }
+
+                    API.setHead( [
+                        'POST',
+                        1,
+                        user.token,
+                        uploadGambarData
+                    ] );
+                    API.request( '/api/upload-gambar.php' ).then( data =>
+                    {
+                        console.log( data );
+                        alert( 'Kuiz berjaya dikemaskini' );
+
+                        history.push( Url( `/guru/kuiz/${newKuiz.kz_id}` ) );
+                    } );
+                }
+                else
+                {
+                    alert( 'Kuiz berjaya dikemaskini' );
+
+                    history.push( Url( `/guru/kuiz/${newKuiz.kz_id}` ) );
+                }
+
             }
             setStatus( data );
 
@@ -246,6 +303,8 @@ function Soalan()
     const { kuiz, setKuiz, disabled } = useContext( KuizContext );
     const sln = useContext( SoalanContext );
     let [ soalan, setSoalan ] = useState( {} );
+    const [ gambar, setGambar ] = useState( () => sln.s_gambar );
+    const inputRef = createRef();
 
     useEffect( () =>
     {
@@ -256,6 +315,18 @@ function Soalan()
             setSoalan( {} );
         };
     }, [ sln ] );
+
+    useEffect( () =>
+    {
+        console.log( gambar );
+        if ( inputRef.current !== null )
+        {
+            if ( gambar === null )
+            {
+                inputRef.current.files = new DataTransfer().files;
+            }
+        }
+    }, [ gambar, inputRef ] );
 
     useEffect( () =>
     {
@@ -313,6 +384,49 @@ function Soalan()
                             required
                             disabled={ disabled }
                         />
+                    </div>
+
+                    <div className="">
+                        <label>Gambar</label>
+                        <div className="preview" style={ {
+                            display: gambar ? 'block' : 'none',
+                            textAlign: 'center',
+                            position: 'relative'
+                        } }>
+                            <span
+                                style={ {
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 0,
+                                    zIndex: 3,
+                                    transform: 'scale(1.5)',
+                                    cursor: 'pointer'
+                                } }
+                                onClick={ () =>
+                                {
+                                    if ( !gambar.startsWith( 'blob' ) )
+                                    {
+                                        setKuiz( kuiz => ( { ...kuiz, gambar_padam: [ ...kuiz.gambar_padam, soalan.s_id ] } ) );
+                                    }
+
+                                    setGambar( null );
+                                } }
+                            >
+                                &times;
+                            </span>
+                            <img src={ gambar ? gambar.startsWith( 'blob' ) ? gambar : API_URL + '/image/' + gambar : "#" } alt="preview" style={ {
+                                maxWidth: '60%'
+                            } } />
+                        </div>
+                        <input type="file" ref={ inputRef } onChange={ ( e ) =>
+                        {
+                            if ( typeof soalan.s_gambar === 'string' && !soalan.s_gambar.startsWith( 'blob' ) )
+                            {
+                                setKuiz( k => ( { ...k, gambar_padam: [ ...k.gambar_padam, soalan.s_id ] } ) );
+                            }
+                            setSoalan( s => ( { ...s, s_gambar: e.target.files[ 0 ] } ) );
+                            setGambar( URL.createObjectURL( e.target.files[ 0 ] ) );
+                        } } />
                     </div>
 
                     <div className="input-container">

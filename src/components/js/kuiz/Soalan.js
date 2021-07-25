@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { shuffle } from "../utils";
+import { API_URL, shuffle } from "../utils";
 
 // update_callback expect a function that update the current soalan
 export default function Soalan( {
@@ -30,9 +30,10 @@ export default function Soalan( {
         <div className="soalan" { ...rest }>
             <div className="soalan-teks">
                 <span>{ soalan.s_teks }</span>
+
                 {
                     soalan.s_gambar &&
-                    <img className="soalan-teks-gambar" src={ soalan.s_gambar } alt="" />
+                    <img className="soalan-teks-gambar" src={ ( soalan.s_gambar.startsWith( 'http' ) ? '' : API_URL + '/image/' ) + soalan.s_gambar } alt="" />
                 }
             </div>
             <div className="soalan-jawapan-container">

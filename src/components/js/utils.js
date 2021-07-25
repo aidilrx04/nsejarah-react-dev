@@ -47,9 +47,9 @@ export class ErrorCallback
 export class API
 {
     static API_URL = '';
-    static CONTENT_TYPES = [ 'application/xxx-form-urlencoded; charset=UTF-8' ];
+    static CONTENT_TYPES = [ 'application/xxx-form-urlencoded; charset=UTF-8', 'no-content-type' ];
     static options = {
-        method: 'GET'
+        method: 'GET',
     };
 
 
@@ -72,12 +72,18 @@ export class API
             },
             body: head[ 3 ]
         };
+
+        // remove content type
+        if ( this.CONTENT_TYPES[ head[ 1 ] ] === this.CONTENT_TYPES[ 1 ] ) 
+        {
+            delete this.options.headers[ 'Content-Type' ];
+        }
     }
 
     static revertHead()
     {
         this.options = {
-            method: 'GET'
+            method: 'GET',
         };
     }
 

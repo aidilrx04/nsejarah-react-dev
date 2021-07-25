@@ -8,7 +8,7 @@ import { KuizLeaderBoard } from "../../kuiz/Kuiz";
 import TailSpinLoader from "../../TailSpinLoader";
 import { API, Url, useTitle } from "../../utils";
 
-export function KuizDetail ()
+export function KuizDetail()
 {
     useTitle( 'Maklumat Kuiz' );
 
@@ -20,6 +20,7 @@ export function KuizDetail ()
 
     useEffect( () =>
     {
+        console.log( idKuiz );
         API.getKuiz( idKuiz ).then( data =>
         {
             if ( data.success )
@@ -34,7 +35,7 @@ export function KuizDetail ()
         {
             setKuiz( {} );
             setIsLoad( false );
-        }
+        };
 
     }, [ idKuiz ] );
 
@@ -99,7 +100,7 @@ export function KuizDetail ()
                             <KuizLeaderBoard />
                         </>
                         : <ErrorBox>
-                            404. aasfas!
+                            404!
                             <br />
                             Tiada data dijumpai
                         </ErrorBox>
