@@ -109,7 +109,7 @@ function ListKuizBox()
     let [ paging, setPaging ] = useState( {} );
     let [ order, setOrder ] = useState( 0 );
     let [ sorted, setSorted ] = useState( false );
-    let [ limit ] = useState( 6 );
+    let [ limit ] = useState( 10 );
 
     useEffect( () =>
     {
