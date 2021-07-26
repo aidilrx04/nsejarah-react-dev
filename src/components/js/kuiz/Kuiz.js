@@ -124,17 +124,23 @@ function KuizDetail()
                                             <>
                                                 {
                                                     isAnswered === false &&
-                                                    <button onClick={ () =>
-                                                    {
-                                                        history.push( Url( `${url}/answer` ), { from: history.location } );
-                                                    } }>Jawab Kuiz</button>
+                                                    <button
+                                                        className="link bg4"
+                                                        // style={ { color: '#fefefe' } }
+                                                        onClick={ () =>
+                                                        {
+                                                            history.push( Url( `${url}/answer` ), { from: history.location } );
+                                                        } }>Jawab Kuiz</button>
                                                 }
                                                 {
                                                     isAnswered === true &&
-                                                    <button onClick={ () =>
-                                                    {
-                                                        history.push( Url( `${url}/ulangkaji/${user.data.m_id}` ), { from: history.location } );
-                                                    } }>
+                                                    <button
+                                                        className="link bg2"
+                                                        // style={ { color: '#fefefe' } }
+                                                        onClick={ () =>
+                                                        {
+                                                            history.push( Url( `${url}/ulangkaji/${user.data.m_id}` ), { from: history.location } );
+                                                        } }>
                                                         Ulangkaji
                                                     </button>
                                                 }

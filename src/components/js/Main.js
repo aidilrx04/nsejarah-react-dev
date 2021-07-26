@@ -20,7 +20,7 @@ function Main()
                 </div>
                 <div id="side">
                     <NavigasiBox />
-                    <UserBox redir={true} />
+                    <UserBox redir={ true } />
                 </div>
             </div>
         </>
@@ -30,8 +30,8 @@ function Main()
 function RandomKuizBox()
 {
 
-    let [senaraiKuiz, setSenaraiKuiz] = useState( [] );
-    let [loaded, setLoaded] = useState( false );
+    let [ senaraiKuiz, setSenaraiKuiz ] = useState( [] );
+    let [ loaded, setLoaded ] = useState( false );
 
     useEffect( () =>
     {
@@ -64,15 +64,15 @@ function RandomKuizBox()
             <BoxHeader right={
                 <button
                     className="header-btn"
-                    style={{ display: 'inline-block', marginLeft: 'auto', fontSize: '1em' }}
-                    onClick={() =>
+                    style={ { display: 'inline-block', marginLeft: 'auto', fontSize: '1em' } }
+                    onClick={ () =>
                     {
                         setLoaded( false );
                         load().then( () => setLoaded( true ) );
-                    }}
-                    disabled={!loaded}
+                    } }
+                    disabled={ !loaded }
                 >
-                    <i className={`fas fa-redo`} />
+                    <i className={ `fas fa-redo` } />
                 </button>
             }>
                 <i className="fas fa-random" /> Rawak
@@ -82,11 +82,11 @@ function RandomKuizBox()
                     {
                         loaded &&
                         <>
-                            {senaraiKuiz.length > 0
+                            { senaraiKuiz.length > 0
                                 ? senaraiKuiz.map( kuiz => (
-                                    <KuizBox key={kuiz.kz_id} path={kuiz.kz_id} kuiz={kuiz} />
+                                    <KuizBox key={ kuiz.kz_id } path={ kuiz.kz_id } kuiz={ kuiz } />
                                 ) )
-                                : ''}
+                                : '' }
                         </>
                     }
                     {
@@ -104,12 +104,12 @@ function RandomKuizBox()
 
 function ListKuizBox()
 {
-    let [loaded, setLoaded] = useState( false );
-    let [senaraiKuiz, setSenaraiKuiz] = useState( {} );
-    let [paging, setPaging] = useState( {} );
-    let [order, setOrder] = useState( 0 );
-    let [sorted, setSorted] = useState( false );
-    let [limit] = useState( 6 );
+    let [ loaded, setLoaded ] = useState( false );
+    let [ senaraiKuiz, setSenaraiKuiz ] = useState( {} );
+    let [ paging, setPaging ] = useState( {} );
+    let [ order, setOrder ] = useState( 0 );
+    let [ sorted, setSorted ] = useState( false );
+    let [ limit ] = useState( 6 );
 
     useEffect( () =>
     {
@@ -128,7 +128,7 @@ function ListKuizBox()
         if ( data.success )
         {
             senaraiKuiz = senaraiKuiz.length > 0 ? senaraiKuiz.concat( data.data.data ) : data.data.data;
-            setSenaraiKuiz( [...senaraiKuiz] );
+            setSenaraiKuiz( [ ...senaraiKuiz ] );
             setPaging( data.data.paging );
         }
     }
@@ -139,7 +139,7 @@ function ListKuizBox()
             setLoaded( true );
         } );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [limit] );
+    }, [ limit ] );
 
     useEffect( () =>
     {
@@ -167,43 +167,43 @@ function ListKuizBox()
                 return status;
             } );
 
-            setSenaraiKuiz( [...newKuiz] );
+            setSenaraiKuiz( [ ...newKuiz ] );
             setSorted( true );
         }
-    }, [order, sorted, senaraiKuiz] );
+    }, [ order, sorted, senaraiKuiz ] );
     return (
         <Box>
             <BoxHeader right={
                 <select
-                    onChange={e => 
+                    onChange={ e => 
                     {
                         setOrder( parseInt( e.target.value ) );
                         setSorted( false );
-                    }}
-                    value={order}
-                    style={{
+                    } }
+                    value={ order }
+                    style={ {
                         padding: 0,
                         fontSize: '1em',
                         backgroundColor: 'transparent',
                         border: 'none',
                         outline: 'none',
                         color: 'white'
-                    }}
+                    } }
                 >
-                    <option style={{ color: 'grey' }} disabled>Susun</option>
-                    <option style={{ color: 'black' }} value={0}>Terbaru</option>
-                    <option style={{ color: 'black' }} value={1}>Lama</option>
+                    <option style={ { color: 'grey' } } disabled>Susun</option>
+                    <option style={ { color: 'black' } } value={ 0 }>Terbaru</option>
+                    <option style={ { color: 'black' } } value={ 1 }>Lama</option>
                 </select>
             }>
                 <i className="fas fa-book" /> Senarai Kuiz
             </BoxHeader>
             <BoxBody>
                 <div className="kuizbox-container">
-                    {console.log( senaraiKuiz )}
+                    { console.log( senaraiKuiz ) }
                     {
                         senaraiKuiz.length > 0
                             ? senaraiKuiz.map( kuiz => (
-                                <KuizBox key={kuiz.kz_id} path={kuiz.kz_id} kuiz={kuiz} />
+                                <KuizBox key={ kuiz.kz_id } path={ kuiz.kz_id } kuiz={ kuiz } />
                             ) )
                             : loaded ? 'Tiada kuiz dijumpai' : ''
                     }
@@ -214,7 +214,7 @@ function ListKuizBox()
                                 range( limit ).map( id =>
                                 {
                                     return (
-                                        <KuizBoxSkeleton key={id} />
+                                        <KuizBoxSkeleton key={ id } />
                                     );
                                 } )
                             }
@@ -224,12 +224,14 @@ function ListKuizBox()
                 {
                     paging.hasOwnProperty( 'has_next' )
                         ? paging.has_next
-                            ? <button style={{
-                                display: 'block',
-                                width: '100%',
-                                padding: '10px'
-                            }}
-                                onClick={( e ) =>
+                            ? <button
+                                className='link bg2'
+                                style={ {
+                                    display: 'block',
+                                    width: '100%',
+                                    padding: '10px',
+                                } }
+                                onClick={ ( e ) =>
                                 {
                                     setLoaded( false );
                                     e.target.disabled = true;
@@ -238,7 +240,7 @@ function ListKuizBox()
                                         setLoaded( true );
                                         e.target.disabled = false;
                                     } );
-                                }}
+                                } }
                             >Muat lagi</button>
                             : null
                         : null
