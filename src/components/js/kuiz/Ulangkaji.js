@@ -16,6 +16,8 @@ function Ulangkaji()
     const [ jawapanMurid, setJawapanMurid ] = useState( {} );
     const [ isLoad, setIsLoad ] = useState( false );
     const [ status, setStatus ] = useState( null );
+    const [ murid, setMurid ] = useState( {} );
+    const [ kuiz, setKuiz ] = useState( {} );
 
     useEffect( () =>
     {
@@ -23,11 +25,12 @@ function Ulangkaji()
         {
             if ( dataKuiz.success )
             {
+                setKuiz( dataKuiz.data );
                 API.getMurid( idMurid ).then( dataMurid =>
                 {
                     if ( dataMurid.success )
                     {
-
+                        setMurid( dataMurid.data );
                         API.getJawapanMurid( dataMurid.data.m_id, dataKuiz.data.kz_id ).then( dataJawapanMurid =>
                         {
                             console.log( dataJawapanMurid );
@@ -64,7 +67,7 @@ function Ulangkaji()
         isLoad
             ? status.success
                 ? <>
-                    <SkorMuridBox jawapanMurid={ jawapanMurid } />
+                    <SkorMuridBox jawapanMurid={ jawapanMurid } kuiz={ kuiz } murid={ murid } />
                     <UlangkajiJawapanBox jawapanMurid={ jawapanMurid } />
                 </>
                 : <ErrorBox>
@@ -74,22 +77,33 @@ function Ulangkaji()
     );
 }
 
-function SkorMuridBox( { jawapanMurid } )
+function SkorMuridBox( { jawapanMurid, kuiz, murid } )
 {
+    const iconStyle = {
+        width: '25px',
+        textAlign: 'center'
+    };
     return (
         <Box id="skor">
             <BoxHeader>
                 <i className="fas fa-star" /> Skor Murid
             </BoxHeader>
             <BoxBody>
-                {
-                    jawapanMurid.hasOwnProperty( 'murid' ) &&
-                    <>
-                        <li>Skor: { jawapanMurid.skor } </li>
-                        <li>Soalan: { jawapanMurid.jumlah } </li>
-                        <li>Jawapan Betul: { jawapanMurid.jumlah_betul } </li>
-                    </>
-                }
+                <li>
+                    <i style={ iconStyle } className="fas fa-user" /> Nama Murid: { murid.m_nama }
+                </li>
+                <li>
+                    <i style={ iconStyle } className="fas fa-book" /> Nama Kuiz: { kuiz.kz_nama }
+                </li>
+                <li>
+                    <i style={ iconStyle } className="fas fa-star-half-alt" /> Skor: { jawapanMurid.skor }%
+                </li>
+                <li>
+                    <i style={ iconStyle } className="fas fa-question" /> Soalan: { jawapanMurid.jumlah }
+                </li>
+                <li>
+                    <i style={ iconStyle } className="fas fa-check" /> Jawapan Betul: { jawapanMurid.jumlah_betul }
+                </li>
             </BoxBody>
         </Box>
     );
