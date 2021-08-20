@@ -3,9 +3,10 @@ import { Box, BoxHeader, BoxBody } from './boxes/Box';
 import KuizBox, { KuizBoxSkeleton } from './kuiz/KuizBox';
 import UserBox from './boxes/UserBox';
 // import {Link, useRouteMatch, useHistory} from 'react-router-dom';
-import { API, useTitle, range } from './utils';
+import { API, useTitle, range, Url } from './utils';
 // import RandomImageBox from './boxes/RandomImageBox';
 import NavigasiBox from './boxes/NavigasiBox';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 function Main()
 {
@@ -110,6 +111,7 @@ function ListKuizBox()
     let [ order, setOrder ] = useState( 0 );
     let [ sorted, setSorted ] = useState( false );
     let [ limit ] = useState( 10 );
+    const { path } = useRouteMatch();
 
     useEffect( () =>
     {
@@ -224,24 +226,33 @@ function ListKuizBox()
                 {
                     paging.hasOwnProperty( 'has_next' )
                         ? paging.has_next
-                            ? <button
-                                className='link bg2'
-                                style={ {
-                                    display: 'block',
-                                    width: '100%',
-                                    padding: '10px',
-                                } }
-                                onClick={ ( e ) =>
-                                {
-                                    setLoaded( false );
-                                    e.target.disabled = true;
-                                    load( limit, paging.page + 1 ).then( () =>
-                                    {
-                                        setLoaded( true );
-                                        e.target.disabled = false;
-                                    } );
-                                } }
-                            >Muat lagi</button>
+                            ? // <button
+                            //     className='link bg2'
+                            //     style={ {
+                            //         display: 'block',
+                            //         width: '100%',
+                            //         padding: '10px',
+                            //     } }
+                            //     onClick={ ( e ) =>
+                            //     {
+                            //         setLoaded( false );
+                            //         e.target.disabled = true;
+                            //         load( limit, paging.page + 1 ).then( () =>
+                            //         {
+                            //             setLoaded( true );
+                            //             e.target.disabled = false;
+                            //         } );
+                            //     } }
+                            // >Muat lagi</button>
+
+                            <Link to={ Url( `${path}/kuiz` ) } className="link" style={ {
+                                display: 'block',
+                                textAlign: 'center',
+                                padding: '10px 0'
+                            } }>
+                                {/* Load kuiz in different place instead of Main */ }
+                                Lihat lagi
+                            </Link>
                             : null
                         : null
                 }

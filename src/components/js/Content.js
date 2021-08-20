@@ -14,13 +14,13 @@ function Content()
 {
     return (
         <Switch>
-            <Route exact path={Url( "/" )} >
+            <Route exact path={ Url( "/" ) } >
                 <Main />
             </Route>
-            <Route path={Url( "/kuiz/:idKuiz" )}>
+            <Route path={ Url( "/kuiz" ) }>
                 <KuizRouteController />
             </Route>
-            <PrivateRoute path={Url( "/guru" )} only="guru">
+            <PrivateRoute path={ Url( "/guru" ) } only="guru">
                 <GuruPageRouteController />
             </PrivateRoute>
             <Route path="*">

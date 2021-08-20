@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Box, BoxBody, BoxHeader } from "../../boxes/Box";
 import ErrorBox from "../../boxes/ErrorBox";
 import { UserContext } from "../../contexts/UserContext";
-import { KuizLeaderBoard } from "../../kuiz/Kuiz";
+import { KuizLeaderBoard } from "../../kuiz/KuizDetail";
 import TailSpinLoader from "../../TailSpinLoader";
 import { API, Url, useTitle } from "../../utils";
 
