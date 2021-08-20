@@ -1,10 +1,5 @@
 @import './colors';
 
-body
-{
-    background: linear-gradient( to left, rgba( $color1, .4 ), rgba( $color2, .4));
-}
-
 .box
 {
     overflow: hidden;

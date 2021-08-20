@@ -1,11 +1,21 @@
 @import "./components/css/mixins";
 @import "./components/css/colors";
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
 *
 {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+}
+
+body
+{
+	// background: linear-gradient( to left, rgba( $color1, .4 ), rgba( $color2, .4));
+	background-color: #fcf9fe;
+	font-family: "Nunito", Arial, Helvetica, sans-serif;
+
 }
 
 .box {
@@ -43,10 +53,6 @@ $colors: ($color1, $color2, $color3, $color4, $color5);
 }
 .bg5 {
 	background-color: $color5 !important;
-}
-
-body {
-	font-family: Arial, Helvetica, sans-serif;
 }
 
 li {
@@ -131,5 +137,23 @@ li {
 		&-container {
 			white-space: nowrap;
 		}
+	}
+}
+
+
+// set a tag default style
+a
+{
+	color: $color2;
+	text-decoration: none;
+
+	&:hover, &:focus
+	{
+		text-decoration: underline;
+		color: darken( $color2, 5);
+	}
+	&:visited
+	{
+		color: #9e9c9c;
 	}
 }

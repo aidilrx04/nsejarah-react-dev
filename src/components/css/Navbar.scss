@@ -1,0 +1,28 @@
+@import 'colors';
+@import 'mixins';
+
+nav
+{
+    @include flex( flex, space-between, center);
+    box-shadow: 0px 1px 10px #00000044;
+    margin-bottom: 10px;
+    padding: 0 10px;
+
+    .title a
+    {
+        // color: $color2;
+        font-size: 35px;
+        text-decoration: none;
+        color: $color2;
+    }
+
+    ul
+    {
+        @include flex( flex, center, center);
+        
+        li
+        {
+            padding: 0 15px;
+        }
+    }
+}
