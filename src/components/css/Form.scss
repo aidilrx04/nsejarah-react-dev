@@ -2,111 +2,117 @@
 @import "./mixins";
 
 form {
-	input, select, textarea {
-		&:not([type="radio"]):not([type="checkbox"]) {
-			display: block;
-			width: 100%;
-			padding: 10px;
-			margin: 0 auto;
-			border: 1px solid $color1;
-			border-radius: 5px;
+  input,
+  select,
+  textarea {
+    &:not([type="radio"]):not([type="checkbox"]) {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 0 auto;
+      border: 1px solid $color1;
+      border-radius: 5px;
 
-			&:not(:disabled) {
-				&:focus,
-				&:active {
-					// outline: 3px solid rgba( $color1, .1 );
-					outline: none;
-					box-shadow: 0 0 0 1px rgba($color1, 0.8);
-				}
-			}
-		}
-		&:disabled {
-			background: lightgrey;
-		}
-	}
+      &:not(:disabled) {
+        &:focus,
+        &:active {
+          // outline: 3px solid rgba( $color1, .1 );
+          outline: none;
+          box-shadow: 0 0 0 1px rgba($color1, 0.8);
+        }
+      }
+    }
+    &:disabled {
+      background: lightgrey;
+    }
+  }
 
-	.input-container {
-		margin: 7px 0;
-	}
-	.error {
-		// @include glinear(to top, red, white);
-		padding: 5px 10px;
-		background: #ff0000bb;
-		color: #fefefe;
-	}
+  textarea {
+    resize: vertical;
+  }
 
-	& button {
-		color: #fefefe;
-		@include background-colors(
-			$color2 !important,
-			darken($color2, 10),
-			darken($color2, 20)
-		);
-		// border: 2px solid darken( $color2, 10 );
-		border: 0;
-		margin: 0 2px;
+  .input-container {
+    margin: 7px 0;
+  }
+  .error {
+    // @include glinear(to top, red, white);
+    padding: 5px 10px;
+    background: #ff0000bb;
+    color: #fefefe;
+  }
 
-		&:hover, &:disabled {
-			filter: brightness(80%);
-		}
+  & button {
+    color: #fefefe;
+    @include background-colors(
+      $color2 !important,
+      darken($color2, 10),
+      darken($color2, 20)
+    );
+    // border: 2px solid darken( $color2, 10 );
+    border: 0;
+    margin: 0 2px;
 
-	}
+    &:hover,
+    &:disabled {
+      filter: brightness(80%);
+    }
+  }
 }
 
 .submit-btn {
-	padding: 5px 15px;
-	margin: 2px auto;
-	display: block;
-	font-size: 16px;
-	background: linear-gradient(to top, $color1, lighten($color1, 25));
-	color: #fefefe;
-	border: 1px solid $color1;
-	border-radius: 3px;
+  padding: 5px 15px;
+  margin: 2px auto;
+  display: block;
+  font-size: 16px;
+  background: linear-gradient(to top, $color1, lighten($color1, 25));
+  color: #fefefe;
+  border: 1px solid $color1;
+  border-radius: 3px;
 
-	@include background-colors(
-		linear-gradient(to top, $color1, lighten($color1, 25)) !important,
-		linear-gradient(to top, $color1, lighten($color1, 35)) !important,
-		$color1 !important
-	);
+  @include background-colors(
+    linear-gradient(to top, $color1, lighten($color1, 25)) !important,
+    linear-gradient(to top, $color1, lighten($color1, 35)) !important,
+    $color1 !important
+  );
 
-	// &:hover
-	// {
-	//     background: linear-gradient(to top, $color1, lighten( $color1, 35));
-	// }
-	// &:active, &:focus
-	// {
-	//     background: $color1;
-	// }
+  // &:hover
+  // {
+  //     background: linear-gradient(to top, $color1, lighten( $color1, 35));
+  // }
+  // &:active, &:focus
+  // {
+  //     background: $color1;
+  // }
 
-	&:not(:disabled) {
-		cursor: pointer;
-	}
+  &:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 .status {
-	&-success,
-	&-fail {
-		padding: 10px;
-		color: #ddd;
-		border-radius: 5px;
-		text-transform: capitalize;
-	}
+  &-success,
+  &-fail {
+    padding: 10px;
+    color: #ddd;
+    border-radius: 5px;
+    text-transform: capitalize;
+  }
 
-	&-success {
-		background: $color4;
-	}
+  &-success {
+    background: $color4;
+  }
 
-	&-fail {
-		background: $color3;
-	}
+  &-fail {
+    background: $color3;
+  }
 }
 
 .logout-btn {
-	@extend .submit-btn;
-	@include background-colors(
-		linear-gradient(to top, $color3, lighten($color3, 20)) !important,
-		linear-gradient(to top, $color3, lighten($color3, 25)) !important,
-		$color3 !important
-	);
-	border: 1px solid $color3;
+  @extend .submit-btn;
+  @include background-colors(
+    linear-gradient(to top, $color3, lighten($color3, 20)) !important,
+    linear-gradient(to top, $color3, lighten($color3, 25)) !important,
+    $color3 !important
+  );
+  border: 1px solid $color3;
 }

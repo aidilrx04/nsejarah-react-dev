@@ -1,0 +1,8 @@
+@import "colors";
+
+#footer {
+  padding: 10px 15px;
+  background: linear-gradient(to right, $color2, $color1);
+  color: #fefefe;
+  margin-top: 10px;
+}

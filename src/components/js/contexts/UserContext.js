@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { API, ErrorCallback } from "../utils";
+import { useHistory } from "react-router-dom";
+import { API, ErrorCallback, Url } from "../utils";
 
 export const UserContext = createContext();
 
@@ -37,15 +38,17 @@ export function getUser()
 export function UserContextProvider( props )
 {
 
-  let [user, setUser] = useState( () => { return getUser() || defaultUser; } );
+  let [ user, setUser ] = useState( () => { return getUser() || defaultUser; } );
+  const history = useHistory();
 
   useEffect( () =>
   {
     ErrorCallback.setCallback( 401, () =>
     {
       console.log( 'purge user' );
-      logout();
+      logout( false );
     } );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [] );
 
   async function login( nokp, katalaluan, jenis = 'murid' )
@@ -87,18 +90,23 @@ export function UserContextProvider( props )
     {
       localStorage.setItem( 'user', JSON.stringify( user ) );
     }
-  }, [user] );
+  }, [ user ] );
 
-  function logout()
+  function logout( redirectToLogin = true )
   {
     console.log( 'logout' );
     setUser( { ...defaultUser } );
     localStorage.removeItem( 'user' );
+
+    if ( redirectToLogin )
+    {
+      history.push( Url( '/login' ) );
+    }
   }
 
 
   return (
-    <UserContext.Provider value={{ ...user, setUser, login, logout }} {...props}>
+    <UserContext.Provider value={ { ...user, setUser, login, logout } } { ...props }>
     </UserContext.Provider>
   );
 }

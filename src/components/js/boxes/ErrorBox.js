@@ -5,12 +5,12 @@ export function ErrorBox({ children, ...rest })
 {
     useEffect(() => document.title = "RALAT", []);
     return (
-        <Box.Box {...rest}>
+        <Box.Box {...rest} className={` ${rest.className} error-box`}>
             <Box.BoxHeader>
                 <i className="fas fa-exclamation-triangle"/> Ralat
             </Box.BoxHeader>
             <Box.BoxBody style={{padding: '0px'}}>
-                <div style={{display: 'flex', minHeight: '400px', backgroundColor: '#ff000077', justifyContent: 'center', alignItems: 'center', textAlign: 'center', flexDirection: 'column', padding: '5px 10px'}}>
+                <div >
                     <div style={{width: '100%'}}>
                         <i className="fas fa-exclamation-triangle" style={{fontSize: '50px'}}/>
                     </div>

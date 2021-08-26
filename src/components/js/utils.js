@@ -337,6 +337,11 @@ export class API
 
         return resp;
     }
+
+    static async getStatistik( type = null )
+    {
+        return await this.request( `/api/statistic.php${type ? '?type=' + type : ''}` );
+    }
 }
 
 export function rand()

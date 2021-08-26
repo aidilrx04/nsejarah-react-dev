@@ -26,6 +26,7 @@ import KelasRouteController from './kelas/KelasRouteController';
 import KuizRouteController from './kuiz/KuizRouteController';
 
 import { Url, useTitle } from '../utils';
+import StatisticWeb from '../StatisticWeb';
 
 function GuruPageRouteController()
 {
@@ -33,14 +34,14 @@ function GuruPageRouteController()
 
     const user = useContext( UserContext );
     let { path } = useRouteMatch();
-    let [guru, setGuru] = useState( null );
+    let [ guru, setGuru ] = useState( null );
 
     useEffect( () =>
     {
         setGuru( user.data );
 
         return () => setGuru( null );
-    }, [user] );
+    }, [ user ] );
 
     // useEffect( () => console.log( path ) );
 
@@ -50,31 +51,31 @@ function GuruPageRouteController()
         <div id="mainContainer">
             <div id="main">
                 <Switch>
-                    <PrivateRoute exact path={( path )} only={'guru'}>
+                    <PrivateRoute exact path={ ( path ) } only={ 'guru' }>
                         <GuruIndex />
                     </PrivateRoute>
 
-                    <PrivateRoute path={( `${path}/guru` )} only="admin">
+                    <PrivateRoute path={ ( `${path}/guru` ) } only="admin">
                         <GuruRouteController />
                     </PrivateRoute>
 
-                    <PrivateRoute path={`${path}/murid`} only="admin">
+                    <PrivateRoute path={ `${path}/murid` } only="admin">
                         <MuridRouteController />
                     </PrivateRoute>
 
-                    <PrivateRoute path={`${path}/tingkatan`} only="admin">
+                    <PrivateRoute path={ `${path}/tingkatan` } only="admin">
                         <TingkatanRouteController />
                     </PrivateRoute>
 
-                    <PrivateRoute path={`${path}/kelas`} only="admin">
+                    <PrivateRoute path={ `${path}/kelas` } only="admin">
                         <KelasRouteController />
                     </PrivateRoute>
 
-                    <PrivateRoute path={`${path}/kuiz`} only="guru">
+                    <PrivateRoute path={ `${path}/kuiz` } only="guru">
                         <KuizRouteController />
                     </PrivateRoute>
 
-                    <PrivateRoute path={( `${path}/padam` )} only="guru">
+                    <PrivateRoute path={ ( `${path}/padam` ) } only="guru">
                         <Padam />
                     </PrivateRoute>
 
@@ -85,18 +86,19 @@ function GuruPageRouteController()
             </div>
             <div id="side">
                 <NavigasiBox>
-                    <Link to={Url( `${path}` )}> <i className="fas fa-home" /> Laman Utama</Link>
+                    <Link to={ Url( `${path}` ) }> <i className="fas fa-home" /> Laman Utama</Link>
                     {
                         guru.g_jenis === 'admin' &&
                         <>
-                            <Link to={Url( `${path}/guru` )}> <i className="fas fa-user-graduate" /> Pengurusan Guru</Link>
-                            <Link to={Url( `${path}/murid` )}> <i className="fas fa-users" /> Pengurusan Murid</Link>
-                            <Link to={Url( `${path}/tingkatan` )}> <i className="fas fa-list-ol" /> Pengurusan Tingkatan</Link>
+                            <Link to={ Url( `${path}/guru` ) }> <i className="fas fa-user-graduate" /> Pengurusan Guru</Link>
+                            <Link to={ Url( `${path}/murid` ) }> <i className="fas fa-users" /> Pengurusan Murid</Link>
+                            <Link to={ Url( `${path}/tingkatan` ) }> <i className="fas fa-list-ol" /> Pengurusan Tingkatan</Link>
                         </>
                     }
-                    <Link to={Url( `${path}/kuiz` )}> <i className="fas fa-book" /> Pengurusan Kuiz</Link>
+                    <Link to={ Url( `${path}/kuiz` ) }> <i className="fas fa-book" /> Pengurusan Kuiz</Link>
                 </NavigasiBox>
                 <UserBox />
+                <StatisticWeb />
             </div>
         </div >
 
@@ -111,7 +113,7 @@ function NavigasiBox( { active, children, ...rest } )
     {
         for ( let i = 0; i < children.length; i++ )
         {
-            let c = children[i];
+            let c = children[ i ];
             // console.log( c );
             if ( c.type === Fragment )
             {
@@ -124,7 +126,7 @@ function NavigasiBox( { active, children, ...rest } )
                     for ( let j = 0; j < cc.length; j++ )
                     {
                         // console.log( j );
-                        flatten.push( cc[j] );
+                        flatten.push( cc[ j ] );
                     }
                 }
                 else
@@ -153,8 +155,8 @@ function NavigasiBox( { active, children, ...rest } )
                     <tbody>
                         {
                             flatten.length > 0 &&
-                            flatten.map( c => c !== null && <tr key={flatten.indexOf( c )} >
-                                <td>{c}</td>
+                            flatten.map( c => c !== null && <tr key={ flatten.indexOf( c ) } >
+                                <td>{ c }</td>
                             </tr> )
                         }
                     </tbody>

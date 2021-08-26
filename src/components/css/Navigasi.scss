@@ -3,6 +3,7 @@
 
 .navigasi
 {
+
     a
     {
         display: block;
@@ -10,7 +11,7 @@
         text-decoration: none;
         font-weight: bold;
         @include background-colors(
-            #00000009 !important,
+            transparent,
             $color2 !important,
             darken( $color2, 10 ) !important,
             // #00000009
@@ -25,6 +26,8 @@
 
         @include transition( (background, color), 400ms, $state: 0);
 
+        border-radius: inherit;
+        
         i
         {
             width: 25px;

@@ -1,0 +1,19 @@
+.box.error-box {
+  background-color: #ff000077;
+
+  .box-header {
+    background-color: inherit;
+    color: #fefefe;
+    border-bottom-color: #fefefe;
+  }
+
+  .box-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    text-align: center;
+    padding: 5px 10px;
+  }
+}

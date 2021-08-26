@@ -7,6 +7,7 @@ import JawabKuiz from './JawabKuiz';
 import NavigasiBox from '../boxes/NavigasiBox';
 import UserBox from '../boxes/UserBox';
 import Ulangkaji from './Ulangkaji';
+import StatisticWeb from '../StatisticWeb';
 
 
 function KuizRouteController()
@@ -84,6 +85,7 @@ function KuizRouteController()
             <div id="side">
                 <NavigasiBox />
                 <UserBox />
+                <StatisticWeb />
             </div>
         </div >
     );

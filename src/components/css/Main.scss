@@ -1,18 +1,51 @@
-.kuizbox-container
+@import 'viewport';
+@import 'mixins';
+$gap: 10px;
+
+@include add_var(column, 1);
+
+// .kuiz-list in KuizList.js
+.kuizbox-container, .kuiz-list
 {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    $columns: 3;
+    display: grid;
+    margin: 0 auto;
+    grid-gap: $gap 10px;
+    grid-template-columns: repeat(var(--column), calc((100% - (#{$gap} * (var(--column) - 1)))/var(--column)));
+    // display: flex;
+    // flex-wrap: wrap;
+    // justify-content: center;
+
+    // .KuizBox
+    // {
+    //     flex: 6 !important;
+    //     min-width: 40%;
+    //     max-width: 50%;
+    //     margin: 4px;
+
+    //     animation: fadeIn .5s;
+    // }
 
     .KuizBox
     {
-        flex: 6 !important;
-        min-width: 40%;
-        max-width: 50%;
-        margin: 4px;
-
-        animation: fadeIn .5s;
+        width: 100%;
     }
+}
+
+@media screen and (min-width: $XSMALL) {
+    @include add_var(column, 2)
+}
+
+@media screen and (min-width: $MEDIUM)
+{
+    @include add_var(column, 2)
+}
+@media screen and (min-width: $BIG)
+{
+    @include add_var(column, 3)
+}
+@media screen and (min-width: $XBIG) {
+    @include add_var(column, 4)
 }
 
 @keyframes fadeIn

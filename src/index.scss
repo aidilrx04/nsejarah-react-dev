@@ -1,159 +1,225 @@
 @import "./components/css/mixins";
 @import "./components/css/colors";
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
 
-*
-{
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body
-{
-	// background: linear-gradient( to left, rgba( $color1, .4 ), rgba( $color2, .4));
-	background-color: #fcf9fe;
-	font-family: "Nunito", Arial, Helvetica, sans-serif;
-
+body {
+  // background: linear-gradient( to left, rgba( $color1, .4 ), rgba( $color2, .4));
+  background-color: #fdfdfd;
+  font-family: "Nunito", Arial, Helvetica, sans-serif;
 }
 
 .box {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 $colors: ($color1, $color2, $color3, $color4, $color5);
 .color1 {
-	color: $color1;
+  color: $color1;
 }
 .color2 {
-	color: $color2;
+  color: $color2;
 }
 .color3 {
-	color: $color3;
+  color: $color3;
 }
 .color4 {
-	color: $color4;
+  color: $color4;
 }
 .color5 {
-	color: $color5;
+  color: $color5;
 }
 
 .bg1 {
-	background-color: $color1 !important;
+  background-color: $color1 !important;
 }
 .bg2 {
-	background-color: $color2 !important;
+  background-color: $color2 !important;
 }
 .bg3 {
-	background-color: $color3 !important;
+  background-color: $color3 !important;
 }
 .bg4 {
-	background-color: $color4 !important;
+  background-color: $color4 !important;
 }
 .bg5 {
-	background-color: $color5 !important;
+  background-color: $color5 !important;
 }
 
 li {
-	list-style-type: none;
-	// padding-left: 15px;
+  list-style-type: none;
+  // padding-left: 15px;
 }
 
 #mainContainer {
-	display: flex;
-	flex: 12;
-	padding: 0 15px;
+  display: flex;
+  flex: 12;
+  padding: 0 15px;
+  justify-content: space-between;
 
-	& > * {
-		width: 100%;
-	}
+  & > * {
+    width: 100%;
+  }
 }
 
 #main {
-	flex: 8;
-	max-width: calc(100% / 12 * 8 - 5px);
-	padding-right: 5px;
+  flex: 8;
+  max-width: calc(100% / 12 * 8 - 5px);
+  padding-right: 5px;
 }
 
 #side {
-	flex: 4;
-	max-width: calc(100% / 12 * 4 - 5px);
-	padding-left: 5px;
+  flex: 4;
+  max-width: calc(100% / 12 * 4 - 5px);
+  padding-left: 5px;
 }
 
 .table {
-	border: 1px solid $color1;
-	width: 100%;
-	max-width: 100%;
-	border-collapse: collapse;
-	background-color: #00000005;
-	// overflow: hidden;
+  border: 1px solid $color1;
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  background-color: #00000005;
+  // overflow: hidden;
 
-	& td,
-	& th {
-		border: 1px solid darken($color2, 20);
-	}
+  & td,
+  & th {
+    border: 1px solid darken($color2, 20);
+  }
 
-	&-content {
-		& th {
-			padding: 10px;
-			background-color: $color2;
-			color: #fefefe;
-		}
-		& td {
-			padding: 5px 10px;
-		}
-	}
+  &-content {
+    & th {
+      padding: 10px;
+      background-color: $color2;
+      color: #fefefe;
+    }
+    & td {
+      padding: 5px 10px;
+    }
+  }
 
-	&.center {
-		& td,
-		& th {
-			text-align: center;
-		}
-	}
+  &.center {
+    & td,
+    & th {
+      text-align: center;
+    }
+  }
 
-	&-link {
-		text-decoration: none;
-		margin: 2px;
-		padding: 3px 5px;
-		color: #fefefe;
-		border-radius: 3px;
-		cursor: pointer;
-		white-space: nowrap;
-		background-color: darken($color2, 5);
+  &-link {
+    text-decoration: none;
+    margin: 2px;
+    padding: 3px 5px;
+    color: #fefefe;
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    background-color: darken($color2, 5);
 
-		&.success {
-			background-color: darken($color4, 5) !important;
-		}
-		&.danger {
-			background-color: $color3;
-		}
+    &.success {
+      background-color: darken($color4, 5) !important;
+    }
+    &.danger {
+      background-color: $color3;
+    }
 
-		&:hover {
-			filter: brightness(80%);
-		}
+    &:hover {
+      filter: brightness(80%);
+    }
 
-		&-container {
-			white-space: nowrap;
-		}
-	}
+    &-container {
+      white-space: nowrap;
+    }
+  }
 }
 
-
 // set a tag default style
-a
-{
-	color: $color2;
-	text-decoration: none;
+a {
+  color: $color2;
+  text-decoration: none;
 
-	&:hover, &:focus
-	{
-		text-decoration: underline;
-		color: darken( $color2, 5);
-	}
-	&:visited
-	{
-		color: #9e9c9c;
-	}
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+    // color: darken( $color2, 5);
+  }
+  // &:visited
+  // {
+  // 	color: #9e9c9c;
+  // }
+}
+
+// container
+
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+  width: 100%;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .container-sm,
+  .container {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .container-xl,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 1140px;
+  }
+}
+@media (min-width: 1400px) {
+  .container-xxl,
+  .container-xl,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 1320px;
+  }
+}
+
+@media (max-width: 768px) {
+  #mainContainer {
+    flex-direction: column;
+
+    #main,
+    #side {
+      flex: 12;
+      max-width: 100%;
+      padding: 0;
+    }
+  }
 }

@@ -73,3 +73,11 @@
         }
     }
 }
+
+@mixin add_var($varname, $value)
+{
+    :root
+    {
+        --#{$varname}: #{$value};
+    }
+}

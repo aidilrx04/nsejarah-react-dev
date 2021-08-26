@@ -9,30 +9,36 @@ import GuruPageRouteController from './guru/Guru';
 import PrivateRoute from './PrivateRoute';
 import ErrorBox from './boxes/ErrorBox';
 import { Url } from './utils';
+import Login from './Login';
 
 function Content()
 {
     return (
-        <Switch>
-            <Route exact path={ Url( "/" ) } >
-                <Main />
-            </Route>
-            <Route path={ Url( "/kuiz" ) }>
-                <KuizRouteController />
-            </Route>
-            <PrivateRoute path={ Url( "/guru" ) } only="guru">
-                <GuruPageRouteController />
-            </PrivateRoute>
-            <Route path="*">
-                <div id="mainContainer">
-                    <ErrorBox>
-                        404. Page Not Found!
-                        <br />
-                        <small>The page you requested is not found.</small>
-                    </ErrorBox>
-                </div>
-            </Route>
-        </Switch>
+        <div className="container">
+            <Switch>
+                <Route exact path={ Url( "/" ) } >
+                    <Main />
+                </Route>
+                <Route path={ Url( '/login' ) }>
+                    <Login />
+                </Route>
+                <Route path={ Url( "/kuiz" ) }>
+                    <KuizRouteController />
+                </Route>
+                <PrivateRoute path={ Url( "/guru" ) } only="guru">
+                    <GuruPageRouteController />
+                </PrivateRoute>
+                <Route path="*">
+                    <div id="mainContainer">
+                        <ErrorBox>
+                            404. Page Not Found!
+                            <br />
+                            <small>The page you requested is not found.</small>
+                        </ErrorBox>
+                    </div>
+                </Route>
+            </Switch>
+        </div>
     );
 }
 

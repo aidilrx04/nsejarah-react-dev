@@ -1,5 +1,6 @@
 @import 'colors';
 @import 'mixins';
+@import 'viewport';
 
 .kuiz-content
 {
@@ -31,7 +32,7 @@
             min-height: 100px;
             border-radius: 5px;
             margin: 10px;
-            padding: 10px 0;
+            padding: 10px 15px;
             background-color: darken( $color2, 10);
             text-align: center;
             height: 60%;
@@ -134,5 +135,25 @@
         {
             background-color: rgba( $color4, .8 ) !important;
         }
+    }
+}
+
+// override soalan
+#JawabKuiz .soalan
+{
+    .soalan-teks
+    {
+        height: 287px !important;
+        overflow: auto;
+    }
+}
+
+// responsive view
+@media (max-width: $MEDIUM)
+{
+    .soalan .soalan-teks .soalan-teks-gambar
+    {
+        width: 100% !important;
+        max-width: 100%;
     }
 }

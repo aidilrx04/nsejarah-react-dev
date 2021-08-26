@@ -43,10 +43,13 @@ function Verify()
 
 function Footer()
 {
+  const year = new Date().getFullYear();
   return (
     <div id="footer">
-      <h4>&copy; 2021, Aidil BlubBlub.</h4>
-      <p>Sebarang kerosakan yang terjadi bukan masalah saya</p>
+      <div className="container">
+        <h4>&copy; { year }, Aidil BlubBlub.</h4>
+        <p>Sebarang kerosakan yang terjadi bukan masalah saya</p>
+      </div>
     </div>
   );
 }

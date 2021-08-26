@@ -1,41 +1,90 @@
 @import './colors';
+@import 'mixins';
 
 .box
 {
-    overflow: hidden;
-}
+    background-color: #fefefe;
+    overflow-x: hidden;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 2px grey;
 
-.box-header
-{
-    & .header-btn
+    .box-header, .box-body
     {
-        background: transparent;
-        color: #fefefe;
-        // border-width: 2px;
-        border: none;
-        border-radius: 50%;
-        padding: 0;
-        transition: box-shadow .2s, background .2s;
-
-        &:hover
-        {
-            box-shadow: 0 0 0 -3px $color1, 0 0 0 10px $color1;
-            background: $color1;
-        }
-        &:focus
-        {
-            box-shadow: 0 0 0 -3px $color1, 0 0 0 10px $color1;
-            background: $color1;
-        }
+        padding: 5px 10px;
     }
 
-    .header-right
+    .box-header
     {
-        font-size: 1.17em;
+        // padding: 10px;
+        @include flex(flex, space-between, center);
+        color: $color2;
+        border-bottom: 2px solid $color2;
+    }
+    .box-body
+    {
+        overflow: auto;
     }
 }
 
-.box-body
-{
-    overflow: auto;
-}
+// .box
+// {
+//     overflow: hidden;	
+//     background-color: #fff;
+// 	box-shadow: 4px 4px 0px #270075;
+// }
+
+// .box-header, .box-body
+// {
+// 	padding: 5px 10px;
+// }
+
+// .box-header
+// {
+//     padding: 10px;
+// 	/* background-color: #4A00E0;     */
+// 	background: linear-gradient(to left, #8e2de2, #4a00e0);
+// 	display: flex;
+// 	justify-content: space-between;
+// 	align-items: center;
+
+//     h3
+//     {
+//         margin: 0;
+//         color: white;
+//         letter-spacing: 1px;
+//     }
+
+//     .header-btn
+//     {
+//         background: transparent;
+//         color: #fefefe;
+//         // border-width: 2px;
+//         border: none;
+//         border-radius: 50%;
+//         padding: 0;
+//         transition: box-shadow .2s, background .2s;
+
+//         &:hover
+//         {
+//             box-shadow: 0 0 0 -3px $color1, 0 0 0 10px $color1;
+//             background: $color1;
+//         }
+//         &:focus
+//         {
+//             box-shadow: 0 0 0 -3px $color1, 0 0 0 10px $color1;
+//             background: $color1;
+//         }
+//     }
+
+//     .header-right
+//     {
+//         font-size: 1.17em;
+//     }
+// }
+
+// .box-body
+// {
+// 	background-color: white;
+//     overflow: auto;
+// }

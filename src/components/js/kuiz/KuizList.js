@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Box, BoxBody, BoxHeader } from "../boxes/Box";
-import { API, Url, useTitle } from "../utils";
+import { API, useTitle } from "../utils";
+import KuizBox from "./KuizBox";
 
 export default function KuizList()
 {
@@ -100,16 +100,13 @@ function SearchForm()
                         isLoad
                             ? listKuiz.length > 0
                                 ? listKuiz.map( kuiz => (
-                                    <div key={ kuiz.kz_id }>
-                                        <h4 style={ { marginBottom: '5px' } }>
-                                            <Link to={ Url( `/kuiz/${kuiz.kz_id}` ) }> { kuiz.kz_nama } </Link>
-                                        </h4>
-                                        <p>
-                                            oleh <i className="fas fa-user" /> { kuiz.guru.g_nama } <i className="far fa-clock" /> { kuiz.kz_tarikh },
-                                            <i className="fas fa-question" /> { kuiz.soalan.length } soalan
-                                        </p>
-                                        <br />
-                                    </div>
+                                    <KuizBox
+                                        key={ kuiz.kz_id }
+                                        kuiz={ kuiz }
+                                        path={ kuiz.kz_id }
+                                        className="fadeIn"
+                                        style={ { '--order': listKuiz.indexOf( kuiz ) } }
+                                    />
                                 ) )
                                 : 'Tiada kuiz dijumpai'
                             : 'Memuat...'

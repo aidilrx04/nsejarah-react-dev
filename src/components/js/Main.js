@@ -7,6 +7,7 @@ import { API, useTitle, range, Url } from './utils';
 // import RandomImageBox from './boxes/RandomImageBox';
 import NavigasiBox from './boxes/NavigasiBox';
 import { Link, useRouteMatch } from 'react-router-dom';
+import StatisticWeb from './StatisticWeb';
 
 function Main()
 {
@@ -16,19 +17,20 @@ function Main()
         <>
             <div id="mainContainer">
                 <div id="main">
-                    <RandomKuizBox />
+                    {/* <RandomKuizBox /> */ }
                     <ListKuizBox />
                 </div>
                 <div id="side">
                     <NavigasiBox />
-                    <UserBox redir={ true } />
+                    <UserBox />
+                    <StatisticWeb />
                 </div>
             </div>
         </>
     );
 }
 
-function RandomKuizBox()
+/* function RandomKuizBox()
 {
 
     let [ senaraiKuiz, setSenaraiKuiz ] = useState( [] );
@@ -101,7 +103,7 @@ function RandomKuizBox()
             </BoxBody>
         </Box>
     );
-}
+} */
 
 function ListKuizBox()
 {
@@ -205,7 +207,14 @@ function ListKuizBox()
                     {
                         senaraiKuiz.length > 0
                             ? senaraiKuiz.map( kuiz => (
-                                <KuizBox key={ kuiz.kz_id } path={ kuiz.kz_id } kuiz={ kuiz } />
+                                <KuizBox
+                                    key={ kuiz.kz_id }
+                                    path={ kuiz.kz_id }
+                                    kuiz={ kuiz }
+                                    style={ { '--order': senaraiKuiz.indexOf( kuiz ) } }
+                                    className="fadeIn"
+                                />
+
                             ) )
                             : loaded ? 'Tiada kuiz dijumpai' : ''
                     }
@@ -263,4 +272,4 @@ function ListKuizBox()
 
 
 
-export default Main;
+export default Main;;

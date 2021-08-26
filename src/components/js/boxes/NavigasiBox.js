@@ -24,7 +24,12 @@ export function NavigasiBox()
                     <tbody>
                         <tr>
                             <td>
-                                <Link to={Url( '/' )}> <i className="fas fa-home" /> Laman Utama</Link>
+                                <Link to={ Url( '/' ) }> <i className="fas fa-home" /> Laman Utama</Link>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Link to={ Url( '/kuiz' ) }><i className="fas fa-search" /> Cari Kuiz</Link>
                             </td>
                         </tr>
                         {
@@ -32,7 +37,7 @@ export function NavigasiBox()
                                 ? <>
                                     <tr>
                                         <td>
-                                            <Link to={Url( "#" )} onClick={e => handleLogout( e )}> <i className="fas fa-sign-out-alt" /> Log Keluar </Link>
+                                            <Link to={ Url( "#" ) } onClick={ e => handleLogout( e ) }> <i className="fas fa-sign-out-alt" /> Log Keluar </Link>
                                         </td>
                                     </tr>
                                     {
@@ -40,7 +45,7 @@ export function NavigasiBox()
                                         && (
                                             <tr>
                                                 <td>
-                                                    <Link to={Url( '/guru' )}> <i className="fas fa-chalkboard-teacher" /> Laman Guru </Link>
+                                                    <Link to={ Url( '/guru' ) }> <i className="fas fa-chalkboard-teacher" /> Laman Guru </Link>
                                                 </td>
                                             </tr>
                                         )
@@ -48,18 +53,16 @@ export function NavigasiBox()
                                 </>
                                 : <tr>
                                     <td>
-                                        <Link to={Url( '/' )} onClick={( e ) =>
-                                        {
-                                            e.preventDefault();
-                                            return false;
-                                        }}> <i className="fas fa-sign-in-alt" /> Log Masuk </Link>
+                                        <Link to={ Url( '/login' ) }>
+                                            <i className="fas fa-sign-in-alt" /> Log Masuk
+                                        </Link>
                                     </td>
                                 </tr>
                         }
                     </tbody>
                 </table>
             </BoxBody>
-            {/* <LoginModalBox cond={showModal}/> */}
+            {/* <LoginModalBox cond={showModal}/> */ }
         </Box>
     );
 }

@@ -270,10 +270,7 @@ function DisplayKuiz( { kuizObj } )
     return (
         <Box id="JawabKuiz">
             <BoxHeader right={
-                <div className="status" style={ {
-                    display: 'flex',
-                    color: '#fefefe'
-                } }>
+                <div className="status">
                     <span className="jumlah-soalan" style={ { margin: '0 5px' } }>
                         <i className="fas fa-question" /> { kuiz.soalan.length }
                     </span>

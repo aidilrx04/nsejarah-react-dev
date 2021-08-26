@@ -3,6 +3,11 @@
 
 #JawabKuiz
 {
+    .status
+    {
+        display: flex;
+        color: $color2;
+    }
     .kuiz-content
     {
         // min-height: 400px;
@@ -108,6 +113,14 @@
             }
         }
     }
+
+    // ? override Soalan
+    .soalan .soalan-teks
+    {
+        height: 287px !important;
+        overflow: auto;
+    }
+
 }
 
 .shake
