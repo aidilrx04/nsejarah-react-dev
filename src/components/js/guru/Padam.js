@@ -4,7 +4,7 @@ import { Box, BoxBody, BoxHeader } from "../boxes/Box";
 import { UserContext } from "../contexts/UserContext";
 import { API, Url } from "../utils";
 
-function Padam ()
+function Padam()
 {
 
     let [ urlParams, setUrlParams ] = useState( new URLSearchParams( window.location.search ) );
@@ -64,16 +64,11 @@ function Padam ()
     }, [ data, user, history, urlParams ] );
 
     return (
-        <Box>
+        <Box className="error-box">
             <BoxHeader>
                 <i className="fas fa-trash-alt" /> Memadam....
             </BoxHeader>
             <BoxBody style={ {
-                minHeight: '300px',
-                backgroundColor: '#ff000088',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
                 fontSize: '1.8em'
             } }>
                 {/* <Spinner text="Memadam..." spin={true} /> */ }

@@ -31,8 +31,8 @@ export default function StatisticWeb()
                 {
                     statistic
                         ? Object.keys( statistic ).map( key => (
-                            <p key={ key }>
-                                { key }: { statistic[ key ] }
+                            <p key={ key } style={ { textTransform: 'capitalize' } }>
+                                <b>{ key }</b>: { statistic[ key ] }
                             </p>
                         ) )
                         : ''

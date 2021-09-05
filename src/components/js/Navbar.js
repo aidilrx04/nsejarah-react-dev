@@ -58,7 +58,7 @@ function Navbar()
                                         : ''
                                 }
                                 {
-                                    user.data.g_jenis === 'admin'
+                                    user.data.g_jenis === 'guru'
                                         ? <li className="dropdown">
                                             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
                                             <a href="#" className="toggler">Guru <i className="fas fa-caret-down" /></a>

@@ -57,11 +57,11 @@ export default function Login()
                     jenis: 'murid'
                 } );
 
-                setTimeout( () =>
-                {
-                    history.push( Url( '/' ), { from: history.location } );
+                // setTimeout( () =>
+                // {
+                history.push( Url( '/' ), { from: history.location } );
 
-                }, 2000 );
+                // }, 2000 );
             }
             else
             {

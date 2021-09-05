@@ -11,7 +11,7 @@ function UserBox()
 {
     const user = useContext( UserContext );
     const type = user.jenis;
-    const title = 'Maklumat ' + ( type === 'murid' ? 'Murid' : user.data.g_jenis === 'Guru' ? 'Guru' : 'Admin' );
+    const title = 'Maklumat ' + ( type === 'murid' ? 'Murid' : user.data.g_jenis === 'guru' ? 'Guru' : 'Admin' );
     const iconType = user.jenis === 'murid' ? 'fa-user-group' : 'fa-user-graduate';
 
     return (

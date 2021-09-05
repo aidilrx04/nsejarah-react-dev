@@ -1,146 +1,121 @@
-@import 'colors';
-@import 'mixins';
-@import 'viewport';
+@import "colors";
+@import "mixins";
+@import "viewport";
 
-nav
-{
-    box-shadow: 0px 1px 10px #00000044;
-    margin-bottom: 10px;
+nav {
+  box-shadow: 0px 1px 10px #00000044;
+  margin-bottom: 10px;
+  z-index: 20;
 
-    .container
-    {
-    @include flex( flex, space-between, center);
+  .container {
+    @include flex(flex, space-between, center);
+  }
 
+  .title a {
+    // color: $color2;
+    font-size: 35px;
+    text-decoration: none;
+    color: $color2;
+  }
+
+  .nav-dropdown {
+    position: relative;
+    display: inline-block;
+    & > .nav-toggler {
+      @include colors($color2, #fefefe, #fefefe, #fefefe);
+      @include background-colors(transparent, $color2, $color2, $color2);
+      border-color: $color2;
     }
 
-    .title a
-    {
-        // color: $color2;
-        font-size: 35px;
-        text-decoration: none;
+    & > .nav-dropdown-content {
+      border-radius: 5px;
+    }
+  }
+
+  ul {
+    @include flex(flex, center, center);
+
+    li {
+      display: block;
+      margin: 0 10px;
+      padding: calc((10px + 10px + 4px) / 2) 0;
+
+      a:visited {
+        // prevent :visited from override
         color: $color2;
+      }
     }
-
-    .nav-dropdown
-    {
-
-        position: relative;
-        display: inline-block;
-        & > .nav-toggler
-        {
-            @include colors($color2, #fefefe, #fefefe, #fefefe);
-            @include background-colors(transparent, $color2, $color2, $color2);
-            border-color: $color2;
-        }
-
-        & > .nav-dropdown-content
-        {
-            border-radius: 5px;
-        }
-
-    }
-
-    ul
-    {
-        @include flex( flex, center, center);
-        
-        li
-        {
-            display: block;
-            margin: 0 10px;
-            padding: calc((10px + 10px + 4px) / 2) 0;
-            
-            a:visited
-            {
-                // prevent :visited from override
-                color: $color2; 
-            }
-        }
-    }
+  }
 }
 
 // dropdown
-.dropdown
-{
-    position: relative;
+.dropdown {
+  position: relative;
 
-    .dropdown-content
-    {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: calc(100% + 3px);
-        padding: 10px 15px;
-        min-width: 220px;
-        max-width: 100%;
-        box-shadow: 0 0 2px grey;
-        border-radius: 5px;
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 3px);
+    padding: 10px 15px;
+    min-width: 220px;
+    max-width: 100%;
+    box-shadow: 0 0 2px grey;
+    border-radius: 5px;
 
-        background-color: #fefefe;
-        z-index: 5;
+    background-color: #fefefe;
+    z-index: 5;
 
-        .dropdown-content-item
-        {
-            display: inline-block;
-            padding: 5px 0;
-        }
+    .dropdown-content-item {
+      display: inline-block;
+      padding: 5px 0;
     }
+  }
 
-    &:focus, &:active, &:focus-within
-    {
-        .dropdown-content
-        {
-            display: block;
-        }
+  &:focus,
+  &:active,
+  &:focus-within {
+    .dropdown-content {
+      display: block;
     }
+  }
 }
 
-@media (max-width: $MEDIUM)
-{
-    .nav-dropdown
-    {
-        & > .nav-toggler
-        {
-            display: block;
-        }
-    
-        & > .nav-dropdown-content
-        {
-            display: none;
-            position: absolute;
-            top: calc( 100% + 5px);
-            right: 0;
-            padding: 10px;
-            min-width: 200px;
-            max-width: 100vw;
-            background-color: #fefefe;
-            box-shadow: 0 0 3px grey;
-            z-index: 100;
-        }
+@media (max-width: $MEDIUM) {
+  .nav-dropdown {
+    & > .nav-toggler {
+      display: block;
     }
 
-    .nav-dropdown:focus-within .nav-dropdown-content
-    {
-        display: block;
+    & > .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      top: calc(100% + 5px);
+      right: 0;
+      padding: 10px;
+      min-width: 200px;
+      max-width: 100vw;
+      background-color: #fefefe;
+      box-shadow: 0 0 3px grey;
+      z-index: 100;
     }
+  }
 
-    .dropdown
-    {
-        .dropdown-content
-        {
-            position: relative;
-        }
+  .nav-dropdown:focus-within .nav-dropdown-content {
+    display: block;
+  }
+
+  .dropdown {
+    .dropdown-content {
+      position: relative;
     }
+  }
 }
 
-@media (min-width: $MEDIUM)
-{
-    .nav-dropdown
-    {
-        .nav-toggler
-        {
-            display: none;
-        }
+@media (min-width: $MEDIUM) {
+  .nav-dropdown {
+    .nav-toggler {
+      display: none;
     }
+  }
 }
-
