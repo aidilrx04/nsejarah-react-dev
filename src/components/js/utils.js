@@ -432,37 +432,39 @@ export function usePaging( initial = {} )
     function displayPaging()
     {
         return (
-            <div className="paging">
-                {
-                    true &&
-                    <button
-                        className="prev-page"
-                        disabled={ paging.page === 1 || paging.loading }
-                        onClick={ () => setPaging( p => ( { ...p, loading: true, page: p.page - 1 } ) ) }
-                    >
-                        &lt; Sebelumnya
-                    </button>
+            ( paging.page !== 1 ) || ( paging.has_next )
+                ? <div className="paging">
+                    {
+                        true &&
+                        <button
+                            className="prev-page"
+                            disabled={ paging.page === 1 || paging.loading }
+                            onClick={ () => setPaging( p => ( { ...p, loading: true, page: p.page - 1 } ) ) }
+                        >
+                            &lt; Sebelumnya
+                        </button>
 
-                }
+                    }
 
-                <span className={ `current-page show` }>
-                    { paging.page }
-                </span>
-                {
-                    true &&
-                    <button
-                        className="next-page"
-                        disabled={ !paging.has_next || paging.loading }
-                        onClick={ () =>
-                        {
-                            setPaging( p => ( { ...p, loading: true, page: p.page + 1 } ) );
-                        } }
-                    >
-                        Seterusnya &gt;
-                    </button>
-                }
+                    <span className={ `current-page show` }>
+                        { paging.page }
+                    </span>
+                    {
+                        true &&
+                        <button
+                            className="next-page"
+                            disabled={ !paging.has_next || paging.loading }
+                            onClick={ () =>
+                            {
+                                setPaging( p => ( { ...p, loading: true, page: p.page + 1 } ) );
+                            } }
+                        >
+                            Seterusnya &gt;
+                        </button>
+                    }
 
-            </div>
+                </div>
+                : null
         );
     }
 
