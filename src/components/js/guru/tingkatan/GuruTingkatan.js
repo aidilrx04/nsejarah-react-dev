@@ -20,10 +20,10 @@ export function GuruTingkatan()
     useTitle( 'Pengurusan Tingkatan & Kelas' );
 
     let { url } = useRouteMatch();
-    let [senaraiTingkatan, setSenaraiTingkatan] = useState( [] );
-    let [senaraiKelas, setSenaraiKelas] = useState( [] );
-    const [tPaging, setTPaging, displayTPaging] = usePaging(); // T = Tingkatan
-    const [kPaging, setKPaging, displayKPaging] = usePaging(); // K = Kelas
+    let [ senaraiTingkatan, setSenaraiTingkatan ] = useState( [] );
+    let [ senaraiKelas, setSenaraiKelas ] = useState( [] );
+    const [ tPaging, setTPaging, displayTPaging ] = usePaging(); // T = Tingkatan
+    const [ kPaging, setKPaging, displayKPaging ] = usePaging(); // K = Kelas
 
     useEffect( () =>
     {
@@ -57,7 +57,7 @@ export function GuruTingkatan()
 
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tPaging] );
+    }, [ tPaging ] );
 
     useEffect( () =>
     {
@@ -78,7 +78,7 @@ export function GuruTingkatan()
             } );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [kPaging] );
+    }, [ kPaging ] );
 
     return (
         <>
@@ -91,6 +91,7 @@ export function GuruTingkatan()
                     <table className="table table-content center">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Tingkatan</th>
                                 <th>Nama Tingkatan</th>
                                 <th>Guru</th>
@@ -102,28 +103,29 @@ export function GuruTingkatan()
                                 !tPaging.loading
                                     ? senaraiTingkatan.length > 0
                                         ? senaraiTingkatan.map( ting => (
-                                            <tr key={senaraiTingkatan.indexOf( ting )}>
-                                                <td> {ting.kt_ting} </td>
-                                                <td> {ting.kelas.k_nama} </td>
-                                                <td> <Link to={Url( `/guru/guru/${ting.guru.g_id}` )} className="table-link">{ting.guru.g_nama}</Link> </td>
+                                            <tr key={ senaraiTingkatan.indexOf( ting ) }>
+                                                <td> { ting.kt_id } </td>
+                                                <td> { ting.kt_ting } </td>
+                                                <td> { ting.kelas.k_nama } </td>
+                                                <td> <Link to={ Url( `/guru/guru/${ting.guru.g_id}` ) } className="table-link">{ ting.guru.g_nama }</Link> </td>
                                                 <td className="table-link-container">
                                                     <Link
                                                         className="table-link"
-                                                        to={Url( `${url}/${ting.kt_id}` )}
+                                                        to={ Url( `${url}/${ting.kt_id}` ) }
                                                         title="Maklumat Tingkatan"
                                                     >
                                                         <i className="fas fa-info-circle" />
                                                     </Link>
                                                     <Link
                                                         className="success table-link"
-                                                        to={Url( `${url}/${ting.kt_id}/kemaskini` )}
+                                                        to={ Url( `${url}/${ting.kt_id}/kemaskini` ) }
                                                         title="Kemaskini Tingkatan"
                                                     >
                                                         <i className="fas fa-pen" />
                                                     </Link>
                                                     <Link
                                                         className="danger table-link"
-                                                        to={Url( `/guru/padam?table=kelas_tingkatan&col=kt_id&val=${ting.kt_id}&redir=${url}` )}
+                                                        to={ Url( `/guru/padam?table=kelas_tingkatan&col=kt_id&val=${ting.kt_id}&redir=${url}` ) }
                                                         title="Padam Tingkatan"
                                                     >
                                                         <i className="fas fa-trash-alt" />
@@ -133,7 +135,7 @@ export function GuruTingkatan()
                                         ) )
                                         : <tr><td colSpan="99999">Tiada data dijumpai</td></tr>
                                     : range( tPaging.limit ).map( n => (
-                                        <tr key={n}>
+                                        <tr key={ n }>
                                             <td><Skeleton /></td>
                                             <td><Skeleton /></td>
                                             <td><Skeleton /></td>
@@ -146,7 +148,7 @@ export function GuruTingkatan()
                     {
                         displayTPaging()
                     }
-                    <Link to={Url( `${url}/baru` )} className="link bg5" style={{ marginTop: '10px' }}>
+                    <Link to={ Url( `${url}/baru` ) } className="link bg5" style={ { marginTop: '10px' } }>
                         <i className="fas fa-plus" /> Tambah Tingkatan
                     </Link>
                 </Box.BoxBody>
@@ -170,19 +172,19 @@ export function GuruTingkatan()
                                 !kPaging.loading
                                     ? senaraiKelas.length > 0
                                         ? senaraiKelas.map( kelas => (
-                                            <tr key={kelas.k_id}>
-                                                <td> {kelas.k_nama} </td>
+                                            <tr key={ kelas.k_id }>
+                                                <td> { kelas.k_nama } </td>
                                                 <td className="table-link-container">
                                                     <Link
                                                         className="success table-link"
-                                                        to={Url( `/guru/kelas/${kelas.k_id}/kemaskini` )}
+                                                        to={ Url( `/guru/kelas/${kelas.k_id}/kemaskini` ) }
                                                         title="Kemaskini Kelas"
                                                     >
                                                         <i className="fas fa-pen" />
                                                     </Link>
                                                     <Link
                                                         className="danger table-link"
-                                                        to={Url( `/guru/padam?table=kelas&col=k_id&val=${kelas.k_id}&redir=${url}` )}
+                                                        to={ Url( `/guru/padam?table=kelas&col=k_id&val=${kelas.k_id}&redir=${url}` ) }
                                                         title="Padam Kelas"
                                                     >
                                                         <i className="fas fa-trash-alt" />
@@ -192,7 +194,7 @@ export function GuruTingkatan()
                                         ) )
                                         : <tr><td colSpan="9999">Tiada data dijumpai</td></tr>
                                     : range( kPaging.limit ).map( n => (
-                                        <tr key={n}>
+                                        <tr key={ n }>
                                             <td><Skeleton /></td>
                                             <td><Skeleton /></td>
                                         </tr>
@@ -206,7 +208,7 @@ export function GuruTingkatan()
                         displayKPaging()
                     }
 
-                    <Link to={Url( `/guru/kelas/baru` )} className="link bg5" style={{ marginTop: '10px' }}>
+                    <Link to={ Url( `/guru/kelas/baru` ) } className="link bg5" style={ { marginTop: '10px' } }>
                         <i className="fas fa-plus" /> Tambah Kelas
                     </Link>
                 </Box.BoxBody>

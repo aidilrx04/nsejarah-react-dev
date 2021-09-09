@@ -16,8 +16,8 @@ export function GuruMurid( { user, ...rest } )
 {
     useTitle( 'Pengurusan Murid' );
 
-    let [senaraiMurid, setSenaraiMurid] = useState( [] );
-    const [paging, setPaging, displayPaging] = usePaging( { limit: 10 } );
+    let [ senaraiMurid, setSenaraiMurid ] = useState( [] );
+    const [ paging, setPaging, displayPaging ] = usePaging( { limit: 10 } );
     let { url } = useRouteMatch();
 
     useEffect( () =>
@@ -58,7 +58,7 @@ export function GuruMurid( { user, ...rest } )
             } );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [paging] );
+    }, [ paging ] );
 
     return (
         <Box.Box>
@@ -81,30 +81,30 @@ export function GuruMurid( { user, ...rest } )
                         {
                             !paging.loading
                                 ? senaraiMurid.length > 0 ? senaraiMurid.map( murid => (
-                                    <tr key={senaraiMurid.indexOf( murid )} >
-                                        <td> {murid.m_nama} </td>
-                                        <td> {murid.m_nokp} </td>
-                                        <td> {murid.m_katalaluan} </td>
+                                    <tr key={ senaraiMurid.indexOf( murid ) } >
+                                        <td> { murid.m_nama } </td>
+                                        <td> { murid.m_nokp } </td>
+                                        <td> { murid.m_katalaluan } </td>
                                         <td>
-                                            <Link to={Url( `/guru/tingkatan/${murid.kelas.kt_id}` )} className="table-link">
-                                                {murid.kelas.kt_ting} {murid.kelas.kelas.k_nama}
+                                            <Link to={ Url( `/guru/tingkatan/${murid.kelas.kt_id}` ) } className="table-link">
+                                                { murid.kelas.kt_ting } { murid.kelas.kelas.k_nama }
                                             </Link>
                                         </td>
                                         <td className="table-link-container">
                                             <Link
-                                                className="table-link" to={Url( `${url}/${murid.m_id}` )}
+                                                className="table-link" to={ Url( `${url}/${murid.m_id}` ) }
                                                 title="Maklumat Murid"
                                             >
                                                 <i className="fas fa-info-circle" />
                                             </Link>
                                             <Link
-                                                className="success table-link" to={Url( `${url}/${murid.m_id}/kemaskini` )}
+                                                className="success table-link" to={ Url( `${url}/${murid.m_id}/kemaskini` ) }
                                                 title="Kemaskini Murid"
                                             >
                                                 <i className="fas fa-pen" />
                                             </Link>
                                             <Link
-                                                className="danger table-link" to={Url( `/guru/padam?table=murid&col=m_id&val=${murid.m_id}&redir=${url}` )}
+                                                className="danger table-link" to={ Url( `/guru/padam?table=murid&col=m_id&val=${murid.m_id}&redir=${url}` ) }
                                                 title="Padam Murid"
                                             >
                                                 <i className="fas fa-trash-alt" />
@@ -114,7 +114,7 @@ export function GuruMurid( { user, ...rest } )
                                     </tr>
                                 ) ) : <tr><td colSpan="9999">Tiada data murid dijumpai</td></tr>
                                 : range( paging.limit ).map( n => (
-                                    <tr key={n}>
+                                    <tr key={ n }>
                                         <td><Skeleton /></td>
                                         <td><Skeleton /></td>
                                         <td><Skeleton /></td>
@@ -128,12 +128,17 @@ export function GuruMurid( { user, ...rest } )
                 {
                     displayPaging()
                 }
-                <Link className="link bg5" style={{ marginTop: '10px' }} to={Url( `${url}/baru` )}>
-                    <i className="fas fa-plus" /> Tambah Murid
-                </Link>
+                <div style={ { marginTop: '10px' } }>
+                    <Link className="link bg5" to={ Url( `${url}/baru` ) }>
+                        <i className="fas fa-plus" /> Tambah Murid
+                    </Link>
+                    <Link className="link bg5" to={ Url( `${url}/import` ) }>
+                        <i className="fas fa-upload" /> Import Data Murid
+                    </Link>
+                </div>
             </Box.BoxBody>
 
-        </Box.Box>
+        </Box.Box >
     );
 }
 
