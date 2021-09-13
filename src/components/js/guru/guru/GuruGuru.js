@@ -18,8 +18,8 @@ export function GuruGuru()
     useTitle( 'Pengurusan Guru' );
 
     let { url } = useRouteMatch();
-    let [senaraiGuru, setSenaraiGuru] = useState( [] );
-    const [paging, setPaging, displayPaging] = usePaging();
+    let [ senaraiGuru, setSenaraiGuru ] = useState( [] );
+    const [ paging, setPaging, displayPaging ] = usePaging();
 
     useEffect( () =>
     {
@@ -53,7 +53,7 @@ export function GuruGuru()
             } );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [paging] );
+    }, [ paging ] );
 
     return (
         <Box.Box>
@@ -80,29 +80,29 @@ export function GuruGuru()
                             ( !paging.loading )
                                 ? senaraiGuru.length > 0
                                     ? senaraiGuru.map( guru => (
-                                        <tr key={senaraiGuru.indexOf( guru )}>
-                                            <td> {guru.g_nokp} </td>
-                                            <td> {guru.g_nama} </td>
-                                            <td> {guru.g_katalaluan} </td>
-                                            <td> {guru.g_jenis} </td>
+                                        <tr key={ senaraiGuru.indexOf( guru ) }>
+                                            <td> { guru.g_nokp } </td>
+                                            <td> { guru.g_nama } </td>
+                                            <td> { guru.g_katalaluan } </td>
+                                            <td> { guru.g_jenis } </td>
                                             <td className="table-link-container">
                                                 <Link
                                                     className="table-link"
-                                                    to={Url( `${url}/${guru.g_id}` )}
+                                                    to={ Url( `${url}/${guru.g_id}` ) }
                                                     title="Maklumat Guru"
                                                 >
                                                     <i className="fas fa-info-circle" />
                                                 </Link>
                                                 <Link
                                                     className="success table-link"
-                                                    to={Url( `${url}/${guru.g_id}/kemaskini` )}
+                                                    to={ Url( `${url}/${guru.g_id}/kemaskini` ) }
                                                     title="Kemaskini Guru"
                                                 >
                                                     <i className="fas fa-pen" />
                                                 </Link>
                                                 <Link
                                                     className="danger table-link"
-                                                    to={Url( `/guru/padam?table=guru&col=g_id&val=${guru.g_id}&redir=${url}` )}
+                                                    to={ Url( `/guru/padam?table=guru&col=g_id&val=${guru.g_id}&redir=${url}` ) }
                                                     title="Padam Guru"
                                                 >
                                                     <i className="fas fa-trash-alt" />
@@ -119,7 +119,7 @@ export function GuruGuru()
                                 : <>
                                     {
                                         range( paging.limit ).map( n => (
-                                            <tr key={n}>
+                                            <tr key={ n }>
                                                 <td><Skeleton /></td>
                                                 <td><Skeleton /></td>
                                                 <td><Skeleton /></td>
@@ -135,7 +135,10 @@ export function GuruGuru()
                 {
                     displayPaging()
                 }
-                <Link to={Url( `${url}/baru` )} className="link bg5" style={{ marginTop: '10px' }}> <i className="fas fa-plus" /> Tambah Guru </Link>
+                <div style={ { marginTop: '10px' } }>
+                    <Link to={ Url( `${url}/baru` ) } className="link bg5"> <i className="fas fa-plus" /> Tambah Guru </Link>
+                    <Link to={ Url( `${url}/import` ) } className="link bg5" > <i className="fas fa-upload" /> Import Data Guru </Link>
+                </div>
             </Box.BoxBody>
         </Box.Box >
     );

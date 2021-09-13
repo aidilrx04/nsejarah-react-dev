@@ -1,178 +1,307 @@
-import { useContext, useEffect, useState } from "react/cjs/react.development";
+import { useState, useEffect, useContext } from "react";
+import { Box, BoxBody, BoxHeader } from "../boxes/Box";
 import { UserContext } from "../contexts/UserContext";
 import Papa from 'papaparse';
-import { API, rand } from '../utils';
+import { API, rand } from "../utils";
+import ScrollToBottom from 'react-scroll-to-bottom';
+import { css } from 'glamor';
 
-export const STATUS = {
-    NOT_START: 0,
-    FILE_UPLOAD: 1,
-    UPLOADING: 2,
-    CANCELLED: 3,
-    DONE: 4
-};
 
-const defaultStatus = {
-    status: STATUS.NOT_START,
-    logs: [],
-    file: null
-};
-export default function ImportDataWrapper( { convert, jenis, children } )
+const validJenis = [ 'murid', 'kelas', 'tingkatan', 'guru' ]; // kuiz is not supported
+
+const defaultConvertFunc = () =>
 {
+    return Error( 'Invalid convert function' );
+};
 
+export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc, children } )
+{
+    // prop validation
+    if ( typeof jenis !== 'string' ) throw Error( 'Invalid jenis' );
+    if ( validJenis.indexOf( jenis ) === -1 ) throw Error( 'Invalid jenis' );
 
-    const [ file, setFile ] = useState( null );
-    const [ status, setStatus ] = useState( () => defaultStatus );
     const user = useContext( UserContext );
+    const [ csvFile, setCsvFile ] = useState( null );
+    const [ isUpload, setIsUpload ] = useState( false );
     const [ isCancel, setIsCancel ] = useState( false );
-    const validJenis = [ 'murid', 'kelas', 'tingkatan', 'guru' ]; // kuiz is not supported
-
-
-    // validate jenis
-    if ( validJenis.indexOf( jenis ) < 0 ) throw Error( `Invalid Jenis. '${jenis}' is not a valid jenis` );
-
-    // valid convert func
-    if ( typeof convert !== 'function' ) throw Error( 'Invalid convert function. `convert` property must be a function' );
+    const [ isDone, setIsDone ] = useState( false );
+    const [ logs, setLogs ] = useState( [] );
 
     useEffect( () =>
     {
         return () =>
         {
-            setFile( null );
-            setStatus( defaultStatus );
-            setIsCancel( false );
+            setIsCancel( true );
+            setCsvFile( null );
+            setIsUpload( false );
+            setIsDone( false );
+            setLogs( [] );
         };
     }, [] );
 
-    function addLog( msg, type = 'message' )
-    {
-        const date = new Date();
-        const now = `${date.getFullYear()}/${date.getMonth()}/${date.getDay()} ${date.getHours()}:${date.getSeconds()} ${date.getMilliseconds()}`;
-        setStatus( ps => ( { ...ps, logs: [ ...ps.logs, [ msg, type, now ] ] } ) );
-    }
-
-    function upload( file )
-    {
-        updateStatus( STATUS.FILE_UPLOAD, file );
-        setFile( file );
-    }
-
-    function updateStatus( status, file = undefined )
-    {
-        setStatus( ps => ( { ...ps, status: status, file: file ? file : file === undefined ? ps.file : file } ) );
-    }
-
-    function reset()
-    {
-        setStatus( defaultStatus );
-        setIsCancel( false );
-        setFile( null );
-    }
-
-    function cancel()
-    {
-        updateStatus( STATUS.CANCELLED );
-        addLog( "operation cancelled" );
-        setIsCancel( true );
-    }
-
     useEffect( () =>
     {
-        let isUpload = !isCancel;
-        /* console.log( file );
-        console.log( isUpload );
-        console.log( convert );
-        console.log( jenis ); */
+        let isUploading = !isCancel;
 
-        if ( !( file instanceof File ) ) isUpload = false;
+        if ( !( csvFile instanceof File ) ) isUploading = false;
 
-        console.log( isUpload );
-        if ( file instanceof File &&
-            isUpload === true &&
-            convert instanceof Function &&
-            typeof jenis === 'string' )
+        if ( isCancel )
         {
-            updateStatus( STATUS.UPLOADING );
-            Papa.parse( file, {
+            console.log( 'cancelled' );
+            addLog( 'Operation cancelled' );
+        }
+
+        if (
+            isUploading && isUpload
+        )
+        {
+            addLog( 'Uploading Data...' );
+            Papa.parse( csvFile, {
                 header: true,
                 download: true,
-                chunkSize: 1024,
-                chunk: ( row, parser ) =>
+                chunkSize: 512,
+                skipEmptyLines: true,
+                chunk: ( chunk, parser ) =>
                 {
-                    // abort operation the component is dismount
-                    if ( !isUpload )
+                    //debugger;
+
+                    if ( !isUploading )
                     {
                         parser.abort();
                         return;
                     }
-                    parser.pause();
-                    // console.log( 'run ', count + 1, isUpload );
-                    // ++count;
 
+                    // pause chunk to complete upload all rows in current
+                    // before continue
+                    parser.pause();
+
+
+                    const chunkData = chunk.data;
+
+                    // function uploadData 
+                    // and auto start/auto call 
+                    // to upload rows starting with index 0
                     ( function uploadData( index )
                     {
-                        // abort operation the component is dismount
-                        if ( !isUpload ) return;
+                        if ( !isUploading ) return;
 
-                        // complete batch upload
-                        if ( index > row.data.length - 1 ) return;
-
-                        const data = row.data[ index ];
-                        const converted = convert( data, rand );
-                        console.log( converted );
-
-                        if ( converted )
+                        if ( index > chunkData.length - 1 )
                         {
-                            API.baru( converted, user.token, jenis ).then( res =>
+                            // try to resume chunk loading
+                            parser.resume();
+
+                            // abort operation
+                            return;
+                        }
+
+                        const row = chunkData[ index ];
+
+                        // auto trim row
+                        Object.keys( row ).forEach( ( key ) =>
+                        {
+                            if ( typeof row[ key ] === 'string' ) row[ key ] = row[ key ].trim();
+                        } );
+
+                        console.log( row );
+
+                        const convertedRow = convert( row, rand );
+
+                        if ( convertedRow instanceof Error === false )
+                        {
+                            // no error continue uploading
+
+                            API.baru( convertedRow, user.token, jenis ).then( res =>
                             {
+                                if ( !isUploading ) return;
+
                                 if ( res.success )
                                 {
-                                    addLog( `${jenis} upload success` );
+                                    // do smthing with success
+                                    console.log( 'Upload success' );
+                                    addLog( `1 ${capitalize( jenis )} berjaya dimuatnaik` );
                                 }
                                 else
                                 {
-                                    addLog( `${jenis} upload failed`, 'error' );
+                                    console.log( 'Upload fail' );
+                                    addLog( `1 ${capitalize( jenis )} gagal dimuatnaik`, 'error' );
                                 }
 
-                                uploadData( index + 1 );
+                                setTimeout( () =>
+                                {
+                                    uploadData( index + 1 );
+                                }, 250 );
+
                             } );
                         }
                         else
                         {
-                            addLog( 'fail convert' );
-                        }
+                            // do somthing with the error
+                            //console.log( 'Fail to convert, Reason:' + convertedRow.message );
+                            addLog( `1 ${capitalize( jenis )} gagal untuk diformat, Sebab: ${convertedRow.message}  `, 'error' );
 
+                            // continue to the next row in chunk
+                            setTimeout( () =>
+                            {
+                                uploadData( index + 1 );
+                            }, 250 );
+
+                        }
                     } )( 0 );
 
-                    //continue operation /* if convert func return falsy */
-                    setTimeout( () =>
-                    {
-                        parser.resume();
-                    }, 2000 );
+
                 },
                 complete: () =>
                 {
-                    console.log( 'done' );
-                    updateStatus( STATUS.DONE );
+                    console.log( 'complete' );
+
+                    addLog( 'Operation completed' );
+                    setIsUpload( false );
+                    setIsDone( true );
                 }
             } );
-        }
-        else
-        {
-            console.log( 'Not pass' );
         }
 
         return () =>
         {
-            isUpload = false;
+            isUploading = false;
         };
-    }, [ file, isCancel, user, convert, jenis ] );
+    }, [ csvFile, isCancel, isUpload, user, convert, jenis ] );
 
-    const additionalProps = { upload, cancel, reset, status, STATUS };
+    // useEffect( () => console.log( csvFile ), [ csvFile ] );
+    // useEffect( () => console.log( logs ), [ logs ] );
+    //useEffect( () => console.log( isUpload ), [ isUpload ] );
+    // useEffect( () =>
+    // {
+    //     if ( isCancel ) console.log( 'cancel' );
+    //     console.log( isCancel );
+    // }, [ isCancel ] );
 
-    children = children ? ( Array.isArray( children ) ? children : [ children ] ).map( ( { type: ChildType, props } ) =>
+    function addLog( msg, type = 'message' )
     {
-        // pass necessary props
-        return <ChildType { ...props } { ...additionalProps } key={ rand() } />;
-    } ) : children;
-    return children;
+        const date = new Date();
+        const now = `${date.getFullYear()}/${date.getMonth()}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} ${date.getMilliseconds()}`;
+        setLogs( ps => ( [ ...ps, [ msg, type, now ] ] ) );
+    }
+
+    function reset()
+    {
+        setIsUpload( false );
+        setCsvFile( null );
+        setIsCancel( false );
+        setLogs( [] );
+        setIsDone( false );
+    }
+
+
+    function handleSubmit( e )
+    {
+        e.preventDefault();
+        addLog( 'File uploaded' );
+        setIsUpload( true );
+        setIsCancel( false );
+    }
+    return (
+        <Box>
+            <BoxHeader>
+                Import Data { capitalize( jenis ) }
+            </BoxHeader>
+            <BoxBody>
+                {
+                    !isUpload && !isDone
+                        ? (
+                            <form onSubmit={ e => handleSubmit( e ) }>
+                                <div className="input-container">
+                                    <input type="file" onChange={ e => setCsvFile( e.target.files[ 0 ] ) } accept=".csv" required />
+                                </div>
+
+                                <button>
+                                    <i className="fas fa-upload" /> Muat Naik
+                                </button>
+                            </form>
+                        )
+                        : (
+                            <div className="process">
+                                <form onSubmit={ e => e.preventDefault() }>
+                                    <button className="link bg3" disabled={ isDone || isCancel } onClick={ () =>
+                                    {
+                                        setIsDone( true );
+                                        setIsUpload( false );
+                                        setIsCancel( true );
+                                    } }>
+                                        <i className="fas fa-times" /> Batalkan Operasi
+                                    </button>
+
+                                    <button disabled={ isUpload } onClick={ reset }>
+                                        <i className="fas fa-upload" /> Muat naik fail baru
+                                    </button>
+                                </form>
+                            </div>
+                        )
+                }
+
+                <div className="process-log" style={ {
+                    background: "#00000011",
+                    display: isUpload || isDone ? 'block' : 'none',
+                    padding: '10px 5',
+                    margin: '10px 0'
+                } }>
+                    <h4>Process Log</h4>
+                    <ScrollToBottom mode="bottom" className={ `${css( { height: 200 } )}` }>
+                        <LogContent logs={ logs } />
+                    </ScrollToBottom>
+                </div>
+
+
+                { children }
+            </BoxBody>
+        </Box>
+    );
+}
+
+function capitalize( str )
+{
+    str = str.split( ' ' );
+    str = str.map( word => word[ 0 ].toUpperCase() + word.substr( 1, word.length ) );
+
+    return str.join( ' ' );
+}
+
+
+
+function LogContent( { logs = [] } )
+{
+    // idk what happen, the is scroll-to-bottom behaviour is actually
+    // implemented by default
+    /* const [ 
+sticky ] = useSticky();
+    const [ atBottom ] = useAtBottom();
+    const scrollToBottom = useScrollToBottom();
+
+    useEffect( () => console.log( sticky ), [ sticky ] );
+    useEffect( () => console.log( atBottom ), [ atBottom ] ); */
+    /* useEffect( () =>
+    {
+        console.log( logs );
+        scrollToBottom( { behaviour: 'smooth' } );
+    }, [ logs, scrollToBottom ] ); */
+
+    return (
+        <ul style={ {
+            lineHeight: '1.01em',
+            fontSize: '14px'
+
+        } } >
+            {
+                logs.map( ( log, index ) => (
+                    <li key={ index } style={ { marginBottom: '2px', background: "#00000012" } } className={ `${log[ 1 ] === 'error' ? css( { color: 'red' } ) : ''}` }>
+                        <b style={ { color: 'black' } }> [ { log[ 2 ] } ] &gt;</b> { log[ 0 ] }
+                    </li>
+                ) )
+            }
+            <div className="emtp" style={ { height: 80 } }></div>
+            {/* {
+                !sticky && scrollToBottom()
+            } */}
+        </ul>
+    );
 }
