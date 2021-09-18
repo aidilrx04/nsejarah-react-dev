@@ -5,14 +5,12 @@ import
 } from 'react-router-dom';
 import
 {
-    useState,
-    useEffect,
     useContext
 } from 'react';
 import { UserContext } from '../../contexts/UserContext';
-import Box from '../../boxes/Box';
-import { API, range, Url, usePaging, useTitle } from '../../utils';
-import Skeleton from 'react-loading-skeleton';
+import { API, Url, useTitle } from '../../utils';
+import BoxWithTitle from '../../boxes/BoxWithTitle';
+import { ListTable, ROUTES } from '../ListTable';
 
 
 export function GuruKuiz()
@@ -21,142 +19,80 @@ export function GuruKuiz()
 
     const user = useContext( UserContext );
     let { url } = useRouteMatch();
-    let [senaraiKuiz, setSenaraiKuiz] = useState( [] );
-    const [paging, setPaging, displayPaging] = usePaging();
+    const filter = user.data.g_jenis === 'admin' ? {
+        // admin view
+        kz_nama: 'Nama Kuiz',
+        kz_jenis: 'Jenis',
+        g_nama: 'Guru',
+        nama_ting: 'Tingkatan',
+        kz_tarikh: 'Tarikh',
+        kz_masa: 'Masa',
+        aksi: 'Aksi'
+    } : {
+        // guru view
+        kz_nama: 'Nama Kuiz',
+        kz_jenis: 'Jenis',
+        nama_ting: 'Tingkatan',
+        kz_tarikh: 'Tarikh',
+        kz_masa: 'Masa',
+        aksi: 'Aksi'
+    };
 
-    useEffect( () =>
+    function getKuiz( limit, page )
     {
-        return () =>
-        {
-            setSenaraiKuiz( [] );
-        };
-    }, [] );
+        const cibai = user.data.g_jenis === 'admin' ? API.getListKuiz( limit, page ) : API.getKuizByGuru( user.data.g_id, limit, page );
 
-    useEffect( () =>
-    {
-        if ( paging.loading )
-        {
-            let request;
-            if ( user.data.g_jenis === 'admin' )
-            {
-                request = API.getListKuiz( paging.limit, paging.page );
-            }
-            else if ( user.data.g_jenis === 'guru' )
-            {
-                request = API.getKuizByGuru( user.data.g_id, paging.limit, paging.page );
-            }
+        return cibai;
+    }
 
-            request.then( data =>
-            {
-                setSenaraiKuiz( data.success ? data.data.data : [] );
-                setPaging( p =>
-                {
-                    p = {
-                        ...p,
-                        loading: false
-                    };
-
-                    return data.success ? { ...p, ...data.data.paging } : p;
-                } );
-            } );
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, paging] );
+    console.log( filter );
 
     return (
-        <Box.Box>
-            {
-                user.data.hasOwnProperty( 'g_jenis' ) &&
-                <>
-                    <Box.BoxHeader>
-                        <i className="fas fa-book" /> Pengurusan Kuiz
-                    </Box.BoxHeader>
-                    <Box.BoxBody>
-                        <table className="table table-content center">
-                            <thead>
-                                <tr>
-                                    <th>Nama Kuiz</th>
-                                    <th>Jenis</th>
-                                    {
-                                        user.data.g_jenis === 'admin'
-                                        &&
-                                        <>
-                                            <th>Guru</th>
-                                        </>
-                                    }
-                                    <th>Kelas</th>
-                                    <th>Tarikh</th>
-                                    <th>Masa</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    !paging.loading
-                                        ? senaraiKuiz.length > 0
-                                            ? senaraiKuiz.map( kuiz => (
-                                                <tr key={senaraiKuiz.indexOf( kuiz )}>
-                                                    <td> {kuiz.kz_nama} </td>
-                                                    <td> {kuiz.kz_jenis} </td>
-
-                                                    {
-                                                        user.data.g_jenis === 'admin' &&
-                                                        <td> {kuiz.guru.g_nama} </td>
-                                                    }
-                                                    <td> {kuiz.ting.kt_ting} {kuiz.ting.kelas.k_nama} </td>
-                                                    <td> {kuiz.kz_tarikh} </td>
-                                                    <td> {kuiz.kz_masa ? kuiz.kz_masa : 'Tiada'} </td>
-                                                    <td className="table-link-container">
-                                                        <Link
-                                                            className='table-link'
-                                                            to={Url( `${url}/${kuiz.kz_id}` )}
-                                                            title="Maklumat Lanjut"
-                                                        >
-                                                            <i className="fas fa-info-circle" />
-                                                        </Link>
-                                                        <Link
-                                                            className='success table-link'
-                                                            to={Url( `${url}/${kuiz.kz_id}/kemaskini` )}
-                                                            title="Kemaskini"
-                                                        >
-                                                            <i className="fas fa-pen" />
-                                                        </Link>
-                                                        <Link
-                                                            className='danger table-link'
-                                                            to={Url( `/guru/padam?table=kuiz&col=kz_id&val=${kuiz.kz_id}&redir=${url}` )}
-                                                            title="Padam"
-                                                        >
-                                                            <i className="fas fa-trash-alt" />
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                            ) )
-                                            : <tr><td colSpan="9999">Tiada data dijumpai</td></tr>
-                                        : range( paging.limit ).map( n => (
-                                            <tr key={n}>
-                                                <td> <Skeleton /> </td>
-                                                <td> <Skeleton /> </td>
-                                                <td> <Skeleton /> </td>
-                                                <td> <Skeleton /> </td>
-                                                <td> <Skeleton /> </td>
-                                                <td> <Skeleton /> </td>
-                                                <td> <Skeleton /> </td>
-                                            </tr>
-                                        ) )
-                                }
-                            </tbody>
-                        </table>
-                        {
-                            displayPaging()
-                        }
-
-                        <Link to={Url( `${url}/baru` )} className="link bg5" style={{ marginTop: '10px' }}>
-                            <i className="fas fa-plus" /> Tambah Kuiz
-                        </Link>
-                    </Box.BoxBody>
-                </>
-            }
-        </Box.Box>
+        <BoxWithTitle>
+            <h4>Senarai Kuiz</h4>
+            <ListTable
+                getListFunc={ getKuiz }
+                limit={ 10 }
+                filter={ filter }
+                before={ ( data ) =>
+                {
+                    return {
+                        ...data,
+                        g_nama: data.guru.g_nama,
+                        nama_ting: `${data.ting.kt_id} ${data.ting.kelas.k_nama}`,
+                        kz_masa: data.kz_masa ? data.kz_masa : 'Tiada',
+                        aksi: (
+                            <div style={ { whiteSpace: 'nowrap' } }>
+                                <Link
+                                    className="table-link"
+                                    to={ Url( `${ROUTES.KUIZ}/${data.kz_id}` ) }
+                                    title="Maklumat Kuiz"
+                                >
+                                    <i className="fas fa-info-circle" />
+                                </Link>
+                                <Link
+                                    className="success table-link"
+                                    to={ Url( `${ROUTES.KUIZ}/${data.kz_id}/kemaskini` ) }
+                                    title="Kemaskini Kuiz"
+                                >
+                                    <i className="fas fa-pen" />
+                                </Link>
+                                <Link
+                                    className="danger table-link"
+                                    to={ Url( `/guru/padam?table=kuiz&col=kz_id&val=${data.kz_id}&redir=${ROUTES.KUIZ}` ) }
+                                    title="Padam Kuiz"
+                                >
+                                    <i className="fas fa-trash-alt" />
+                                </Link>
+                            </div>
+                        )
+                    };
+                } }
+            />
+            <Link to={ Url( `${url}/baru` ) } className="link bg5" style={ { marginTop: '10px' } }>
+                <i className="fas fa-plus" /> Tambah Kuiz
+            </Link>
+        </BoxWithTitle>
     );
 }
 
