@@ -107,7 +107,7 @@ function InvalidAccess()
             <ErrorBox className="flex-12" style={ { width: '100%' } }>
                 403. Akses Tanpa Kebenaran.
                 <br />
-                <small>Anda tidak mempunyai akses terhadap laman ini. <Link to={ Url( `/?redir=${history.location.pathname}` ) }>Log masuk</Link></small>
+                <small>Anda tidak mempunyai akses terhadap laman ini. <Link to={ Url( `/login?redir=${history.location.pathname}` ) }>Log masuk</Link></small>
             </ErrorBox>
         </div>
     );

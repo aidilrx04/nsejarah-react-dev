@@ -1,15 +1,14 @@
-@import 'colors';
+@import "colors";
 
-.loader-container
-{
-    height: 400px;
-    position: relative;
+.loader-container {
+  height: 400px;
+  position: relative;
 
-    .loader
-    {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+  .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
 }

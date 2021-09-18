@@ -20,8 +20,8 @@ function App()
           <Verify />
           <Navbar />
           <Content />
+          <Footer />
         </UserContextProvider>
-        <Footer />
       </Router>
     </>
   );
