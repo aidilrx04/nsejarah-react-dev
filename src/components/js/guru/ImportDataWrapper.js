@@ -4,7 +4,11 @@ import { UserContext } from "../contexts/UserContext";
 import Papa from 'papaparse';
 import { API, rand } from "../utils";
 import ScrollToBottom from 'react-scroll-to-bottom';
+<<<<<<< HEAD
 import { css, /* keyframes */ } from 'glamor';
+=======
+import { css } from 'glamor';
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
 
 
 const validJenis = [ 'murid', 'kelas', 'tingkatan', 'guru' ]; // kuiz is not supported
@@ -26,7 +30,10 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
     const [ isCancel, setIsCancel ] = useState( false );
     const [ isDone, setIsDone ] = useState( false );
     const [ logs, setLogs ] = useState( [] );
+<<<<<<< HEAD
     const [ [ berjaya, gagal ], setResult ] = useState( [ 0, 0 ] );
+=======
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
 
     useEffect( () =>
     {
@@ -43,9 +50,15 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
     useEffect( () =>
     {
         let isUploading = !isCancel;
+<<<<<<< HEAD
 
         if ( !( csvFile instanceof File ) ) isUploading = false;
 
+=======
+
+        if ( !( csvFile instanceof File ) ) isUploading = false;
+
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
         if ( isCancel )
         {
             console.log( 'cancelled' );
@@ -94,6 +107,7 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
                             // abort operation
                             return;
                         }
+<<<<<<< HEAD
 
                         const row = chunkData[ index ];
 
@@ -109,6 +123,23 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
 
                         if ( convertedRow instanceof Error === false )
                         {
+=======
+
+                        const row = chunkData[ index ];
+
+                        // auto trim row
+                        Object.keys( row ).forEach( ( key ) =>
+                        {
+                            if ( typeof row[ key ] === 'string' ) row[ key ] = row[ key ].trim();
+                        } );
+
+                        console.log( row );
+
+                        const convertedRow = convert( row, rand );
+
+                        if ( convertedRow instanceof Error === false )
+                        {
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
                             // no error continue uploading
 
                             API.baru( convertedRow, user.token, jenis ).then( res =>
@@ -120,13 +151,19 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
                                     // do smthing with success
                                     console.log( 'Upload success' );
                                     addLog( `1 ${capitalize( jenis )} berjaya dimuatnaik` );
+<<<<<<< HEAD
                                     setResult( rs => [ rs[ 0 ] + 1, rs[ 1 ] ] );
+=======
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
                                 }
                                 else
                                 {
                                     console.log( 'Upload fail' );
                                     addLog( `1 ${capitalize( jenis )} gagal dimuatnaik`, 'error' );
+<<<<<<< HEAD
                                     setResult( rs => [ rs[ 0 ], rs[ 1 ] + 1 ] );
+=======
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
                                 }
 
                                 setTimeout( () =>
@@ -169,6 +206,7 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
             isUploading = false;
         };
     }, [ csvFile, isCancel, isUpload, user, convert, jenis ] );
+<<<<<<< HEAD
 
     // useEffect( () => console.log( csvFile ), [ csvFile ] );
     // useEffect( () => console.log( logs ), [ logs ] );
@@ -198,6 +236,37 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
 
     function handleSubmit( e )
     {
+=======
+
+    // useEffect( () => console.log( csvFile ), [ csvFile ] );
+    // useEffect( () => console.log( logs ), [ logs ] );
+    //useEffect( () => console.log( isUpload ), [ isUpload ] );
+    // useEffect( () =>
+    // {
+    //     if ( isCancel ) console.log( 'cancel' );
+    //     console.log( isCancel );
+    // }, [ isCancel ] );
+
+    function addLog( msg, type = 'message' )
+    {
+        const date = new Date();
+        const now = `${date.getFullYear()}/${date.getMonth()}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} ${date.getMilliseconds()}`;
+        setLogs( ps => ( [ ...ps, [ msg, type, now ] ] ) );
+    }
+
+    function reset()
+    {
+        setIsUpload( false );
+        setCsvFile( null );
+        setIsCancel( false );
+        setLogs( [] );
+        setIsDone( false );
+    }
+
+
+    function handleSubmit( e )
+    {
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
         e.preventDefault();
         addLog( 'File uploaded' );
         setIsUpload( true );
@@ -248,6 +317,7 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
                     padding: '10px 5',
                     margin: '10px 0'
                 } }>
+<<<<<<< HEAD
                     <div style={ {
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -260,6 +330,10 @@ export default function ImportDataWrapper( { jenis, convert = defaultConvertFunc
                         </div>
                     </div>
                     <ScrollToBottom mode="bottom" className={ `${css( { height: 200 } )}` } >
+=======
+                    <h4>Process Log</h4>
+                    <ScrollToBottom mode="bottom" className={ `${css( { height: 200 } )}` }>
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
                         <LogContent logs={ logs } />
                     </ScrollToBottom>
                 </div>
@@ -280,6 +354,7 @@ function capitalize( str )
 }
 
 
+<<<<<<< HEAD
 /* const fadeIn = keyframes( {
     from: {
         opacity: 0
@@ -288,6 +363,8 @@ function capitalize( str )
         opacity: 1
     }
 } ); */
+=======
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
 
 function LogContent( { logs = [] } )
 {
@@ -308,13 +385,21 @@ sticky ] = useSticky();
 
     return (
         <ul style={ {
+<<<<<<< HEAD
             lineHeight: '1.1em',
+=======
+            lineHeight: '1.01em',
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
             fontSize: '14px'
 
         } } >
             {
                 logs.map( ( log, index ) => (
+<<<<<<< HEAD
                     <li key={ index } style={ { marginBottom: '2px', background: "#00000012", padding: '10px 0' } } className={ `${log[ 1 ] === 'error' ? css( { color: 'red' } ) : ''}` }>
+=======
+                    <li key={ index } style={ { marginBottom: '2px', background: "#00000012" } } className={ `${log[ 1 ] === 'error' ? css( { color: 'red' } ) : ''}` }>
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
                         <b style={ { color: 'black' } }> [ { log[ 2 ] } ] &gt;</b> { log[ 0 ] }
                     </li>
                 ) )

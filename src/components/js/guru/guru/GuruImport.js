@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { PUBLIC_URL } from "../../utils";
+=======
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
 import ImportDataWrapper from "../ImportDataWrapper";
 
 export default function GuruImport()
@@ -9,12 +12,18 @@ export default function GuruImport()
         KatalaluanGuru: 'g_katalaluan',
         JenisGuru: 'g_jenis'
     };
+<<<<<<< HEAD
     // const legalJenis = [ 'guru', 'admin' ];
     // const guruKeys = Object.keys( legalProps );
+=======
+    const legalJenis = [ 'guru', 'admin' ];
+    const guruKeys = Object.keys( legalProps );
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
 
 
     function convertDataToGuru( data, generateID )
     {
+<<<<<<< HEAD
         // ! NOTE(aidil): assumed data is valid by default
 
         const dataKeys = Object.keys( data );
@@ -22,6 +31,13 @@ export default function GuruImport()
         // let valid = true;
 
         if ( dataLength !== 4 ) return Error( 'Data tidak sah' );
+=======
+        const dataKeys = Object.keys( data );
+        const dataLength = dataKeys.length;
+        let valid = true;
+
+        if ( dataLength !== 3 ) return Error( 'Data tidak sah' );
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
 
 
 
@@ -32,6 +48,7 @@ export default function GuruImport()
             // g_jenis: ''
         };
 
+<<<<<<< HEAD
         dataKeys.forEach( key =>
         {
             guru[ legalProps[ key ] ] = data[ key ];
@@ -53,6 +70,14 @@ export default function GuruImport()
                     </p>
                 </small>
             </div>
+=======
+        const legalProp;
+    }
+
+    return (
+        <ImportDataWrapper jenis="guru">
+
+>>>>>>> 6cd14c27e2c480d6a9ba7a25be44d891d2b4ed7e
         </ImportDataWrapper>
     );
 }
